@@ -17,13 +17,24 @@ return [
 
     'paths' => ['api/*'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => [
+        'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'
+    ],
 
     'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => [
+        'Accept',
+        'Origin',
+        'Content-Type',
+        'Authorization',
+        'X-XSRF-TOKEN',
+        'X-CSRF-TOKEN',
+        'X-Requested-With',
+        'X-PAPANDAYAN-TOKEN',
+    ],
 
     'exposed_headers' => [],
 
