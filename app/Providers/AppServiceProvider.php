@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,5 +26,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // Passport:routes();
+        View::composer(['telescope::layout'], function ($view) {
+            $view->with('telescopeScriptVariables', ['path' => 'public/telescope', 'timezone' => config('app.timezone'), 'recording' => !cache('telescope:pause-recording')]);
+        });
     }
 }
