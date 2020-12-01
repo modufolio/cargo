@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Role;
+use DB;
 
 class RoleSeeder extends Seeder
 {
@@ -14,6 +15,8 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
+        DB::beginTransaction();
+        DB::table('roles')->truncate();
         $roles = [
             [
                 'name' => 'Customer',
@@ -77,5 +80,6 @@ class RoleSeeder extends Seeder
             ]
         ];
         Role::insert($roles);
+        DB::commit();
     }
 }
