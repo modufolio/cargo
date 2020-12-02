@@ -18,6 +18,7 @@ use App\Http\Controllers\TestController;
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('user', [AuthController::class, 'checkLogin']);
 });
 
 Route::middleware('guest')->group(function () {

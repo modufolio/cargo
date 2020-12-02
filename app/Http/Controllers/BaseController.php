@@ -30,16 +30,16 @@ class BaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendError($error, $errorMessages = [], $code = 404)
+    public function sendError($errorMessages = [], $error = [],  $code = 403)
     {
     	$response = [
             'success' => false,
-            'message' => $error,
+            'message' => $errorMessages,
         ];
 
 
-        if(!empty($errorMessages)){
-            $response['data'] = $errorMessages;
+        if(!empty($error)){
+            $response['data'] = $error;
         }
 
 

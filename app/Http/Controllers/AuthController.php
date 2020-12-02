@@ -24,6 +24,15 @@ class AuthController extends BaseController
 
     public function login(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first());
+        }
+
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             DB::beginTransaction();
             $user = Auth::user();
@@ -69,7 +78,7 @@ class AuthController extends BaseController
         ]);
 
         $resp = $this->proxy->grantPasswordToken(
-            $user->email,
+            $request->email,
             $request->password
         );
 
@@ -102,5 +111,27 @@ class AuthController extends BaseController
         cookie()->queue(cookie()->forget('refresh_token'));
 
         return $this->sendResponse(null, 'Successfully logged out');
+    }
+
+    public function checkLogin(Request $request)
+    {
+        if (Auth::guard('api')->check()) {
+            // Here you have access to $request->user() method that
+            // contains the model of the currently authenticated user.
+            //
+            // Note that this method should only work if you call it
+            // after an Auth::check(), because the user is set in the
+            // request object by the auth component after a successful
+            // authentication check/retrival
+            return response()->json($request->user());
+        }
+
+        // alternative method
+        if (($user = Auth::user()) !== null) {
+            // Here you have your authenticated user model
+            return response()->json($user);
+        }
+
+        return response('Unauthenticated user');
     }
 }
