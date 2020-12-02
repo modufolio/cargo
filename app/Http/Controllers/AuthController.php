@@ -30,18 +30,23 @@ class AuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError($validator->errors()->first());
+            if ($validator->errors()->first('email')) {
+                return $this->sendError($validator->errors()->first('email'), 4001);
+            }
+            if ($validator->errors()->first('password')) {
+                return $this->sendError($validator->errors()->first('password'), 4002);
+            }
         }
 
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             DB::beginTransaction();
             $user = Auth::user();
-            abort_unless($user, 404, 'This combination does not exists.');
-            abort_unless(
-                \Hash::check($request->password, $user->password),
-                403,
-                'This combination does not exists.'
-            );
+            // abort_unless($user, 404, 'This combination does not exists');
+            // abort_unless(
+            //     \Hash::check($request->password, $user->password),
+            //     403,
+            //     'This combination does not exists'
+            // );
 
             $resp = $this->proxy->grantPasswordToken($request->email, $request->password);
             $success = [
@@ -49,10 +54,9 @@ class AuthController extends BaseController
                 'expiresIn' => Carbon::now()->addSecond($resp->expires_in)->toDateTimeString(),
             ];
             DB::commit();
-            return $this->sendResponse($success, 'User login successfully.');
+            return $this->sendResponse('Berhasil login', $success);
         } else {
-
-            return $this->sendError('Unauthorised', ['error'=>'Unauthorised']);
+            return $this->sendError('Identitas tersebut tidak cocok dengan data kami', 4003);
         }
     }
 
@@ -66,7 +70,7 @@ class AuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error', $validator->errors());
+            return $this->sendError($validator->errors()->first());
         }
 
         DB::beginTransaction();
@@ -87,7 +91,7 @@ class AuthController extends BaseController
             'expiresIn' => Carbon::now()->addSecond($resp->expires_in)->toDateTimeString(),
         ];
         DB::commit();
-        return $this->sendResponse($success, 'User register successfully');
+        return $this->sendResponse('Pengguna berhasil register', $success);
     }
 
     public function refreshToken()
@@ -99,7 +103,7 @@ class AuthController extends BaseController
             'expiresIn' => Carbon::now()->addSecond($resp->expires_in)->toDateTimeString(),
         ];
 
-        return $this->sendResponse($success, 'Token has been refreshed');
+        return $this->sendResponse('Token telah di perbarui', $success);
     }
 
     public function logout(Request $request)
@@ -110,7 +114,7 @@ class AuthController extends BaseController
         // remove the httponly cookie
         cookie()->queue(cookie()->forget('refresh_token'));
 
-        return $this->sendResponse(null, 'Successfully logged out');
+        return $this->sendResponse('Successfully logged out');
     }
 
     public function checkLogin(Request $request)
