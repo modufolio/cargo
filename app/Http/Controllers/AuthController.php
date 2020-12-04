@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use App\Http\Controllers\BaseController;
+use App\Models\User;
 use App\Services\LoginService;
 use App\Utilities\ProxyRequest;
+
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
 use Carbon\Carbon;
+use Validator;
 use DB;
 
 class AuthController extends BaseController
@@ -25,17 +28,24 @@ class AuthController extends BaseController
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
+            'userId' => 'bail|required',
+            'password' => 'bail|required',
         ]);
 
         if ($validator->fails()) {
-            if ($validator->errors()->first('email')) {
-                return $this->sendError($validator->errors()->first('email'), 4001);
+            if ($validator->errors()->first('userId')) {
+                return $this->sendError($validator->errors()->first('userId'), 4001);
             }
             if ($validator->errors()->first('password')) {
                 return $this->sendError($validator->errors()->first('password'), 4002);
             }
+        }
+
+        $useEmail = filter_var(strtolower($request->userId), FILTER_VALIDATE_EMAIL);
+
+        if (!$useEmail) {
+            $user = User::where('username', strtolower($request->userId))->first();
+			$request->merge(["email" => $user->email]);
         }
 
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
@@ -63,10 +73,11 @@ class AuthController extends BaseController
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed',
-            'role_id' => 'required'
+            'name' => 'bail|required',
+            'email' => 'bail|required|email|unique:users',
+            'password' => 'bail|required|confirmed',
+            'role_id' => 'bail|required',
+            'username' => 'bail|required|unique:users'
         ]);
 
         if ($validator->fails()) {
@@ -76,13 +87,14 @@ class AuthController extends BaseController
         DB::beginTransaction();
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => strtolower($request->email),
             'password' => bcrypt($request->password),
+            'username' => bcrypt($request->username),
             'role_id' => $request->role_id
         ]);
 
         $resp = $this->proxy->grantPasswordToken(
-            $request->email,
+            strtolower($request->email),
             $request->password
         );
 

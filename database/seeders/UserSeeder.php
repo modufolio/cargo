@@ -20,7 +20,8 @@ class UserSeeder extends Seeder
             'name' => 'ival',
             'email' => 'ival@test.com',
             'password' => bcrypt('ival1234'),
-            'role_id' => 1
+            'role_id' => 1,
+            'username' => 'ival',
         ]);
         DB::commit();
     }

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,7 @@ use App\Http\Controllers\TestController;
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('user', [AuthController::class, 'checkLogin']);
+    Route::resource('role', RoleController::class);
 });
 
 Route::middleware('guest')->group(function () {

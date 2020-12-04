@@ -14,7 +14,9 @@ class AlterTableUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->string('username')->nullable();
             $table->unsignedBigInteger('role_id')->nullable();
+            $table->string('google_id')->nullable();
             $table->softDeletes();
         });
     }
@@ -27,7 +29,9 @@ class AlterTableUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('username');
             $table->dropColumn('role_id');
+            $table->dropColumn('google_id');
             $table->dropSoftDeletes();
         });
     }
