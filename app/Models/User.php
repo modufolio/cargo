@@ -74,4 +74,9 @@ class User extends Authenticatable
         $data = Role::find($this->attributes['role_id']);
         return $data;
     }
+
+    public function addresses()
+    {
+        return $this->hasMany('App\Models\Address');
+    }
 }
