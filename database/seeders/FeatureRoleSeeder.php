@@ -18,10 +18,8 @@ class FeatureRoleSeeder extends Seeder
         DB::beginTransaction();
         DB::table('feature_role')->truncate();
         try {
-            DB::table('feature_role')->insert(
-                ['role_id' => 9, 'feature_id' => 1],
-                ['role_id' => 9, 'feature_id' => 2]
-            );
+            DB::table('feature_role')->insert(['role_id' => 9, 'feature_id' => 1]);
+            DB::table('feature_role')->insert(['role_id' => 9, 'feature_id' => 2]);
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();
