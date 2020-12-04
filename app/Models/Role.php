@@ -9,6 +9,11 @@ class Role extends Model
 {
     use HasFactory;
     public $timestamps = true;
+    public $casts = [
+        'features' => 'array',
+        'ranking' => 'double',
+    ];
+    public $hidden = ['created_at','updated_at'];
 
     public function users()
     {

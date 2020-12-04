@@ -33,7 +33,6 @@ class RoleController extends BaseController
      */
     public function index()
     {
-
         try {
             $result = $this->roleService->getAll();
         } catch (Exception $e) {
