@@ -9,6 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 
+use App\Models\Feature;
+use App\Models\Role;
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
@@ -45,9 +48,30 @@ class User extends Authenticatable
     ];
 
     public $timestamps = true;
+    // protected $appends = ['feature','role'];
 
     public function role()
     {
         return $this->belongsTo('App\Models\Role');
+    }
+
+    public function getFeaturesAttribute()
+    {
+        $role = Role::find($this->attributes['role_id'])->features()->get();
+        foreach ($role as $value) {
+            $val = [
+                'id' => $value->id,
+                'name' => $value->name,
+                'slug' => $value->slug,
+            ];
+            $data[] = $val;
+        }
+        return $data;
+    }
+
+    public function getRoleAttribute()
+    {
+        $data = Role::find($this->attributes['role_id']);
+        return $data;
     }
 }

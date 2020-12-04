@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\FeatureSeeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\FeatureRoleSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,7 +21,8 @@ class DatabaseSeeder extends Seeder
             [
                 RoleSeeder::class,
                 FeatureSeeder::class,
-                UserSeeder::class
+                UserSeeder::class,
+                FeatureRoleSeeder::class,
             ]
         );
     }

@@ -21,6 +21,10 @@ class FeatureSeeder extends Seeder
             [
                 'name' => 'Reporting',
                 'slug' => 'reporting',
+            ],
+            [
+                'name' => 'User Management',
+                'slug' => 'user-management',
             ]
         ];
         Feature::insert($features);

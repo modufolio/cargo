@@ -10,7 +10,6 @@ class Role extends Model
     use HasFactory;
     public $timestamps = true;
     public $casts = [
-        'features' => 'array',
         'ranking' => 'double',
     ];
     public $hidden = ['created_at','updated_at'];
@@ -18,5 +17,10 @@ class Role extends Model
     public function users()
     {
         return $this->hasMany('App\Models\User');
+    }
+
+    public function features()
+    {
+        return $this->belongsToMany('App\Models\Feature');
     }
 }

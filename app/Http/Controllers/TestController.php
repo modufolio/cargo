@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+use App\Models\User;
+use App\Models\Role;
+use App\Http\Controllers\BaseController;
 
-class TestController extends Controller
+class TestController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -15,8 +18,9 @@ class TestController extends Controller
      */
     public function index()
     {
-        $date = Carbon::now()->addSecond(86400)->toDateTimeString();
-        return response()->json($date);
+        $data = User::find(1)->setAppends(['features','role'])->toArray();
+        $data = collect($data)->only('id', 'email', 'name','features','role')->all();
+        return $this->sendResponse('data user', $data);
     }
 
     /**
