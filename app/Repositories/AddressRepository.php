@@ -59,12 +59,7 @@ class AddressRepository
     {
 
         if ($data['is_primary']) {
-            $addressUser = $this->address->where('user_id', $data['userId'])->select('id')->get();
-            foreach ($addressUser as $value) {
-                $data = $this->address->find($value['id']);
-                $data->is_primary = false;
-                $data->update();
-            }
+            $addressUser = $this->address->where('user_id', $data['userId'])->update(['is_primary' => false]);
         }
 
         $user = $this->user->find($data['userId']);
@@ -96,12 +91,7 @@ class AddressRepository
     public function update($data, $id)
     {
         if ($data['is_primary']) {
-            $addressUser = $this->address->whereNotIn('id', [$id])->where('user_id', $data['userId'])->select('id')->get();
-            foreach ($addressUser as $value) {
-                $data = $this->address->find($value['id']);
-                $data->is_primary = false;
-                $data->update();
-            }
+            $addressUser = $this->address->where('user_id', $data['userId'])->where('id', '!==', $id)->update(['is_primary' => false]);
         }
 
         $address = $this->address->find($id);
