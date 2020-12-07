@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('user', [AuthController::class, 'checkLogin']);
     Route::resource('role', RoleController::class);
     Route::resource('address', AddressController::class);
+    Route::resource('user', UserController::class);
 });
 
 Route::middleware('guest')->group(function () {

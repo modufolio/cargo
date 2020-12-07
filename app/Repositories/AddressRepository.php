@@ -91,7 +91,7 @@ class AddressRepository
     public function update($data, $id)
     {
         if ($data['is_primary']) {
-            $addressUser = $this->address->where('user_id', $data['userId'])->where('id', '!==', $id)->update(['is_primary' => false]);
+            $this->updatePrimaryAddress($data['userId'], $id, false);
         }
 
         $address = $this->address->find($id);
@@ -123,5 +123,11 @@ class AddressRepository
         $address = $this->address->find($id);
         $address->delete();
         return $address;
+    }
+
+    public function updatePrimaryAddress($userId, $addressId, $isPrimary)
+    {
+        $addressUser = $this->address->where('user_id', $userId)->where('id', '!==', $addressId)->update(['is_primary' => $isPrimary]);
+        return $addressUser->fresh();
     }
 }

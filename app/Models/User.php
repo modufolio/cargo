@@ -12,7 +12,7 @@ use Laravel\Passport\HasApiTokens;
 use App\Models\Feature;
 use App\Models\Role;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
 
