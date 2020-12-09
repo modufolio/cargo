@@ -46,9 +46,15 @@ class AuthController extends BaseController
         if (!$useEmail) {
             $user = User::where('username', strtolower($request->userId))->first();
             if (!$user) {
-                return $this->sendError('Identitas tersebut tidak cocok dengan data kami', 4003);
+                return $this->sendError('Username tersebut tidak cocok dengan data kami', 4003);
             }
 			$request->merge(["email" => $user->email]);
+        } else {
+            $user = User::where('email', strtolower($request->userId))->first();
+
+            if (!$user) {
+                return $this->sendError('Email tersebut tidak cocok dengan data kami', 4004);
+            }
         }
 
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
@@ -69,7 +75,7 @@ class AuthController extends BaseController
             DB::commit();
             return $this->sendResponse('Berhasil login', $success);
         } else {
-            return $this->sendError('Identitas tersebut tidak cocok dengan data kami', 4003);
+            return $this->sendError('Password tersebut tidak cocok dengan data kami', 4005);
         }
     }
 
