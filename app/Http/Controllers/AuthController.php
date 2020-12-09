@@ -87,7 +87,7 @@ class AuthController extends BaseController
 
         // save user
         try {
-            $response = $this->userService->save($request->all());
+            $user = $this->userService->save($request->all());
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());
@@ -95,7 +95,7 @@ class AuthController extends BaseController
 
         // get access token
         try {
-            $response = $this->authService->getAccessToken(strtolower($request->email), $request->password);
+            $response = $this->authService->getAccessToken(strtolower($user->email), $request->password);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());
