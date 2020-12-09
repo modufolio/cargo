@@ -45,6 +45,9 @@ class AuthController extends BaseController
 
         if (!$useEmail) {
             $user = User::where('username', strtolower($request->userId))->first();
+            if (!$user) {
+                return $this->sendError('Identitas tersebut tidak cocok dengan data kami', 4003);
+            }
 			$request->merge(["email" => $user->email]);
         }
 
