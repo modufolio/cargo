@@ -26,11 +26,11 @@ class UserRepository
     {
         $user = new $this->user;
 
-        $user->name = $data['name'];
-        $user->email = $data['email'];
-        $user->password = $data['password'];
+        $user->name     = $data['name'];
+        $user->email    = strtolower($data['email']);
+        $user->password = bcrypt($data['password']);
         $user->username = $data['username'];
-        $user->role_id = $data['role_id'];
+        $user->role_id  = $data['role_id'];
         $user->save();
 
         return $user->fresh();

@@ -17,11 +17,11 @@ class ProxyRequest
         return $this->makePostRequest($params);
     }
 
-    public function refreshAccessToken()
+    public function refreshAccessToken(string $refreshToken)
     {
-        $refreshToken = request()->cookie('refresh_token');
+        // $refreshToken = request()->cookie('refresh_token');
 
-        abort_unless($refreshToken, 403, 'Your refresh token is expired.');
+        abort_unless($refreshToken, 401, 'Your refresh token is expired.');
 
         $params = [
             'grant_type' => 'refresh_token',
@@ -42,7 +42,7 @@ class ProxyRequest
         $proxy = \Request::create('oauth/token', 'post', $params);
         $resp = json_decode(app()->handle($proxy)->getContent());
 
-        $this->setHttpOnlyCookie($resp->refresh_token);
+        // $this->setHttpOnlyCookie($resp->refresh_token);
 
         return $resp;
     }

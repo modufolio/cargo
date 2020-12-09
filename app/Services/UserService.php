@@ -106,7 +106,7 @@ class UserService {
      * @param array $data
      * @return String
      */
-    public function saveUserData($data)
+    public function save($data)
     {
         $validator = Validator::make($data, [
             'name' => 'bail|required|max:255',

@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
 use App\Models\User;
-use App\Services\LoginService;
+use App\Services\AuthService;
+use App\Services\UserService;
 use App\Utilities\ProxyRequest;
 
 use Illuminate\Http\Request;
@@ -15,14 +16,19 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Validator;
 use DB;
+use Exception;
 
 class AuthController extends BaseController
 {
     protected $proxy;
+    protected $authService;
+    protected $userService;
 
-    public function __construct(ProxyRequest $proxy)
+    public function __construct(ProxyRequest $proxy, AuthService $authService, UserService $userService)
     {
         $this->proxy = $proxy;
+        $this->authService = $authService;
+        $this->userService = $userService;
     }
 
     public function login(Request $request)
@@ -48,32 +54,28 @@ class AuthController extends BaseController
             if (!$user) {
                 return $this->sendError('Username tersebut tidak cocok dengan data kami', 4003);
             }
-			$request->merge(["email" => $user->email]);
         } else {
             $user = User::where('email', strtolower($request->userId))->first();
-
             if (!$user) {
                 return $this->sendError('Email tersebut tidak cocok dengan data kami', 4004);
             }
         }
 
+        $request->merge(['email' => $user->email]);
+
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             DB::beginTransaction();
-            $user = Auth::user();
-            // abort_unless($user, 404, 'This combination does not exists');
-            // abort_unless(
-            //     \Hash::check($request->password, $user->password),
-            //     403,
-            //     'This combination does not exists'
-            // );
+            // $user = Auth::user();
 
-            $resp = $this->proxy->grantPasswordToken($request->email, $request->password);
-            $success = [
-                'token' => $resp->access_token,
-                'expiresIn' => Carbon::now()->addSecond($resp->expires_in)->toDateTimeString(),
-            ];
+            try {
+                $response = $this->authService->getAccessToken(strtolower($request->email), $request->password);
+            } catch (Exception $e) {
+                DB::rollback();
+                return $this->sendError($e->getMessage());
+            }
             DB::commit();
-            return $this->sendResponse('Berhasil login', $success);
+
+            return $this->sendResponse('Berhasil login', $response);
         } else {
             return $this->sendError('Password tersebut tidak cocok dengan data kami', 4005);
         }
@@ -81,50 +83,39 @@ class AuthController extends BaseController
 
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'bail|required',
-            'email' => 'bail|required|email|unique:users',
-            'password' => 'bail|required|confirmed',
-            'role_id' => 'bail|required',
-            'username' => 'bail|required|unique:users'
-        ]);
+        DB::beginTransaction();
 
-        if ($validator->fails()) {
-            return $this->sendError($validator->errors()->first());
+        // save user
+        try {
+            $response = $this->userService->save($request->all());
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
         }
 
-        DB::beginTransaction();
-        $user = User::create([
-            'name' => $request->name,
-            'email' => strtolower($request->email),
-            'password' => bcrypt($request->password),
-            'username' => bcrypt($request->username),
-            'role_id' => $request->role_id
-        ]);
+        // get access token
+        try {
+            $response = $this->authService->getAccessToken(strtolower($request->email), $request->password);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
 
-        $resp = $this->proxy->grantPasswordToken(
-            strtolower($request->email),
-            $request->password
-        );
-
-        $success = [
-            'token' => $resp->access_token,
-            'expiresIn' => Carbon::now()->addSecond($resp->expires_in)->toDateTimeString(),
-        ];
         DB::commit();
-        return $this->sendResponse('Pengguna berhasil register', $success);
+        return $this->sendResponse('Pengguna berhasil register', $response);
     }
 
-    public function refreshToken()
+    public function refreshToken(Request $request)
     {
-        $resp = $this->proxy->refreshAccessToken();
-
-        $success = [
-            'token' => $resp->access_token,
-            'expiresIn' => Carbon::now()->addSecond($resp->expires_in)->toDateTimeString(),
-        ];
-
-        return $this->sendResponse('Token telah di perbarui', $success);
+        DB::beginTransaction();
+        try {
+            $response = $this->authService->refreshToken($request->refreshToken);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse('Token telah di perbarui', $response);
     }
 
     public function logout(Request $request)
@@ -133,7 +124,7 @@ class AuthController extends BaseController
         $token->delete();
 
         // remove the httponly cookie
-        cookie()->queue(cookie()->forget('refresh_token'));
+        // cookie()->queue(cookie()->forget('refresh_token'));
 
         return $this->sendResponse('Successfully logged out');
     }
