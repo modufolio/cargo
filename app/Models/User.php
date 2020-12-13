@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Mail\Mailable;
 use Laravel\Passport\HasApiTokens;
 
 use App\Models\Feature;
@@ -78,5 +79,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function addresses()
     {
         return $this->hasMany('App\Models\Address');
+    }
+
+    public function verifyUser()
+    {
+        return $this->hasOne('App\Models\VerifyUser');
     }
 }

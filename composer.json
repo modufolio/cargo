@@ -19,7 +19,8 @@
         "laravel/socialite": "^5.1",
         "laravel/telescope": "^4.3",
         "laravel/tinker": "^2.5",
-        "laravolt/indonesia": "^0.27.0"
+        "laravolt/indonesia": "^0.27.0",
+        "snowfire/beautymail": "^1.1"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

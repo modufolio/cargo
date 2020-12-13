@@ -16,3 +16,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/test-email', function()
+{
+	$beautymail = app()->make(Snowfire\Beautymail\Beautymail::class);
+	$beautymail->send('emails.verify-email', [], function($message)
+	{
+		$message
+			->from('ival@papandayan.com')
+			->to('ivalrival95@gmail.com', 'Ival')
+			->subject('Welcome!');
+	});
+
+});

@@ -58,4 +58,24 @@ class AuthService {
         DB::commit();
         return $data;
     }
+
+    /**
+     * create verify user.
+     *
+     * @param String $id
+     * @return Mixed
+     */
+    public function createVerifyUser($id)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $this->authRepository->createVerifyUser($id);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Unable to create verify user');
+        }
+        DB::commit();
+        return $data;
+    }
 }

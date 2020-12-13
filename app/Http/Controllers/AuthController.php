@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Models\User;
 use App\Services\AuthService;
 use App\Services\UserService;
+use App\Services\MailService;
 use App\Utilities\ProxyRequest;
 
 use Illuminate\Http\Request;
@@ -23,12 +24,14 @@ class AuthController extends BaseController
     protected $proxy;
     protected $authService;
     protected $userService;
+    protected $mailService;
 
-    public function __construct(ProxyRequest $proxy, AuthService $authService, UserService $userService)
+    public function __construct(ProxyRequest $proxy, AuthService $authService, UserService $userService, MailService $mailService)
     {
         $this->proxy = $proxy;
         $this->authService = $authService;
         $this->userService = $userService;
+        $this->mailService = $mailService;
     }
 
     public function login(Request $request)
@@ -88,6 +91,22 @@ class AuthController extends BaseController
         // save user
         try {
             $user = $this->userService->save($request->all());
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+
+        // create verify user
+        try {
+            $verifyUser = $this->authService->createVerifyUser($user->id);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+
+        // send email verification
+        try {
+            $this->mailService->sendEmailVerification($user, $verifyUser);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

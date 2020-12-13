@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use App\Models\VerifyUser;
 use App\Utilities\ProxyRequest;
 
 use Illuminate\Support\Facades\Auth;
@@ -15,11 +16,13 @@ class AuthRepository
 {
     protected $user;
     protected $proxy;
+    protected $verifyUser;
 
-    public function __construct(User $user, ProxyRequest $proxy)
+    public function __construct(User $user, VerifyUser $verifyUser, ProxyRequest $proxy)
     {
         $this->user = $user;
         $this->proxy = $proxy;
+        $this->verifyUser = $verifyUser;
     }
 
     /**
@@ -61,5 +64,20 @@ class AuthRepository
             'expiresIn' => Carbon::now()->addSecond($resp->expires_in)->toDateTimeString(),
         ];
         return $success;
+    }
+
+    /**
+     * Create Verify Email Token
+     *
+     * @param String $userId
+     * @return VerifyUser
+     */
+    public function createVerifyUser($userId)
+    {
+        $verify = new $this->verifyUser;
+        $verify->user_id = $userId;
+        $verify->token = sha1(time());
+        $verify->save();
+        return $verify->fresh();
     }
 }
