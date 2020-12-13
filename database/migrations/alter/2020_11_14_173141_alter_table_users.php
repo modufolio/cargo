@@ -17,6 +17,7 @@ class AlterTableUsers extends Migration
             $table->string('username')->nullable();
             $table->unsignedBigInteger('role_id')->nullable();
             $table->string('google_id')->nullable();
+            $table->string('refferal')->nullable();
             $table->softDeletes();
         });
     }
@@ -32,6 +33,7 @@ class AlterTableUsers extends Migration
             $table->dropColumn('username');
             $table->dropColumn('role_id');
             $table->dropColumn('google_id');
+            $table->dropColumn('refferal');
             $table->dropSoftDeletes();
         });
     }
