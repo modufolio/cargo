@@ -4,16 +4,19 @@ namespace App\Repositories;
 
 use App\Models\Address;
 use App\Models\User;
+use Indonesia;
 
 class AddressRepository
 {
     protected $address;
     protected $user;
+    protected $indo;
 
-    public function __construct(Address $address, User $user)
+    public function __construct(Address $address, User $user, Indonesia $indo)
     {
         $this->address = $address;
         $this->user = $user;
+        $this->indo = $indo;
     }
 
     /**
@@ -35,6 +38,19 @@ class AddressRepository
     public function getById($id)
     {
         return $this->address->where('id', $id)->get();
+    }
+
+    /**
+     * Update Address
+     *
+     * @param $data
+     * @return Address
+     */
+    public function delete($id)
+    {
+        $address = $this->address->find($id);
+        $address->delete();
+        return $address;
     }
 
     /**
@@ -112,22 +128,15 @@ class AddressRepository
         return $address;
     }
 
-    /**
-     * Update Address
-     *
-     * @param $data
-     * @return Address
-     */
-    public function delete($id)
-    {
-        $address = $this->address->find($id);
-        $address->delete();
-        return $address;
-    }
-
     public function updatePrimaryAddress($userId, $addressId, $isPrimary)
     {
         $addressUser = $this->address->where('user_id', $userId)->where('id', '!==', $addressId)->update(['is_primary' => $isPrimary]);
         return $addressUser->fresh();
+    }
+
+    public function getAllProvince()
+    {
+        $data = $this->indo::allProvinces();
+        return $data;
     }
 }

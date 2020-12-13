@@ -19,6 +19,27 @@ class AddressService {
     }
 
     /**
+     * Get all address.
+     *
+     * @return String
+     */
+    public function getAll()
+    {
+        return $this->addressRepository->getAll();
+    }
+
+    /**
+     * Get address by id.
+     *
+     * @param $id
+     * @return String
+     */
+    public function getById($id)
+    {
+        return $this->addressRepository->getById($id);
+    }
+
+    /**
      * Delete address by id.
      *
      * @param $id
@@ -41,34 +62,13 @@ class AddressService {
     }
 
     /**
-     * Get all address.
-     *
-     * @return String
-     */
-    public function getAll()
-    {
-        return $this->addressRepository->getAll();
-    }
-
-    /**
-     * Get address by id.
-     *
-     * @param $id
-     * @return String
-     */
-    public function getById($id)
-    {
-        return $this->addressRepository->getById($id);
-    }
-
-    /**
      * Update address data
      * Store to DB if there are no errors.
      *
      * @param array $data
      * @return String
      */
-    public function updateRole($data, $id)
+    public function updateAddress($data, $id)
     {
         $validator = Validator::make($data, [
             'name' => 'bail|min:2',

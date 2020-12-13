@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Mail\VerifyMail;
 use App\Http\Controllers\BaseController;
+use Indonesia;
 
 class TestController extends BaseController
 {
@@ -21,6 +22,8 @@ class TestController extends BaseController
      */
     public function index()
     {
+        $data = Indonesia::allProvinces();
+        return response()->json($data);
         $user = User::findOrFail(1);
         $beautymail = app()->make(Beautymail::class);
         $beautymail->send('emails.verify', ['user' => $user], function($message) use ($user)
