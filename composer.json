@@ -20,6 +20,7 @@
         "laravel/telescope": "^4.3",
         "laravel/tinker": "^2.5",
         "laravolt/indonesia": "^0.27.0",
+        "peterpetrus/passport-token": "^0.0.9",
         "snowfire/beautymail": "^1.1"
     },
     "require-dev": {
