@@ -24,9 +24,15 @@ class AddressController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            $result = $this->addressService->getAddressUser($request->userId);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse($result);
     }
 
     /**

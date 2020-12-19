@@ -132,9 +132,23 @@ class AddressService {
         return $result;
     }
 
-    public function getAllProvince()
+    /**
+     * Get address by given user id
+     */
+    public function getAddressUser($userId)
     {
-        $result = $this->addressRepository->getAllProvince();
-        return $result;
+        DB::beginTransaction();
+
+        try {
+            $address = $this->addressRepository->getByUserId($userId);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Unable to get user address');
+        }
+
+        DB::commit();
+
+        return $address;
     }
 }

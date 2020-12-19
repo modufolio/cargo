@@ -62,8 +62,7 @@ class AddressRepository
      */
     public function getByUserId($id)
     {
-        return $this->user->find($id)->address()->get();
-        // return $this->address->where('user_id', $id)->get();
+        return $this->user->find($id)->addresses()->get();
     }
 
     /**
@@ -134,17 +133,5 @@ class AddressRepository
     {
         $addressUser = $this->address->where('user_id', $userId)->where('id', '!==', $addressId)->update(['is_primary' => $isPrimary]);
         return $addressUser->fresh();
-    }
-
-    public function getAllProvince()
-    {
-        $data = $this->indo::allProvinces();
-        return $data;
-    }
-
-    public function getCityByProvince($provinceId)
-    {
-        $data = $this->indo::findProvince($provinceId, ['cities']);
-        return $data;
     }
 }
