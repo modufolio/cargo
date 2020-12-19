@@ -45,12 +45,12 @@ class AddressService {
      * @param $id
      * @return String
      */
-    public function deleteById($id)
+    public function deleteById($addressId)
     {
         DB::beginTransaction();
 
         try {
-            $address = $this->addressRepository->delete($id);
+            $address = $this->addressRepository->delete($addressId);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());

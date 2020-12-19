@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Services\AddressService;
 use App\Http\Controllers\BaseController;
+use Exception;
 
 class AddressController extends BaseController
 {
@@ -114,11 +115,17 @@ class AddressController extends BaseController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $addressId
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($addressId)
     {
-        //
+        try {
+            $result = $this->addressService->deleteById($addressId);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse($result);
     }
 }

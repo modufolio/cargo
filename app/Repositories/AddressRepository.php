@@ -49,7 +49,7 @@ class AddressRepository
      */
     public function delete($id)
     {
-        $address = $this->address->find($id);
+        $address = $this->address->findOrFail($id);
         $address->delete();
         return $address;
     }
