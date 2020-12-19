@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePickupsTable extends Migration
+class CreateShippingLogs extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,13 @@ class CreatePickupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pickups', function (Blueprint $table) {
+        Schema::create('shipping_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('fleet_id');
-            $table->unsignedBigInteger('address_id');
+            $table->unsignedBigInteger('shipping_id');
+            $table->string('status');
+            $table->text('detail');
+            $table->text('shipper_id');
+            $table->text('billing_id');
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ class CreatePickupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pickups');
+        Schema::dropIfExists('shipping_logs');
     }
 }

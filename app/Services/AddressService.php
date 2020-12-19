@@ -106,13 +106,21 @@ class AddressService {
      * @param array $data
      * @return String
      */
-    public function saveRoleData($data)
+    public function saveAddressData($data)
     {
         $validator = Validator::make($data, [
-            'name' => 'bail|min:2',
-            'slug' => 'bail|max:255',
-            'ranking' => 'bail|max:255',
-            'features' => 'bail|max:255',
+            'is_primary'    => 'bail|required|boolean',
+            'userId'        => 'bail|required|integer',
+            'title'         => 'bail|required|max:255',
+            'receiptor'     => 'bail|required|max:255',
+            'phone'         => 'bail|required|max:255',
+            'province'      => 'bail|required|max:255',
+            'city'          => 'bail|required|max:255',
+            'district'      => 'bail|required|max:255',
+            'village'       => 'bail|required|max:255',
+            'postal_code'   => 'bail|required|integer|max:99999',
+            'street'        => 'bail|required|max:255',
+            'notes'         => 'bail|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -121,6 +129,12 @@ class AddressService {
 
         $result = $this->addressRepository->save($data);
 
+        return $result;
+    }
+
+    public function getAllProvince()
+    {
+        $result = $this->addressRepository->getAllProvince();
         return $result;
     }
 }

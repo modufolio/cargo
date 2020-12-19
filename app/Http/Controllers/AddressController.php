@@ -3,9 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\UserService;
+use App\Services\AddressService;
+use App\Http\Controllers\BaseController;
 
-class AddressController extends Controller
+class AddressController extends BaseController
 {
+    protected $userService;
+    protected $addressService;
+
+    public function __construct(UserService $userService, AddressService $addressService)
+    {
+        $this->userService = $userService;
+        $this->addressService = $addressService;
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -34,7 +47,28 @@ class AddressController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->only([
+            'userId',
+            'is_primary',
+            'title',
+            'receiptor',
+            'phone',
+            'province',
+            'city',
+            'district',
+            'village',
+            'postal_code',
+            'street',
+            'notes',
+        ]);
+
+        try {
+            $result = $this->addressService->saveAddressData($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse($result);
     }
 
     /**

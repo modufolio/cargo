@@ -10,7 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\GoogleController;
 
-Route::group(['middleware' => ['auth.custom']], function () {
+Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('check-user', [AuthController::class, 'checkLogin']);
     Route::resource('role', RoleController::class);

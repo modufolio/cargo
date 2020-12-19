@@ -23,9 +23,10 @@ class CreateAddresTable extends Migration
             $table->string('province');
             $table->string('city');
             $table->string('district');
+            $table->string('village');
             $table->smallInteger('postal_code');
             $table->text('street');
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

@@ -24,9 +24,11 @@ class CustomAuth
         if ($token['valid']) {
             $tokenExist = PassportToken::existsValidToken($token['token_id'], $token['user_id']);
             if ($tokenExist) {
-                if (($user = Auth::user()) !== null) {
-                    $request->route()->setParameter('userId', $user->id);
-                    return $next($request);
+                $user = Auth::user();
+                if ($user !== null) {
+                    $request->merge(['userId' => $user['id']]);
+                    $response = $next($request);
+                    return $response;
                 }
                 return $this->errorResponse(['code' => 4001], 'unathorized', 401);
             }

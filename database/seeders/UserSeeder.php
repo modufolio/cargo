@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
         DB::table('users')->truncate();
         DB::table('users')->insert([
             'name' => 'ival',
-            'email' => 'ival@test.com',
+            'email' => 'ivalrival95@gmail.com',
             'password' => bcrypt('ival1234'),
             'role_id' => 9,
             'username' => 'ival',

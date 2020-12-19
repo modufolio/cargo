@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Address;
 use App\Models\User;
 use Indonesia;
+use Carbon\Carbon;
 
 class AddressRepository
 {
@@ -80,19 +81,20 @@ class AddressRepository
 
         $user = $this->user->find($data['userId']);
 
-        $address = $user->address()->create([
-            'is_primary' => $data['is_primary'],
-            'title' => $data['title'],
-            'receiptor' => $data['receiptor'],
-            'phone' => $data['phone'],
-            'province' => $data['province'],
-            'city' => $data['city'],
-            'district' => $data['district'],
-            'postal_code' => $data['postal_code'],
-            'street' => $data['street'],
-            'notes' => $data['notes'],
-            'created_at' => $data['created_at'],
-            'updated_at' => $data['updated_at'],
+        $address = $user->addresses()->create([
+            'is_primary'    => $data['is_primary'],
+            'title'         => $data['title'],
+            'receiptor'     => $data['receiptor'],
+            'phone'         => $data['phone'],
+            'province'      => $data['province'],
+            'city'          => $data['city'],
+            'district'      => $data['district'],
+            'village'       => $data['village'],
+            'postal_code'   => $data['postal_code'],
+            'street'        => $data['street'],
+            'notes'         => $data['notes'],
+            'created_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+            'updated_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
         ]);
 
         return $address->fresh();
@@ -137,6 +139,12 @@ class AddressRepository
     public function getAllProvince()
     {
         $data = $this->indo::allProvinces();
+        return $data;
+    }
+
+    public function getCityByProvince($provinceId)
+    {
+        $data = $this->indo::findProvince($provinceId, ['cities']);
         return $data;
     }
 }

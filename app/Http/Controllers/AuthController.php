@@ -163,10 +163,12 @@ class AuthController extends BaseController
 
         // alternative method
         if (($user = Auth::user()) !== null) {
-            // Here you have your authenticated user model
+        //     // Here you have your authenticated user model
             return response()->json($user);
         }
 
-        return response('Unauthenticated user');
+        return $this->sendError('Unauthenticated user', null);
+
+        // return response('Unauthenticated user');
     }
 }
