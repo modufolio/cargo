@@ -15,8 +15,8 @@ class CreateAddresTable extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->boolean('is_primary');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->boolean('is_primary')->default(0);
             $table->string('title');
             $table->string('receiptor');
             $table->string('phone');

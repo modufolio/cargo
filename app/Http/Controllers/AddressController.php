@@ -57,6 +57,7 @@ class AddressController extends BaseController
         $data = $request->only([
             'userId',
             'is_primary',
+            'temporary',
             'title',
             'receiptor',
             'phone',

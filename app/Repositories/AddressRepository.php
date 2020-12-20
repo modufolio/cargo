@@ -62,7 +62,7 @@ class AddressRepository
      */
     public function getByUserId($id)
     {
-        return $this->user->find($id)->addresses()->get();
+        return $this->user->find($id)->addresses()->where('temporary', false)->get();
     }
 
     /**
@@ -82,6 +82,7 @@ class AddressRepository
 
         $address = $user->addresses()->create([
             'is_primary'    => $data['is_primary'],
+            'temporary'     => $data['temporary'],
             'title'         => $data['title'],
             'receiptor'     => $data['receiptor'],
             'phone'         => $data['phone'],

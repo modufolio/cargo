@@ -110,6 +110,7 @@ class AddressService {
     {
         $validator = Validator::make($data, [
             'is_primary'    => 'bail|required|boolean',
+            'temporary'     => 'bail|required|boolean',
             'userId'        => 'bail|required|integer',
             'title'         => 'bail|required|max:255',
             'receiptor'     => 'bail|required|max:255',

@@ -14,6 +14,7 @@ class AlterTableAddresses extends Migration
     public function up()
     {
         Schema::table('addresses', function (Blueprint $table) {
+            $table->boolean('temporary')->default(1);
             $table->softDeletes();
         });
     }
@@ -26,6 +27,7 @@ class AlterTableAddresses extends Migration
     public function down()
     {
         Schema::table('addresses', function (Blueprint $table) {
+            $table->dropColumn('temporary');
             $table->dropSoftDeletes();
         });
     }
