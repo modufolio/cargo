@@ -15,9 +15,9 @@ class CreateShippingsTable extends Migration
     {
         Schema::create('shippings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('fleet_id');
-            $table->unsignedBigInteger('address_id');
+            $table->bigInteger('number');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('pickup_id')->nullable();
             $table->timestamps();
         });
     }

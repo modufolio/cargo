@@ -90,4 +90,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany('App\Models\VerifyUser');
     }
+
+    public function senders()
+    {
+        return $this->hasMany('App\Models\Sender');
+    }
 }

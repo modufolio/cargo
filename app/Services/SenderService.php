@@ -1,46 +1,66 @@
 <?php
 namespace App\Services;
 
-use App\Models\Address;
-use App\Repositories\AddressRepository;
+use App\Models\Sender;
+use App\Repositories\SenderRepository;
 use Exception;
 use DB;
 use Log;
 use Validator;
 use InvalidArgumentException;
 
-class AddressService {
+class SenderService {
 
-    protected $addressRepository;
+    protected $senderRepository;
 
-    public function __construct(AddressRepository $addressRepository)
+    public function __construct(SenderRepository $senderRepository)
     {
-        $this->addressRepository = $addressRepository;
+        $this->senderRepository = $senderRepository;
     }
 
     /**
-     * Get all address.
+     * Get all sender.
      *
      * @return String
      */
     public function getAll()
     {
-        return $this->addressRepository->getAll();
+        return $this->senderRepository->getAll();
     }
 
     /**
-     * Get address by id.
+     * Get sender by id.
      *
      * @param $id
      * @return String
      */
     public function getById($id)
     {
-        return $this->addressRepository->getById($id);
+        return $this->senderRepository->getById($id);
     }
 
     /**
-     * Delete address by id.
+     * Get sender by given user id
+     */
+    public function getByUserId($userId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $sender = $this->senderRepository->getByUserId($userId);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Unable to get user sender');
+        }
+
+        DB::commit();
+
+        return $sender;
+    }
+
+    /**
+     * Delete sender by id.
      *
      * @param $id
      * @return String
@@ -49,19 +69,19 @@ class AddressService {
     {
         DB::beginTransaction();
         try {
-            $address = $this->addressRepository->delete($addressId);
+            $sender = $this->senderRepository->delete($addressId);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal menghapus alamat');
         }
         DB::commit();
-        return $address;
+        return $sender;
 
     }
 
     /**
-     * Update address data
+     * Update sender data
      * Store to DB if there are no errors.
      *
      * @param array $data
@@ -82,32 +102,30 @@ class AddressService {
 
         DB::beginTransaction();
         try {
-            $address = $this->addressRepository->update($data, $id);
+            $sender = $this->senderRepository->update($data, $id);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mengubah alamat');
         }
         DB::commit();
-        return $address;
+        return $sender;
     }
 
     /**
-     * Validate address data.
+     * Validate sender data.
      * Store to DB if there are no errors.
      *
      * @param array $data
      * @return String
      */
-    public function saveAddressData($data)
+    public function save($data)
     {
         $validator = Validator::make($data, [
             'is_primary'    => 'bail|required|boolean',
             'temporary'     => 'bail|required|boolean',
             'userId'        => 'bail|required|integer',
             'title'         => 'bail|required|max:255',
-            'receiptor'     => 'bail|required|max:255',
-            'phone'         => 'bail|required|max:255',
             'province'      => 'bail|required|max:255',
             'city'          => 'bail|required|max:255',
             'district'      => 'bail|required|max:255',
@@ -123,7 +141,7 @@ class AddressService {
 
         DB::beginTransaction();
         try {
-            $result = $this->addressRepository->save($data);
+            $result = $this->senderRepository->save($data);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -131,25 +149,5 @@ class AddressService {
         }
         DB::commit();
         return $result;
-    }
-
-    /**
-     * Get address by given user id
-     */
-    public function getAddressUser($userId)
-    {
-        DB::beginTransaction();
-
-        try {
-            $address = $this->addressRepository->getByUserId($userId);
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException('Unable to get user address');
-        }
-
-        DB::commit();
-
-        return $address;
     }
 }

@@ -7,6 +7,9 @@ use Database\Seeders\RoleSeeder;
 use Database\Seeders\FeatureSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\FeatureRoleSeeder;
+use Database\Seeders\FleetSeeder;
+use Database\Seeders\UnitSeeder;
+use Database\Seeders\ServiceSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +26,9 @@ class DatabaseSeeder extends Seeder
                 FeatureSeeder::class,
                 UserSeeder::class,
                 FeatureRoleSeeder::class,
+                FleetSeeder::class,
+                UnitSeeder::class,
+                ServiceSeeder::class,
             ]
         );
     }

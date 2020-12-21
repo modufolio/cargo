@@ -18,8 +18,6 @@ class CreateShippingLogs extends Migration
             $table->unsignedBigInteger('shipping_id');
             $table->string('status');
             $table->text('detail');
-            $table->text('shipper_id');
-            $table->text('billing_id');
             $table->timestamps();
         });
     }

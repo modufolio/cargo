@@ -20,6 +20,7 @@ class CreateItemsTable extends Migration
             $table->unsignedBigInteger('service_id')->nullable();
             $table->string('name');
             $table->string('unit_total');
+            $table->float('price');
             $table->timestamps();
         });
     }

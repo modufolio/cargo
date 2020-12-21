@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAddresTable extends Migration
+class CreateReceiversTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateAddresTable extends Migration
      */
     public function up()
     {
-        Schema::create('addresses', function (Blueprint $table) {
+        Schema::create('receivers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->boolean('is_primary')->default(0);
             $table->string('title');
-            $table->string('receiptor');
+            $table->string('name');
             $table->string('phone');
             $table->string('province');
             $table->string('city');
@@ -27,6 +26,8 @@ class CreateAddresTable extends Migration
             $table->smallInteger('postal_code');
             $table->text('street');
             $table->text('notes')->nullable();
+            $table->boolean('temporary')->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -38,6 +39,6 @@ class CreateAddresTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('addresses');
+        Schema::dropIfExists('receivers');
     }
 }

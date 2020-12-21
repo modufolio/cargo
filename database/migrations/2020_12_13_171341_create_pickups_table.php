@@ -15,8 +15,17 @@ class CreatePickupsTable extends Migration
     {
         Schema::create('pickups', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('fleet_id');
-            $table->unsignedBigInteger('address_id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('fleet_id')->nullable();
+            $table->unsignedBigInteger('promo_id')->nullable();
+            $table->timestamp('picktime');
+            $table->string('name');
+            $table->string('phone');
+            $table->text('address_sender');
+            $table->text('address_receiver');
+            $table->text('address_billing');
+            $table->text('notes');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
