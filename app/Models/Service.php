@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
-class Receiver extends Model
+class Service extends Model
 {
-    use HasFactory, SoftDeletes;
-
+    use HasFactory;
     public $timestamps = true;
-
     protected $guarded = [];
 
-    public function user()
+    /**
+     * Get the items with service data.
+     */
+    public function items()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->hasMany('App\Models\Item');
     }
 
     public function getCreatedAtAttribute($value)

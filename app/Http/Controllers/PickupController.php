@@ -8,6 +8,7 @@ use App\Services\AddressService;
 use App\Services\PickupService;
 use App\Http\Controllers\BaseController;
 use Exception;
+use DB;
 
 class PickupController extends BaseController
 {
@@ -48,20 +49,22 @@ class PickupController extends BaseController
      */
     public function store(Request $request)
     {
-        if (!$fromPickupList) {
-            DB::beginTransaction();
-            try {
-                $addressPickup = $this->addressService->saveAddressData($data);
-            } catch (Exception $e) {
-                DB::rollback();
-                return $this->sendError($e->getMessage());
-            }
-            $data = $addressPickup;
-        }
-
-
+        $data = $request->only([
+            'userId',
+            'fleetId',
+            'promoId',
+            'name',
+            'phone',
+            'addressSender',
+            'addressReceiver',
+            'addressBilling',
+            'notes',
+            'items',
+            'picktime',
+        ]);
+        DB::beginTransaction();
         try {
-            $result = $this->pickupService->save($data, $request->userId, $request->fleetId);
+            $result = $this->pickupService->save($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

@@ -1,66 +1,66 @@
 <?php
 namespace App\Services;
 
-use App\Models\Sender;
-use App\Repositories\SenderRepository;
+use App\Models\Receiver;
+use App\Repositories\ReceiverRepository;
 use Exception;
 use DB;
 use Log;
 use Validator;
 use InvalidArgumentException;
 
-class SenderService {
+class ReceiverService {
 
-    protected $senderRepository;
+    protected $receiverRepository;
 
-    public function __construct(SenderRepository $senderRepository)
+    public function __construct(ReceiverRepository $receiverRepository)
     {
-        $this->senderRepository = $senderRepository;
+        $this->receiverRepository = $receiverRepository;
     }
 
     /**
-     * Get all sender.
+     * Get all receiver.
      *
      * @return String
      */
     public function getAll()
     {
-        return $this->senderRepository->getAll();
+        return $this->receiverRepository->getAll();
     }
 
     /**
-     * Get sender by id.
+     * Get receiver by id.
      *
      * @param $id
      * @return String
      */
     public function getById($id)
     {
-        return $this->senderRepository->getById($id);
+        return $this->receiverRepository->getById($id);
     }
 
     /**
-     * Get sender by given user id
+     * Get receiver by given user id
      */
     public function getByUserId($userId)
     {
         DB::beginTransaction();
 
         try {
-            $sender = $this->senderRepository->getByUserId($userId);
+            $receiver = $this->receiverRepository->getByUserId($userId);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal mendapatkan alamat pengirim');
+            throw new InvalidArgumentException('Gagal mendapatkan alamat penerima');
         }
 
         DB::commit();
 
-        return $sender;
+        return $receiver;
     }
 
     /**
-     * Delete sender by id.
+     * Delete receiver by id.
      *
      * @param $id
      * @return String
@@ -69,19 +69,19 @@ class SenderService {
     {
         DB::beginTransaction();
         try {
-            $sender = $this->senderRepository->delete($addressId);
+            $receiver = $this->receiverRepository->delete($addressId);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal menghapus alamat');
         }
         DB::commit();
-        return $sender;
+        return $receiver;
 
     }
 
     /**
-     * Update sender data
+     * Update receiver data
      * Store to DB if there are no errors.
      *
      * @param array $data
@@ -102,18 +102,18 @@ class SenderService {
 
         DB::beginTransaction();
         try {
-            $sender = $this->senderRepository->update($data, $id);
+            $receiver = $this->receiverRepository->update($data, $id);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mengubah alamat');
         }
         DB::commit();
-        return $sender;
+        return $receiver;
     }
 
     /**
-     * Validate sender data.
+     * Validate receiver data.
      * Store to DB if there are no errors.
      *
      * @param array $data
@@ -122,10 +122,11 @@ class SenderService {
     public function save($data)
     {
         $validator = Validator::make($data, [
-            'is_primary'    => 'bail|required|boolean',
             'temporary'     => 'bail|required|boolean',
             'userId'        => 'bail|required|integer',
             'title'         => 'bail|required|max:255',
+            'phone'         => 'bail|required|max:14',
+            'name'          => 'bail|required|max:255',
             'province'      => 'bail|required|max:255',
             'city'          => 'bail|required|max:255',
             'district'      => 'bail|required|max:255',
@@ -141,11 +142,11 @@ class SenderService {
 
         DB::beginTransaction();
         try {
-            $result = $this->senderRepository->save($data);
+            $result = $this->receiverRepository->save($data);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal menyimpan alamat pengirim');
+            throw new InvalidArgumentException('Gagal menyimpan alamat penerima');
         }
         DB::commit();
         return $result;

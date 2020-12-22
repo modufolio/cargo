@@ -20,27 +20,35 @@ class PickupRepository
     /**
      * Save Pickup Address / alamat pickup / alamat pengirim
      *
-     * @param Address $address
-     * @param user_id $userId
-     * @param fleet_id $fleetId
+     * @param $data
      * @return Pickup
      */
-    public function save($address, $userId, $fleetId)
+    public function save($data)
     {
         $pickup = new $this->pickup;
 
-        $pickup->fleet_id           = $fleetId;
-        $pickup->user_id            = $userId;
-        $pickup->promo_id           = $address['promoId'] ?? null;
-        $pickup->name               = $address['name'];
-        $pickup->phone              = $address['phone'];
-        $pickup->address_sender     = $address['addressSender'];
-        $pickup->address_recipient  = $address['addressRecepient'];
-        $pickup->address_billing    = $address['addressBilling'];
-        $pickup->notes              = $address['notes'];
-        $pickup->picktime           = $address['picktime'];
+        $pickup->fleet_id           = $data['fleetId'];
+        $pickup->user_id            = $data['userId'];
+        $pickup->promo_id           = $data['promoId'] ?? null;
+        $pickup->name               = $data['name'];
+        $pickup->phone              = $data['phone'];
+        $pickup->address_sender     = $data['addressSender'];
+        $pickup->address_receiver   = $data['addressReceiver'];
+        $pickup->address_billing    = $data['addressBilling'];
+        $pickup->notes              = $data['notes'];
+        $pickup->picktime           = $data['picktime'];
         $pickup->save();
 
         return $pickup->fresh();
+    }
+
+    /**
+     * Save pickup item
+     *
+     * @param Pickup $pickup
+     */
+    public function saveItem($pickup)
+    {
+
     }
 }

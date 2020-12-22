@@ -4,21 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\UserService;
-use App\Services\SenderService;
+use App\Services\ReceiverService;
 use App\Http\Controllers\BaseController;
 use Exception;
 
-class SenderController extends BaseController
+class ReceiverController extends BaseController
 {
     protected $userService;
-    protected $senderService;
+    protected $receiverService;
 
-    public function __construct(UserService $userService, SenderService $senderService)
+    public function __construct(UserService $userService, ReceiverService $receiverService)
     {
         $this->userService = $userService;
-        $this->senderService = $senderService;
+        $this->receiverService = $receiverService;
     }
-
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +26,7 @@ class SenderController extends BaseController
     public function index(Request $request)
     {
         try {
-            $result = $this->senderService->getByUserId($request->userId);
+            $result = $this->receiverService->getByUserId($request->userId);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
@@ -54,9 +53,10 @@ class SenderController extends BaseController
     {
         $data = $request->only([
             'userId',
-            'is_primary',
             'temporary',
             'title',
+            'name',
+            'phone',
             'province',
             'city',
             'district',
@@ -67,7 +67,7 @@ class SenderController extends BaseController
         ]);
 
         try {
-            $result = $this->senderService->save($data);
+            $result = $this->receiverService->save($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }

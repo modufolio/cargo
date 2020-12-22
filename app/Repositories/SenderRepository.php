@@ -10,7 +10,6 @@ class SenderRepository
 {
     protected $sender;
     protected $user;
-    protected $indo;
 
     public function __construct(Sender $sender, User $user)
     {
@@ -47,7 +46,7 @@ class SenderRepository
      */
     public function getByUserId($id)
     {
-        return $this->user->find($id)->addresses()->where('temporary', false)->get();
+        return $this->user->find($id)->senders()->where('temporary', false)->get();
     }
 
     /**
