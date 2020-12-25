@@ -17,8 +17,9 @@ class CreateRoutesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('fleet_id');
             $table->string('origin');
-            $table->string('destination');
             $table->string('destination_island');
+            $table->string('destination_city');
+            $table->string('destination_district');
             $table->float('price');
             $table->float('minimum_weight');
             $table->softDeletes();

@@ -27,7 +27,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'KOTA MEDAN',
+                'destination_city'      => 'KOTA MEDAN',
+                'destination_district'  => 'MEDAN KOTA',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 4000,
                 'minimum_weight'        => 100,
@@ -35,7 +36,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 3,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'KOTA MEDAN',
+                'destination_city'      => 'KOTA MEDAN',
+                'destination_district'  => 'MEDAN KOTA',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 33500,
                 'minimum_weight'        => 15,
@@ -43,7 +45,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'KOTA BATAM',
+                'destination_city'      => 'KOTA BATAM',
+                'destination_district'  => 'BATAM KOTA',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 5000,
                 'minimum_weight'        => 100,
@@ -51,7 +54,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 3,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'KOTA BATAM',
+                'destination_city'      => 'KOTA BATAM',
+                'destination_district'  => 'BATAM KOTA',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 34000,
                 'minimum_weight'        => 10,
@@ -59,7 +63,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'KOTA PEKANBARU',
+                'destination_city'      => 'KOTA PEKANBARU',
+                'destination_district'  => 'PEKANBARU KOTA',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 4000,
                 'minimum_weight'        => 100,
@@ -67,7 +72,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 3,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'KOTA PEKANBARU',
+                'destination_city'      => 'KOTA PEKANBARU',
+                'destination_district'  => 'PEKANBARU KOTA',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 29500,
                 'minimum_weight'        => 15,
@@ -75,7 +81,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'DUMAI KOTA',
+                'destination_city'      => 'KOTA D U M A I',
+                'destination_district'  => 'DUMAI KOTA',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 8000,
                 'minimum_weight'        => 100,
@@ -83,7 +90,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'SIAK',
+                'destination_city'      => 'KABUPATEN S I A K',
+                'destination_district'  => 'SIAK',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 9500,
                 'minimum_weight'        => 100,
@@ -91,7 +99,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'PANGKALAN KERINCI',
+                'destination_city'      => 'KABUPATEN PELALAWAN',
+                'destination_district'  => 'PANGKALAN KERINCI',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 8000,
                 'minimum_weight'        => 100,
@@ -99,7 +108,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'RENGAT',
+                'destination_city'      => 'KABUPATEN INDRAGIRI HULU',
+                'destination_district'  => 'RENGAT',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 9000,
                 'minimum_weight'        => 100,
@@ -107,7 +117,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'TEMBILAHAN',
+                'destination_city'      => 'KABUPATEN INDRAGIRI HILIR',
+                'destination_district'  => 'TEMBILAHAN',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 10000,
                 'minimum_weight'        => 100,
@@ -115,7 +126,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'KABUPATEN KAMPAR',
+                'destination_city'      => 'KABUPATEN KAMPAR',
+                'destination_district'  => 'KAMPAR',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 10000,
                 'minimum_weight'        => 100,
@@ -123,15 +135,8 @@ class RouteSeeder extends Seeder
             [
                 'fleet_id'              => 4,
                 'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'LIRIK',
-                'destination_island'    => 'SUMATERA',
-                'price'                 => 8000,
-                'minimum_weight'        => 100,
-            ],
-            [
-                'fleet_id'              => 4,
-                'origin'                => 'KOTA SURABAYA',
-                'destination'           => 'SUNGAI PAKNING',
+                'destination_city'      => 'BUKIT BATU',
+                'destination_district'  => 'SUNGAI PAKNING',
                 'destination_island'    => 'SUMATERA',
                 'price'                 => 8000,
                 'minimum_weight'        => 100,
