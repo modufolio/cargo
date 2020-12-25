@@ -26,13 +26,13 @@ class UnitSeeder extends Seeder
             ],
             [
                 'name'          => 'Kilogram',
-                'price'         => 1000,
+                'price'         => 2000,
                 'created_at'    => Carbon::now('Asia/Jakarta'),
                 'updated_at'    => Carbon::now('Asia/Jakarta'),
             ],
             [
                 'name'          => 'Volume',
-                'price'         => 1000,
+                'price'         => 3000,
                 'created_at'    => Carbon::now('Asia/Jakarta'),
                 'updated_at'    => Carbon::now('Asia/Jakarta'),
             ],

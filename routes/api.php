@@ -12,6 +12,8 @@ use App\Http\Controllers\FleetController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\SenderController;
 use App\Http\Controllers\ReceiverController;
+use App\Http\Controllers\BillController;
+use App\Http\Controllers\RouteController;
 
 Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -23,9 +25,21 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::resource('sender', SenderController::class);
     Route::resource('receiver', ReceiverController::class);
     Route::get('get-provinces', [RegionController::class, 'getProvinces']);
+    Route::get('province/{provinceId}', [RegionController::class, 'getProvince']);
     Route::get('get-cities/{provinceId}', [RegionController::class, 'getCities']);
+    Route::get('city/{cityId}', [RegionController::class, 'getCity']);
     Route::get('get-districts/{cityId}', [RegionController::class, 'getDistricts']);
+    Route::get('district/{districtId}', [RegionController::class, 'getDistrict']);
     Route::get('get-villages/{districtId}', [RegionController::class, 'getVillages']);
+    Route::get('village/{villageId}', [RegionController::class, 'getVillage']);
+    Route::post('get-regions', [RegionController::class, 'getRegions']);
+    Route::post('get-regions-paginate', [RegionController::class, 'getPaginateRegions']);
+    Route::prefix('bill')->group(function() {
+        Route::post('calculate', [BillController::class, 'calculatePrice']);
+    });
+    Route::prefix('route')->group(function() {
+        Route::post('get-fleet-origin-destination', [RouteController::class, 'getByFleetOriginDestination']);
+    });
     Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
     Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 });

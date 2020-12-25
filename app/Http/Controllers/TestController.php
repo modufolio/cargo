@@ -2,19 +2,40 @@
 
 namespace App\Http\Controllers;
 
+// OTHER
 use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
-use Snowfire\Beautymail\Beautymail;
+use App\Http\Controllers\BaseController;
 
+// MODEL
 use App\Models\User;
 use App\Models\Role;
-use App\Mail\VerifyMail;
-use App\Http\Controllers\BaseController;
+use App\Models\Fleet;
+use App\Models\Route;
+
+// SERVICE
+use App\Services\AddressService;
+use App\Services\PickupService;
+
+// VENDOR
+use Carbon\Carbon;
+use Snowfire\Beautymail\Beautymail;
 use Indonesia;
+
+// MAIL
+use App\Mail\VerifyMail;
+use Illuminate\Support\Facades\Mail;
 
 class TestController extends BaseController
 {
+    protected $addressService;
+    protected $pickupService;
+
+    public function __construct(AddressService $addressService, PickupService $pickupService)
+    {
+        $this->addressService = $addressService;
+        $this->pickupService = $pickupService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -23,7 +44,6 @@ class TestController extends BaseController
     public function index()
     {
         $data = Indonesia::allProvinces();
-        return response()->json($data);
         $user = User::findOrFail(1);
         $beautymail = app()->make(Beautymail::class);
         $beautymail->send('emails.verify', ['user' => $user], function($message) use ($user)
@@ -60,7 +80,9 @@ class TestController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $data = Route::where([['origin',$request->origin],['destination', $request->destination]])->exists();
+
+        return response()->json($data);
     }
 
     /**
