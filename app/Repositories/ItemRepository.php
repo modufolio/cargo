@@ -78,7 +78,7 @@ class ItemRepository
             $item[] = $pickup->items()->create($value);
         }
 
-        return $item->fresh();
+        return $item;
     }
 
     /**

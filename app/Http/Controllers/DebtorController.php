@@ -4,21 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\UserService;
-use App\Services\AddressService;
-use App\Services\PickupService;
+use App\Services\DebtorService;
 use App\Http\Controllers\BaseController;
 use Exception;
-use DB;
 
-class PickupController extends BaseController
+class DebtorController extends BaseController
 {
-    protected $addressService;
-    protected $pickupService;
+    protected $userService;
+    protected $debtorService;
 
-    public function __construct(AddressService $addressService, PickupService $pickupService)
+    public function __construct(UserService $userService, DebtorService $debtorService)
     {
-        $this->addressService = $addressService;
-        $this->pickupService = $pickupService;
+        $this->userService = $userService;
+        $this->debtorService = $debtorService;
     }
 
     /**
@@ -26,9 +24,14 @@ class PickupController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            $result = $this->debtorService->getByUserId($request->userId);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse($result);
     }
 
     /**
@@ -51,28 +54,24 @@ class PickupController extends BaseController
     {
         $data = $request->only([
             'userId',
-            'fleetId',
-            'promoCode',
+            'title',
             'name',
             'phone',
-            'addressSender',
-            'addressReceiver',
-            'addressBilling',
+            'province',
+            'city',
+            'district',
+            'village',
+            'postal_code',
+            'street',
             'notes',
-            'items',
-            'origin',
-            'destination_city',
-            'destination_district',
-            'picktime',
         ]);
-        DB::beginTransaction();
+
         try {
-            $result = $this->pickupService->save($data);
+            $result = $this->debtorService->save($data);
         } catch (Exception $e) {
-            DB::rollback();
             return $this->sendError($e->getMessage());
         }
-        DB::commit();
+
         return $this->sendResponse($result);
     }
 

@@ -78,26 +78,36 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function addresses()
     {
-        return $this->hasMany('App\Models\Address');
+        return $this->hasMany(Address::class);
     }
 
     public function verifyUser()
     {
-        return $this->hasOne('App\Models\VerifyUser');
+        return $this->hasOne(VerifyUser::class);
     }
 
     public function promos()
     {
-        return $this->belongsToMany('App\Models\VerifyUser');
+        return $this->belongsToMany(VerifyUser::class);
     }
 
     public function senders()
     {
-        return $this->hasMany('App\Models\Sender');
+        return $this->hasMany(Sender::class);
     }
 
     public function receivers()
     {
-        return $this->hasMany('App\Models\Receiver');
+        return $this->hasMany(Receiver::class);
+    }
+
+    public function debtors()
+    {
+        return $this->hasMany(Debtor::class);
+    }
+
+    public function pickups()
+    {
+        return $this->hasMany(Pickup::class);
     }
 }

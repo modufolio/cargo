@@ -4,16 +4,20 @@ namespace App\Repositories;
 
 use App\Models\Promo;
 use App\Models\User;
+use Carbon\Carbon;
+use App\Models\Pickup;
 
 class PromoRepository
 {
     protected $promo;
     protected $user;
+    protected $pickup;
 
-    public function __construct(Promo $promo, User $user)
+    public function __construct(Promo $promo, User $user, Pickup $pickup)
     {
         $this->promo = $promo;
         $this->user = $user;
+        $this->pickup = $pickup;
     }
 
     /**
@@ -24,6 +28,17 @@ class PromoRepository
     public function getAll()
     {
         return $this->promo->get();
+    }
+
+    /**
+     * Get all promo can be used.
+     *
+     * @return Promo $promo
+     */
+    public function listPromoCanBeUsed($userId)
+    {
+        $this->promo->get();
+        $this->user->find($id)->pickups()->get();
     }
 
     /**
@@ -38,6 +53,18 @@ class PromoRepository
     }
 
     /**
+     * Get Promo by code
+     *
+     * @param $code
+     * @return mixed
+     */
+    public function getByCode($code = '')
+    {
+        $promo = $this->promo->where('code', $code)->first();
+        return $promo;
+    }
+
+    /**
      * Save Promo
      *
      * @param $data
@@ -45,21 +72,17 @@ class PromoRepository
      */
     public function save($data)
     {
-        $promo = $user->promo()->create([
-            'is_primary' => $data['is_primary'],
-            'title' => $data['title'],
-            'receiptor' => $data['receiptor'],
-            'phone' => $data['phone'],
-            'province' => $data['province'],
-            'city' => $data['city'],
-            'district' => $data['district'],
-            'postal_code' => $data['postal_code'],
-            'street' => $data['street'],
-            'notes' => $data['notes'],
-            'created_at' => $data['created_at'],
-            'updated_at' => $data['updated_at'],
-        ]);
-
+        $promo = new $this->promo;
+        $promo->discount = $data['discount'];
+        $promo->discount_max = $data['discount_max'];
+        $promo->min_value = $data['min_value'];
+        $promo->start_at = $data['start_at'];
+        $promo->end_at = $data['end_at'];
+        $promo->max_used = $data['max_used'];
+        $promo->description = $data['description'];
+        $promo->code = $data['code'];
+        $promo->term = $data['term'];
+        $promo->save();
         return $promo->fresh();
     }
 
@@ -71,26 +94,18 @@ class PromoRepository
      */
     public function update($data, $id)
     {
-        if ($data['is_primary']) {
-            $this->updatePrimaryPromo($data['userId'], $id, false);
-        }
-
         $promo = $this->promo->find($id);
-
-        $promo->is_primary = $data['is_primary'];
-        $promo->title = $data['title'];
-        $promo->receiptor = $data['receiptor'];
-        $promo->phone = $data['phone'];
-        $promo->province = $data['province'];
-        $promo->city = $data['city'];
-        $promo->district = $data['district'];
-        $promo->postal_code = $data['postal_code'];
-        $promo->street = $data['street'];
-        $promo->notes = $data['notes'];
-
+        $promo->discount = $data['discount'];
+        $promo->discount_max = $data['discount_max'];
+        $promo->min_value = $data['min_value'];
+        $promo->start_at = $data['start_at'];
+        $promo->end_at = $data['end_at'];
+        $promo->max_used = $data['max_used'];
+        $promo->description = $data['description'];
+        $promo->code = $data['code'];
+        $promo->term = $data['term'];
         $promo->update();
-
-        return $promo;
+        return $promo->fresh();
     }
 
     /**
@@ -106,9 +121,14 @@ class PromoRepository
         return $promo;
     }
 
-    public function updatePrimaryPromo($userId, $promoId, $isPrimary)
+    public function canUsePromo($promoCode, $userId)
     {
-        $promoUser = $this->promo->where('user_id', $userId)->where('id', '!==', $promoId)->update(['is_primary' => $isPrimary]);
-        return $promoUser->fresh();
+        $promo = $this->getByCode($promoCode);
+        $pickup = $this->pickup->where([
+            ['promo_id', '=', $promo['id']],
+            ['user_id'], '=', $userId
+        ])->get();
+
     }
+
 }

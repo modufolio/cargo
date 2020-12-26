@@ -16,6 +16,7 @@ use App\Http\Controllers\BillController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\DebtorController;
 
 Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -28,6 +29,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::resource('receiver', ReceiverController::class);
     Route::resource('unit', UnitController::class);
     Route::resource('service', ServiceController::class);
+    Route::resource('debtor', DebtorController::class);
     Route::get('get-provinces', [RegionController::class, 'getProvinces']);
     Route::get('province/{provinceId}', [RegionController::class, 'getProvince']);
     Route::get('get-cities/{provinceId}', [RegionController::class, 'getCities']);

@@ -11,6 +11,7 @@ use Database\Seeders\FleetSeeder;
 use Database\Seeders\UnitSeeder;
 use Database\Seeders\ServiceSeeder;
 use Database\Seeders\RouteSeeder;
+use Database\Seeders\PromoSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -30,7 +31,8 @@ class DatabaseSeeder extends Seeder
                 FleetSeeder::class,
                 UnitSeeder::class,
                 ServiceSeeder::class,
-                RouteSeeder::class
+                RouteSeeder::class,
+                PromoSeeder::class
             ]
         );
     }

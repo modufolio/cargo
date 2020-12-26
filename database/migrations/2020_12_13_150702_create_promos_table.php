@@ -22,6 +22,7 @@ class CreatePromosTable extends Migration
             $table->timestamp('end_at');
             $table->integer('max_used');
             $table->text('description');
+            $table->text('terms');
             $table->string('code');
             $table->timestamps();
         });

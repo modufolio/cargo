@@ -11,10 +11,12 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Fleet;
 use App\Models\Route;
+use App\Models\Promo;
 
 // SERVICE
 use App\Services\AddressService;
 use App\Services\PickupService;
+use App\Services\PromoService;
 
 // VENDOR
 use Carbon\Carbon;
@@ -29,11 +31,17 @@ class TestController extends BaseController
 {
     protected $addressService;
     protected $pickupService;
+    protected $promoService;
 
-    public function __construct(AddressService $addressService, PickupService $pickupService)
+    public function __construct(
+        AddressService $addressService,
+        PickupService $pickupService,
+        PromoService $promoService
+    )
     {
         $this->addressService = $addressService;
         $this->pickupService = $pickupService;
+        $this->promoService = $promoService;
     }
 
     /**
@@ -43,6 +51,9 @@ class TestController extends BaseController
      */
     public function index()
     {
+        $promo = Promo::all();
+        $user = User::find(1)->pickups()->get();
+        return response()->json($user);
         $data = Indonesia::allProvinces();
         $user = User::findOrFail(1);
         $beautymail = app()->make(Beautymail::class);

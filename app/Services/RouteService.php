@@ -27,9 +27,10 @@ class RouteService {
     public function getByFleetOriginDestination($data)
     {
         $validator = Validator::make($data, [
-            'origin'            => 'bail|required|max:50',
-            'destination'       => 'bail|required|max:50',
-            'fleetId'           => 'bail|required|integer'
+            'origin'                    => 'bail|required|max:50',
+            'destination_city'          => 'bail|required|max:50',
+            'destination_disctrict'     => 'bail|required|max:50',
+            'fleetId'                   => 'bail|required|integer'
         ]);
 
         if ($validator->fails()) {

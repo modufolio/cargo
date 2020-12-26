@@ -84,7 +84,7 @@ class BillRepository
         $calculation = $result;
         $result = (object)[
             'per_item'      => $calculation,
-            'total_price'   => array_sum(array_column($calculation, 'price'))
+            'total_price'   => array_sum(array_column($calculation, 'price')) + intval($route['price'])
         ];
         return $result;
     }

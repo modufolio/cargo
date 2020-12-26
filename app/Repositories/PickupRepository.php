@@ -20,16 +20,17 @@ class PickupRepository
     /**
      * Save Pickup Address / alamat pickup / alamat pengirim
      *
-     * @param $data
+     * @param array $data
+     * @param Promo $promo
      * @return Pickup
      */
-    public function save($data)
+    public function save($data, $promo)
     {
         $pickup = new $this->pickup;
 
         $pickup->fleet_id           = $data['fleetId'];
         $pickup->user_id            = $data['userId'];
-        $pickup->promo_id           = $data['promoId'] ?? null;
+        $pickup->promo_id           = $promo['id'] ?? null;
         $pickup->name               = $data['name'];
         $pickup->phone              = $data['phone'];
         $pickup->address_sender     = $data['addressSender'];
@@ -43,12 +44,12 @@ class PickupRepository
     }
 
     /**
-     * Save pickup item
+     * Save get pickup by userId
      *
      * @param Pickup $pickup
      */
-    public function saveItem($pickup)
+    public function getByUserId($pickup)
     {
-
+        return $this->user->find($id)->pickups()->get();
     }
 }

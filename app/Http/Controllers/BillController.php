@@ -40,6 +40,7 @@ class BillController extends BaseController
         DB::beginTransaction();
         try {
             $route = $this->routeService->getByFleetOriginDestination($data);
+            dd($route);
             $result = $this->billService->calculatePrice($data['items'], $route);
         } catch (Exception $e) {
             DB::rollback();

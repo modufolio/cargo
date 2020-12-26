@@ -29,7 +29,8 @@ class RouteRepository
         $route = $this->route->where([
             ['fleet_id', '=', $data['fleetId']],
             ['origin', '=', $data['origin']],
-            ['destination_district', '=', $data['destination']]
+            ['destination_district', '=', $data['destination_district']],
+            ['destination_city', '=', $data['destination_city']]
         ])->first();
         return $route;
     }
