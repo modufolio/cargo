@@ -104,12 +104,18 @@ class PickupService {
         }
 
         try {
-            $price = $this->billRepository->calculatePrice($items, $route);
+            $price = $this->billRepository->calculatePrice($items, $route, $promo);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5005)');
         }
+
+        if (!$price->success) {
+            DB::rollback();
+            throw new InvalidArgumentException($price->message);
+        }
+
         DB::commit();
         $result = (object)[
             'items' => $items,

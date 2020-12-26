@@ -61,31 +61,84 @@ class BillRepository
      * @param $unitTotal
      * @return mixed
      */
-    public function calculatePrice($items, $route)
+    // public function calculatePrice($items, $route, $promo)
+    // {
+    //     $result = $data = [];
+    //     foreach ($items as $key => $value) {
+    //         $unit           = $this->unit->where('id', $value['unit_id'])->select('name','price')->first();
+    //         $service        = $this->service->where('id', $value['service_id'])->select('name','price')->first();
+    //         $servicePrice   = $service['price'] ?? 0;
+    //         if ($value['unit_total'] >= intval($route['minimum_weight'])) {
+    //             $data['success']    = true;
+    //             $data['price']      = ($value['unit_total'] * intval($unit['price'])) + $servicePrice;
+    //         } else  {
+    //             $data['success']    = false;
+    //             $data['price']      = 0;
+    //         }
+    //         $data['name']       = $value['name'];
+    //         $data['unit']       = $unit;
+    //         $data['unit_total'] = $value['unit_total'];
+    //         $data['service']    = $service ?? null;
+    //         $result[] = $data;
+    //     }
+    //     $total = array_sum(array_column($result, 'price'));
+    //     $finalTotal = $this->addingPromoAndRoutePrice($total, $promo, intval($route['price']));
+    //     $result = (object)[
+    //         'per_item'      => $calculation,
+    //         'total_price'   => $finalTotal
+    //     ];
+    //     return $result;
+    // }
+
+    public function calculatePrice($items, $route, $promo)
     {
         $result = $data = [];
-        foreach ($items as $key => $value) {
-            $unit           = $this->unit->where('id', $value['unit_id'])->select('name','price')->first();
-            $service        = $this->service->where('id', $value['service_id'])->select('name','price')->first();
-            $servicePrice   = $service['price'] ?? 0;
-            if ($value['unit_total'] >= intval($route['minimum_weight'])) {
-                $data['success']    = true;
-                $data['price']      = ($value['unit_total'] * intval($unit['price'])) + $servicePrice;
-            } else  {
-                $data['success']    = false;
-                $data['price']      = 0;
+        $totalWeight = array_sum(array_column($items, 'unit_total'));
+        if ($totalWeight >= intval($route['minimum_weight'])) {
+            foreach ($items as $key => $value) {
+                $unit               = $this->unit->where('id', $value['unit_id'])->select('name','price')->first();
+                $service            = $this->service->where('id', $value['service_id'])->select('name','price')->first();
+                $servicePrice       = $service['price'] ?? 0;
+                $data['price']      = ($value['unit_total'] * intval($route['price'])) + $servicePrice;
+                $data['name']       = $value['name'];
+                $data['unit']       = $unit;
+                $data['unit_total'] = $value['unit_total'];
+                $data['service']    = $service ?? null;
+                $itemData[] = $data;
             }
-            $data['name']       = $value['name'];
-            $data['unit']       = $unit;
-            $data['unit_total'] = $value['unit_total'];
-            $data['service']    = $service ?? null;
-            $result[] = $data;
+            $total = array_sum(array_column($itemData, 'price'));
+            $finalTotal = $this->addingPromo($total, $promo);
+            $result = (object)[
+                'success'       => true,
+                'total_weight'  => $totalWeight,
+                'items'         => $itemData,
+                'total_price'   => $finalTotal
+            ];
+        } else {
+            $result = (object) [
+                'success' => false,
+                'message' => 'Total berat barang tidak memenuhi minimum persyaratan pengiriman'
+            ];
         }
-        $calculation = $result;
-        $result = (object)[
-            'per_item'      => $calculation,
-            'total_price'   => array_sum(array_column($calculation, 'price')) + intval($route['price'])
-        ];
         return $result;
+    }
+
+    public function addingPromo($total, $promo)
+    {
+        $total = intval($total);
+        if ($promo !== null) {
+            $minValue = intval($promo['min_value']);
+            $promoDiscount = intval($promo['discount']);
+            $promoDiscountMax = intval($promo['discount_max']);
+            if ($total >= $minValue) {
+                $discount = ($total * $promoDiscount) / 100;
+                if (intval($discount) >= $promoDiscountMax) {
+                    $total = $total - $promoDiscountMax;
+                } else {
+                    $total = $total - intval($discount);
+                }
+            }
+        }
+        return $total;
     }
 }
