@@ -106,7 +106,27 @@ class SenderController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->only([
+            'userId',
+            'is_primary',
+            'temporary',
+            'title',
+            'province',
+            'city',
+            'district',
+            'village',
+            'postal_code',
+            'street',
+            'notes',
+        ]);
+
+        try {
+            $result = $this->senderService->update($data, $id);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse($result);
     }
 
     /**

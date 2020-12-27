@@ -108,15 +108,18 @@ class SenderRepository
             $this->updatePrimaryAddress($data['userId'], $id, false);
         }
 
-        $sender = $this->sender->find($id);
+        $sender = $this->sender->findOrFail($id);
+
+        if ($sender['user_id'] !== $data['userId']) {
+            return false;
+        }
 
         $sender->is_primary = $data['is_primary'];
         $sender->title = $data['title'];
-        $sender->receiptor = $data['receiptor'];
-        $sender->phone = $data['phone'];
         $sender->province = $data['province'];
         $sender->city = $data['city'];
         $sender->district = $data['district'];
+        $sender->village = $data['village'];
         $sender->postal_code = $data['postal_code'];
         $sender->street = $data['street'];
         $sender->notes = $data['notes'];

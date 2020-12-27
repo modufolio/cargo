@@ -98,13 +98,19 @@ class SenderService {
      * @param array $data
      * @return String
      */
-    public function updateAddress($data, $id)
+    public function update($data, $id)
     {
         $validator = Validator::make($data, [
-            'name' => 'bail|min:2',
-            'slug' => 'bail|max:255',
-            'ranking' => 'bail|max:255',
-            'features' => 'bail|max:255',
+            'is_primary'    => 'bail|required|boolean',
+            'userId'        => 'bail|required|integer',
+            'title'         => 'bail|required|max:255',
+            'province'      => 'bail|required|max:255',
+            'city'          => 'bail|required|max:255',
+            'district'      => 'bail|required|max:255',
+            'village'       => 'bail|required|max:255',
+            'postal_code'   => 'bail|required|integer|max:99999',
+            'street'        => 'bail|required|max:255',
+            'notes'         => 'bail|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -119,6 +125,12 @@ class SenderService {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mengubah alamat');
         }
+
+        if (!$sender) {
+            DB::rollBack();
+            throw new InvalidArgumentException('Pengguna tidak bisa mengubah alamat pengirim ini');
+        }
+
         DB::commit();
         return $sender;
     }
