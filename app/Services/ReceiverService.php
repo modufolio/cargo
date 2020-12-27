@@ -94,13 +94,20 @@ class ReceiverService {
      * @param array $data
      * @return String
      */
-    public function updateAddress($data, $id)
+    public function update($data, $id)
     {
         $validator = Validator::make($data, [
-            'name' => 'bail|min:2',
-            'slug' => 'bail|max:255',
-            'ranking' => 'bail|max:255',
-            'features' => 'bail|max:255',
+            'userId'        => 'bail|required|integer',
+            'title'         => 'bail|required|max:255',
+            'name'          => 'bail|required|max:255',
+            'phone'         => 'bail|required|max:14',
+            'province'      => 'bail|required|max:255',
+            'city'          => 'bail|required|max:255',
+            'district'      => 'bail|required|max:255',
+            'village'       => 'bail|required|max:255',
+            'postal_code'   => 'bail|required|integer|max:99999',
+            'street'        => 'bail|required|max:255',
+            'notes'         => 'bail|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -113,8 +120,14 @@ class ReceiverService {
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal mengubah alamat');
+            throw new InvalidArgumentException('Gagal mengubah alamat penerima');
         }
+
+        if (!$receiver) {
+            DB::rollBack();
+            throw new InvalidArgumentException('Pengguna tidak bisa mengubah alamat penerima ini');
+        }
+
         DB::commit();
         return $receiver;
     }

@@ -105,31 +105,26 @@ class ReceiverRepository
      */
     public function update($data, $id)
     {
-        if ($data['is_primary']) {
-            $this->updatePrimaryAddress($data['userId'], $id, false);
+        $receiver = $this->receiver->findOrFail($id);
+
+        if ($receiver['user_id'] !== $data['userId']) {
+            return false;
         }
 
-        $receiver = $this->receiver->find($id);
-
-        $receiver->is_primary = $data['is_primary'];
         $receiver->title = $data['title'];
-        $receiver->receiptor = $data['receiptor'];
+        $receiver->name = $data['name'];
         $receiver->phone = $data['phone'];
         $receiver->province = $data['province'];
         $receiver->city = $data['city'];
         $receiver->district = $data['district'];
+        $receiver->village = $data['village'];
         $receiver->postal_code = $data['postal_code'];
         $receiver->street = $data['street'];
         $receiver->notes = $data['notes'];
+        $receiver->temporary = $data['temporary'];
 
         $receiver->update();
 
         return $receiver;
-    }
-
-    public function updatePrimaryAddress($userId, $receiver, $isPrimary)
-    {
-        $receiver = $this->receiver->where('user_id', $userId)->where('id', '!==', $receiver)->update(['is_primary' => $isPrimary]);
-        return $receiver->fresh();
     }
 }

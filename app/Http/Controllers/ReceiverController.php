@@ -106,7 +106,28 @@ class ReceiverController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->only([
+            'userId',
+            'temporary',
+            'title',
+            'name',
+            'phone',
+            'province',
+            'city',
+            'district',
+            'village',
+            'postal_code',
+            'street',
+            'notes',
+        ]);
+
+        try {
+            $result = $this->receiverService->update($data, $id);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse($result);
     }
 
     /**
