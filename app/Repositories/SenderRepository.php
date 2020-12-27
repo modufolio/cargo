@@ -35,7 +35,8 @@ class SenderRepository
      */
     public function getById($id)
     {
-        return $this->sender->where('id', $id)->get();
+        $sender = $this->sender->findOrFail($id);
+        return $sender;
     }
 
     /**
@@ -50,7 +51,7 @@ class SenderRepository
     }
 
     /**
-     * Update Sender
+     * Delete data Sender
      *
      * @param $data
      * @return Sender
