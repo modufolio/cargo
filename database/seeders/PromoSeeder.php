@@ -27,7 +27,9 @@ class PromoSeeder extends Seeder
                 'max_used'      => 10,
                 'description'   => 'Promo Year End',
                 'code'          => 'Y34R3ND',
-                'terms'         => 'Term And Condition'
+                'terms'         => 'Term And Condition',
+                'created_by'    => 1,
+                'user_id'       => 2,
             ],
             [
                 'discount'      => 15,
@@ -38,7 +40,9 @@ class PromoSeeder extends Seeder
                 'max_used'      => 10,
                 'description'   => 'Promo Year End',
                 'code'          => 'Y34R3ND2',
-                'terms'         => 'Term And Condition'
+                'terms'         => 'Term And Condition',
+                'created_by'    => 1,
+                'user_id'       => 2,
             ],
             [
                 'discount'      => 50,
@@ -49,7 +53,9 @@ class PromoSeeder extends Seeder
                 'max_used'      => 10,
                 'description'   => 'Promo Year End',
                 'code'          => 'Y34R3ND3',
-                'terms'         => 'Term And Condition'
+                'terms'         => 'Term And Condition',
+                'created_by'    => 1,
+                'user_id'       => 2,
             ],
             [
                 'discount'      => 15,
@@ -60,7 +66,9 @@ class PromoSeeder extends Seeder
                 'max_used'      => 10,
                 'description'   => 'Promo Year End',
                 'code'          => 'Y34R3ND4',
-                'terms'         => 'Term And Condition'
+                'terms'         => 'Term And Condition',
+                'created_by'    => 1,
+                'user_id'       => 2,
             ],
         ]);
         DB::commit();
