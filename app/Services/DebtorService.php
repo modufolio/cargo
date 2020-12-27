@@ -60,17 +60,29 @@ class DebtorService {
      * Delete debtor by id.
      *
      * @param $id
+     * @param $userId
      * @return String
      */
-    public function deleteById($addressId)
+    public function deleteById($id, $userId)
     {
         DB::beginTransaction();
         try {
-            $debtor = $this->debtorRepository->delete($addressId);
+            $address = $this->debtorRepository->getById($id);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat alamat penagihan (code: 5001)');
+        }
+
+        if ($address['user_id'] !== $userId) {
+            throw new InvalidArgumentException('Pengguna tidak bisa menghapus alamat penagihan ini');
+        }
+
+        try {
+            $debtor = $this->debtorRepository->delete($id);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal menghapus alamat penagihan');
+            throw new InvalidArgumentException('Gagal menghapus alamat penagihan (code: 5002)');
         }
         DB::commit();
         return $debtor;
