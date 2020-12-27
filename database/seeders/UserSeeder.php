@@ -17,11 +17,20 @@ class UserSeeder extends Seeder
         DB::beginTransaction();
         DB::table('users')->truncate();
         DB::table('users')->insert([
-            'name' => 'ival',
-            'email' => 'ivalrival95@gmail.com',
-            'password' => bcrypt('ival1234'),
-            'role_id' => 9,
-            'username' => 'ival',
+            [
+                'name' => 'ival',
+                'email' => 'ivalrival95@gmail.com',
+                'password' => bcrypt('ival1234'),
+                'role_id' => 9,
+                'username' => 'ival',
+            ],
+            [
+                'name' => 'viky',
+                'email' => 'vikyyahya.id@gmail.com',
+                'password' => bcrypt('aaaaaaaa1'),
+                'role_id' => 1,
+                'username' => 'vikyyahya',
+            ]
         ]);
         DB::commit();
     }
