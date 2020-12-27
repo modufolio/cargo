@@ -84,7 +84,7 @@ class ReceiverService {
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal menghapus alamat penerima');
+            throw new InvalidArgumentException('Gagal menghapus alamat penerima (code: 5002)');
         }
         DB::commit();
         return $receiver;
