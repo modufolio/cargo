@@ -35,7 +35,8 @@ class DebtorRepository
      */
     public function getById($id)
     {
-        return $this->debtor->where('id', $id)->get();
+        $debtor = $this->debtor->findOrFail($id);
+        return $debtor;
     }
 
     /**
@@ -50,9 +51,9 @@ class DebtorRepository
     }
 
     /**
-     * Update Debtor
+     * Delete Debtor data
      *
-     * @param $data
+     * @param $id
      * @return Debtor
      */
     public function delete($id)
