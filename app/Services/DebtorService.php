@@ -67,22 +67,15 @@ class DebtorService {
     {
         DB::beginTransaction();
         try {
-            $address = $this->debtorRepository->getById($id);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal mendapat alamat penagihan (code: 5001)');
-        }
-
-        if ($address['user_id'] !== $userId) {
-            throw new InvalidArgumentException('Pengguna tidak bisa menghapus alamat penagihan ini');
-        }
-
-        try {
-            $debtor = $this->debtorRepository->delete($id);
+            $debtor = $this->debtorRepository->delete($id, $userId);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal menghapus alamat penagihan (code: 5002)');
+        }
+        if (!$debtor) {
+            DB::rollBack();
+            throw new InvalidArgumentException('Pengguna tidak bisa menghapus alamat penagihan ini');
         }
         DB::commit();
         return $debtor;
@@ -94,9 +87,9 @@ class DebtorService {
      * Store to DB if there are no errors.
      *
      * @param array $data
-     * @return String
+     * @return array
      */
-    public function updateAddress($data, $id)
+    public function update($data, $id)
     {
         $validator = Validator::make($data, [
             'userId'        => 'bail|required|integer',
@@ -122,8 +115,14 @@ class DebtorService {
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal mengubah alamat');
+            throw new InvalidArgumentException('Gagal mengubah alamat penagihan');
         }
+
+        if (!$debtor) {
+            DB::rollBack();
+            throw new InvalidArgumentException('Pengguna tidak bisa mengubah alamat penagihan ini');
+        }
+
         DB::commit();
         return $debtor;
     }
