@@ -63,6 +63,7 @@ class SenderService {
      * Delete sender by id.
      *
      * @param $id
+     * @param $userId
      * @return String
      */
     public function deleteById($id, $userId)
@@ -74,7 +75,7 @@ class SenderService {
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal menghapus alamat pengirim (code: 5002)');
+            throw new InvalidArgumentException('Gagal menghapus alamat pengirim (code: 5001)');
         }
 
         if (!$sender) {

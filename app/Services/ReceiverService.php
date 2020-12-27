@@ -63,29 +63,25 @@ class ReceiverService {
      * Delete receiver by id.
      *
      * @param $id
+     * @param $userId
      * @return String
      */
-    public function deleteById($id)
+    public function deleteById($id, $userId)
     {
         DB::beginTransaction();
-        try {
-            $address = $this->receiverRepository->getById($id);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal mendapat alamat penerima (code: 5001)');
-        }
-
-        if ($address['user_id'] !== $userId) {
-            throw new InvalidArgumentException('Pengguna tidak bisa menghapus alamat penerima ini');
-        }
 
         try {
-            $receiver = $this->receiverRepository->delete($id);
+            $receiver = $this->receiverRepository->delete($id, $userId);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal menghapus alamat penerima (code: 5002)');
+            throw new InvalidArgumentException('Gagal menghapus alamat penerima (code: 5001)');
         }
+
+        if (!$receiver) {
+            throw new InvalidArgumentException('Pengguna tidak bisa menghapus alamat penerima ini');
+        }
+
         DB::commit();
         return $receiver;
 

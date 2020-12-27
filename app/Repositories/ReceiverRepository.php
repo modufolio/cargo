@@ -53,12 +53,16 @@ class ReceiverRepository
     /**
      * Delete data Receiver
      *
-     * @param $data
+     * @param $id
+     * @param $userId
      * @return Receiver
      */
-    public function delete($id)
+    public function delete($id, $userId)
     {
         $receiver = $this->receiver->findOrFail($id);
+        if ($receiver['user_id'] !== $userId) {
+            return false;
+        }
         $receiver->delete();
         return $receiver;
     }
