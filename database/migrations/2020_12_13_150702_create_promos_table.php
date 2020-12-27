@@ -15,6 +15,8 @@ class CreatePromosTable extends Migration
     {
         Schema::create('promos', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('created_by');
             $table->integer('discount');
             $table->integer('discount_max');
             $table->integer('min_value');
