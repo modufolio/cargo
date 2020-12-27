@@ -56,9 +56,12 @@ class DebtorRepository
      * @param $id
      * @return Debtor
      */
-    public function delete($id)
+    public function delete($id, $userId)
     {
         $debtor = $this->debtor->findOrFail($id);
+        if ($debtor['user_id'] !== $userId) {
+            return false;
+        }
         $debtor->delete();
         return $debtor;
     }
@@ -95,18 +98,25 @@ class DebtorRepository
     /**
      * Update Debtor
      *
-     * @param $data
-     * @return Debtor
+     * @param int $id
+     * @param array $data
+     * @return Debtor $debtor
      */
     public function update($data, $id)
     {
-        $debtor = $this->debtor->find($id);
+        $debtor = $this->debtor->findOrFail($id);
+
+        if ($debtor['user_id'] !== $data['userId']) {
+            return false;
+        }
+
         $debtor->title = $data['title'];
-        $debtor->receiptor = $data['receiptor'];
+        $debtor->name = $data['name'];
         $debtor->phone = $data['phone'];
         $debtor->province = $data['province'];
         $debtor->city = $data['city'];
         $debtor->district = $data['district'];
+        $debtor->village = $data['village'];
         $debtor->postal_code = $data['postal_code'];
         $debtor->street = $data['street'];
         $debtor->notes = $data['notes'];
