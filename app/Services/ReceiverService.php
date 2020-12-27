@@ -79,6 +79,7 @@ class ReceiverService {
         }
 
         if (!$receiver) {
+            DB::rollBack();
             throw new InvalidArgumentException('Pengguna tidak bisa menghapus alamat penerima ini');
         }
 

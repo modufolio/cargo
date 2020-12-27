@@ -79,6 +79,7 @@ class SenderService {
         }
 
         if (!$sender) {
+            DB::rollBack();
             throw new InvalidArgumentException('Pengguna tidak bisa menghapus alamat pengirim ini');
         }
 
