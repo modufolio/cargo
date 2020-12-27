@@ -68,24 +68,19 @@ class SenderService {
     public function deleteById($id, $userId)
     {
         DB::beginTransaction();
-        try {
-            $address = $this->senderRepository->getById($id);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal mendapat alamat pengirim (code: 5001)');
-        }
-
-        if ($address['user_id'] !== $userId) {
-            throw new InvalidArgumentException('Pengguna tidak bisa menghapus alamat pengirim ini');
-        }
 
         try {
-            $sender = $this->senderRepository->delete($id);
+            $sender = $this->senderRepository->delete($id, $userId);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal menghapus alamat pengirim (code: 5002)');
         }
+
+        if (!$sender) {
+            throw new InvalidArgumentException('Pengguna tidak bisa menghapus alamat pengirim ini');
+        }
+
         DB::commit();
         return $sender;
 

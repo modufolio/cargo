@@ -56,9 +56,12 @@ class SenderRepository
      * @param $data
      * @return Sender
      */
-    public function delete($id)
+    public function delete($id, $userId)
     {
         $sender = $this->sender->findOrFail($id);
+        if ($sender['user_id'] !== $userId) {
+            return false;
+        }
         $sender->delete();
         return $sender;
     }
@@ -76,7 +79,7 @@ class SenderRepository
             $sender = $this->sender->where('user_id', $data['userId'])->update(['is_primary' => false]);
         }
 
-        $user = $this->user->find($data['userId']);
+        $user = $this->user->findOrFail($data['userId']);
 
         $sender = $user->senders()->create([
             'is_primary'    => $data['is_primary'],
