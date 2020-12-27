@@ -35,7 +35,8 @@ class ReceiverRepository
      */
     public function getById($id)
     {
-        return $this->receiver->where('id', $id)->get();
+        $receiver = $this->receiver->findOrFail($id);
+        return $receiver;
     }
 
     /**
@@ -50,7 +51,7 @@ class ReceiverRepository
     }
 
     /**
-     * Update Receiver
+     * Delete data Receiver
      *
      * @param $data
      * @return Receiver
