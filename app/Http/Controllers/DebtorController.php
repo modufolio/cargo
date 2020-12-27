@@ -20,7 +20,7 @@ class DebtorController extends BaseController
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the debtor data.
      *
      * @return \Illuminate\Http\Response
      */
@@ -45,7 +45,7 @@ class DebtorController extends BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created debtor data in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -98,7 +98,7 @@ class DebtorController extends BaseController
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update debtor data.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -106,11 +106,31 @@ class DebtorController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->only([
+            'userId',
+            'title',
+            'name',
+            'phone',
+            'province',
+            'city',
+            'district',
+            'village',
+            'postal_code',
+            'street',
+            'notes',
+        ]);
+
+        try {
+            $result = $this->debtorService->update($data, $id);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse($result);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove debtor data.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
