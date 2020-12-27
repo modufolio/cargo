@@ -53,6 +53,28 @@ class PromoRepository
     }
 
     /**
+     * Get Promo by user id
+     *
+     * @param Array $data
+     * @return mixed
+     */
+    public function getUserId($data)
+    {
+        return $this->user->find($data['userId'])->promos->get();
+    }
+
+    /**
+     * Get Promo by created_by
+     *
+     * @param Array $data
+     * @return mixed
+     */
+    public function getCreatedBy($data)
+    {
+        return $this->user->find($data['userId'])->promoOwnerships->get();
+    }
+
+    /**
      * Get Promo by code
      *
      * @param $code
@@ -73,6 +95,8 @@ class PromoRepository
     public function save($data)
     {
         $promo = new $this->promo;
+        $promo->created_by = $data['userId'];
+        $promo->user_id = $data['targetPromo'];
         $promo->discount = $data['discount'];
         $promo->discount_max = $data['discount_max'];
         $promo->min_value = $data['min_value'];

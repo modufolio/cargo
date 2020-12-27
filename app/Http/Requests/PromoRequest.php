@@ -24,9 +24,9 @@ class PromotionRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required',
-            'banner' => 'required',
-            'content' => 'required',
+            'title' => 'bail|required',
+            'banner' => 'bail|required',
+            'content' => 'bail|required',
         ];
     }
 }

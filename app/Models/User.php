@@ -86,9 +86,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(VerifyUser::class);
     }
 
+    public function promoOwnerships()
+    {
+        return $this->hasMany(Promo::class, 'created_by');
+    }
+
     public function promos()
     {
-        return $this->belongsToMany(VerifyUser::class);
+        return $this->hasMany(Promo::class);
     }
 
     public function senders()

@@ -17,6 +17,7 @@ use App\Http\Controllers\RouteController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\DebtorController;
+use App\Http\Controllers\PromoController;
 
 Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -45,6 +46,10 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     });
     Route::prefix('route')->group(function() {
         Route::post('get-fleet-origin-destination', [RouteController::class, 'getByFleetOriginDestination']);
+    });
+    Route::prefix('promo')->group(function() {
+        Route::post('user', [PromoController::class, 'getPromoUser']);
+        Route::post('creator', [PromoController::class, 'getCreatorPromo']);
     });
     Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
     Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
