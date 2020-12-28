@@ -46,7 +46,7 @@ class PickupService {
         $validator = Validator::make($data, [
             'fleetId'               => 'bail|required|max:19',
             'userId'                => 'bail|required|max:19',
-            'promoCode'             => 'bail|nullable|max:19',
+            'promoId'               => 'bail|nullable|max:19',
             'name'                  => 'bail|required|max:255',
             'phone'                 => 'bail|required|max:14',
             'addressSender'         => 'bail|required|max:500',
@@ -66,14 +66,24 @@ class PickupService {
 
         DB::beginTransaction();
 
+        // PROMO
         try {
-            $promo = $this->promoRepository->getByCode($data['promoCode']);
+            $promo = $this->promoRepository->getById($data['promoId']);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5001)');
         }
 
+        if ($promo !== false) {
+            if ($promo['user_id'] !== $data['userId']) {
+                DB::rollback();
+                throw new InvalidArgumentException('Promo tidak dapat digunakan');
+            }
+        }
+        // END PROMO
+
+        // SAVE PICKUP
         try {
             $pickup = $this->pickupRepository->save($data, $promo);
         } catch (Exception $e) {
@@ -81,7 +91,9 @@ class PickupService {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5002)');
         }
+        // END SAVE PICKUP
 
+        // SAVE ITEM
         try {
             $items = $this->itemRepository->save($pickup, $data['items']);
         } catch (Exception $e) {
@@ -89,7 +101,9 @@ class PickupService {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5003)');
         }
+        // END SAVE ITEM
 
+        // GET ROUTE
         try {
             $route = $this->routeRepository->getByFleetOriginDestination($data);
         } catch (Exception $e) {
@@ -102,7 +116,9 @@ class PickupService {
             DB::rollback();
             throw new InvalidArgumentException('Mohon maaf, untuk saat ini kota tujuan yang Anda mau belum masuk kedalam jangkauan kami');
         }
+        // END GET ROUTE
 
+        // CALCULATE PRICE
         try {
             $price = $this->billRepository->calculatePrice($items, $route, $promo);
         } catch (Exception $e) {
@@ -115,6 +131,7 @@ class PickupService {
             DB::rollback();
             throw new InvalidArgumentException($price->message);
         }
+        // END CALCULATE PRICE
 
         DB::commit();
         $result = (object)[
