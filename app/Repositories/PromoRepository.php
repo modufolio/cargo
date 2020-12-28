@@ -44,12 +44,17 @@ class PromoRepository
     /**
      * Get Promo by id
      *
-     * @param $id
-     * @return mixed
+     * @param int $id
+     * @return false
+     * @return Promo
      */
-    public function getById($id)
+    public function getById($id = null)
     {
-        return $this->promo->where('id', $id)->get();
+        if ($id == null) {
+            return false;
+        }
+        $promo = $this->promo->findOrFail($id);
+        return $promo;
     }
 
     /**
