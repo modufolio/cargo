@@ -90,6 +90,13 @@ class BillRepository
     //     return $result;
     // }
 
+    /**
+     * @param array $items
+     * @param array $route
+     * @param array $promo
+     *
+     * @return object
+     */
     public function calculatePrice($items, $route, $promo)
     {
         $result = $data = [];
@@ -115,7 +122,7 @@ class BillRepository
                 'total_price'   => $finalTotal
             ];
         } else {
-            $result = (object) [
+            $result = (object)[
                 'success' => false,
                 'message' => 'Total berat barang tidak memenuhi minimum persyaratan pengiriman'
             ];
@@ -126,7 +133,7 @@ class BillRepository
     public function addingPromo($total, $promo)
     {
         $total = intval($total);
-        if ($promo !== null) {
+        if ($promo !== null || $promo !== false) {
             $minValue = intval($promo['min_value']);
             $promoDiscount = intval($promo['discount']);
             $promoDiscountMax = intval($promo['discount_max']);
