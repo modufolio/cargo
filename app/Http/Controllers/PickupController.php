@@ -52,7 +52,7 @@ class PickupController extends BaseController
         $data = $request->only([
             'userId',
             'fleetId',
-            'promoCode',
+            'promoId',
             'name',
             'phone',
             'addressSender',
