@@ -2,16 +2,18 @@
 
 namespace App\Repositories;
 
+// MODEL
 use App\Models\User;
 use App\Models\VerifyUser;
-use App\Utilities\ProxyRequest;
 
+// OTHER
+use App\Utilities\ProxyRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
 use Carbon\Carbon;
 use DB;
-
+use Laravel\Passport\TokenRepository;
+use Laravel\Passport\RefreshTokenRepository;
 class AuthRepository
 {
     protected $user;
@@ -79,5 +81,21 @@ class AuthRepository
         $verify->token = sha1(time());
         $verify->save();
         return $verify->fresh();
+    }
+
+    /**
+     * Revoke token
+     *
+     */
+    public function revoke($tokenId)
+    {
+        $tokenRepository = app(TokenRepository::class);
+        $refreshTokenRepository = app(RefreshTokenRepository::class);
+
+        // Revoke an access token...
+        $tokenRepository->revokeAccessToken($tokenId);
+
+        // Revoke all of the token's refresh tokens...
+        $refreshTokenRepository->revokeRefreshTokensByAccessTokenId($tokenId);
     }
 }
