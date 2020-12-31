@@ -84,11 +84,12 @@ class UserController extends BaseController
             'password',
             'password_confirmation',
             'role_id',
-            'username'
+            'username',
+            'phone',
         ]);
 
         try {
-            $result = $this->userService->saveUserData($data);
+            $result = $this->userService->save($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }

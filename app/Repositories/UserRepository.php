@@ -76,6 +76,7 @@ class UserRepository
         $user->username     = $data['username'];
         $user->role_id      = $data['role_id'];
         $user->google_id    = $data['google_id'] ?? null;
+        $user->phone        = $data['phone'] ?? null;
         $user->save();
 
         return $user->fresh();

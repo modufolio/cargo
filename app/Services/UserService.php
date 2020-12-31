@@ -143,7 +143,8 @@ class UserService {
             'email' => 'bail|required|max:255|email|unique:users',
             'password' => 'bail|required|max:255|confirmed',
             'role_id' => 'bail|required|max:1',
-            'username' => 'bail|required|max:255|unique:users,username'
+            'username' => 'bail|required|max:255|unique:users,username',
+            'phone' => 'bail|max:15|unique:users,phone',
         ]);
 
         if ($validator->fails()) {
