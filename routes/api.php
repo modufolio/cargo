@@ -22,14 +22,41 @@ use App\Http\Controllers\PromoController;
 Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('check-user', [AuthController::class, 'checkLogin']);
+
+    // Role
     Route::resource('role', RoleController::class);
-    Route::resource('user', UserController::class);
+
+    // User
+    Route::group(['middleware' => ['admin.panel']], function () {
+        Route::get('user', [UserController::class, 'index']);
+        Route::get('user/create', [UserController::class, 'create']);
+        Route::post('user-paginate', [UserController::class, 'paginate']);
+        Route::post('user', [UserController::class, 'store']);
+        Route::get('user/{id}', [UserController::class, 'show']);
+        Route::get('user/{id}/edit', [UserController::class, 'edit']);
+        Route::put('user/{id}', [UserController::class, 'update']);
+        Route::delete('user/{id}', [UserController::class, 'destroy']);
+    });
+
+    // Fleet
     Route::resource('fleet', FleetController::class);
+
+    // Pickup
     Route::resource('pickup', PickupController::class);
+
+    // Sender
     Route::resource('sender', SenderController::class);
+
+    // Receiver
     Route::resource('receiver', ReceiverController::class);
+
+    // Unit
     Route::resource('unit', UnitController::class);
+
+    // Service
     Route::resource('service', ServiceController::class);
+
+    // Debtor
     Route::resource('debtor', DebtorController::class);
     Route::get('get-provinces', [RegionController::class, 'getProvinces']);
     Route::get('province/{provinceId}', [RegionController::class, 'getProvince']);

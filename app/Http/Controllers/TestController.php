@@ -51,8 +51,11 @@ class TestController extends BaseController
      */
     public function index()
     {
-        $promo = Promo::all();
-        $user = User::find(1)->pickups()->get();
+        $user = User::find(1);
+        $user = [
+            'user' => $user,
+            'role' => $user->role()->get()
+        ];
         return response()->json($user);
         $data = Indonesia::allProvinces();
         $user = User::findOrFail(1);

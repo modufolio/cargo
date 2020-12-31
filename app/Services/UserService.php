@@ -33,7 +33,7 @@ class UserService {
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Unable to delete user data');
+            throw new InvalidArgumentException('Gagal menghapus user');
         }
         DB::commit();
         return $user;
@@ -47,7 +47,37 @@ class UserService {
      */
     public function getAll()
     {
-        return $this->userRepository->getAll();
+        try {
+            $user = $this->userRepository->getAll();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat semua user');
+        }
+        return $user;
+    }
+
+    /**
+     * Get all user paginate.
+     *
+     * @return String
+     */
+    public function getAllPaginate($data)
+    {
+        $validator = Validator::make($data, [
+            'per_page'  => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $user = $this->userRepository->getPaginate($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat semua user');
+        }
+        return $user;
     }
 
     /**
@@ -90,7 +120,7 @@ class UserService {
             DB::rollBack();
             Log::info($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to update user data');
+            throw new InvalidArgumentException('Gagal mengubah data user');
         }
 
         DB::commit();

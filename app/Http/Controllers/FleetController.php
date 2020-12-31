@@ -28,7 +28,7 @@ class FleetController extends BaseController
         } catch (Exception $th) {
             return $this->sendError($e->getMessage());
         }
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**

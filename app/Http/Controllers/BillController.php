@@ -48,6 +48,6 @@ class BillController extends BaseController
             return $this->sendError($e->getMessage());
         }
         DB::commit();
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 }

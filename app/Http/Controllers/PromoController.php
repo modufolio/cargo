@@ -31,7 +31,7 @@ class PromoController extends BaseController
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     public function getCreatorPromo(Request $request)
@@ -45,6 +45,6 @@ class PromoController extends BaseController
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 }

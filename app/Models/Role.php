@@ -16,11 +16,11 @@ class Role extends Model
 
     public function users()
     {
-        return $this->hasMany('App\Models\User');
+        return $this->hasMany(User::class);
     }
 
     public function features()
     {
-        return $this->belongsToMany('App\Models\Feature');
+        return $this->belongsToMany(Feature::class);
     }
 }

@@ -17,6 +17,50 @@ class UserRepository
     }
 
     /**
+     * Get All User
+     *
+     * @return User
+     */
+    public function getAll()
+    {
+        return $this->user->get();
+    }
+
+    /**
+     * Get All User
+     *
+     * @return User
+     */
+    public function getPaginate($data)
+    {
+        $user = new $this->user;
+        $user = $user->paginate($data['per_page']);
+        return $user;
+    }
+
+    /**
+     * Get user by id
+     *
+     * @param int $id
+     * @return User
+     */
+    public function getById($id)
+    {
+        return $this->user->findOrFail($id);
+    }
+
+    /**
+     * Get user by email
+     *
+     * @param string $email
+     * @return User
+     */
+    public function getByEmail($email)
+    {
+        return $this->user->where('email', $email)->first();
+    }
+
+    /**
      * Save User
      *
      * @param $data

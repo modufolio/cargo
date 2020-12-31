@@ -38,7 +38,7 @@ class RoleController extends BaseController
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -72,7 +72,7 @@ class RoleController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -88,7 +88,7 @@ class RoleController extends BaseController
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -124,7 +124,7 @@ class RoleController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -140,6 +140,6 @@ class RoleController extends BaseController
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 }

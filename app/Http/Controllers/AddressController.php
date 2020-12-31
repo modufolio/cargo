@@ -33,7 +33,7 @@ class AddressController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -76,7 +76,7 @@ class AddressController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -127,6 +127,6 @@ class AddressController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 }

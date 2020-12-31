@@ -31,7 +31,7 @@ class SenderController extends BaseController
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -72,7 +72,7 @@ class SenderController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -126,7 +126,7 @@ class SenderController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -143,6 +143,6 @@ class SenderController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 }

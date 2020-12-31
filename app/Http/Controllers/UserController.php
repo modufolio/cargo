@@ -33,7 +33,31 @@ class UserController extends BaseController
      */
     public function index()
     {
-        //
+        try {
+            $result = $this->userService->getAll();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * Display a listing of the resource paginate.
+     *
+     * @return User with paginate
+     */
+    public function paginate(Request $request)
+    {
+        $data = $request->only([
+            'per_page'
+        ]);
+        try {
+            $result = $this->userService->getAllPaginate($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
     }
 
     /**
@@ -69,7 +93,7 @@ class UserController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse($result);
+        return $this->sendResponse(null, $result);
     }
 
     /**
