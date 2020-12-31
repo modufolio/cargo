@@ -139,8 +139,17 @@ class AuthController extends BaseController
 
     public function logout(Request $request)
     {
-        $token = request()->user()->token();
-        $token->delete();
+        DB::beginTransaction();
+        try {
+            $request->user()->token()->revoke();
+            $this->authService->revoke($request->user()->token()->id);
+            $token = request()->user()->token();
+            $token->delete();
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
 
         // remove the httponly cookie
         // cookie()->queue(cookie()->forget('refresh_token'));
