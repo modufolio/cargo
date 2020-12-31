@@ -78,4 +78,21 @@ class AuthService {
         DB::commit();
         return $data;
     }
+
+    /**
+     * Revoke token
+     */
+    public function revoke($tokenId)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $this->authRepository->revoke($tokenId);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal revoke token');
+        }
+        DB::commit();
+        return $data;
+    }
 }
