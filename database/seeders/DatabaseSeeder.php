@@ -12,6 +12,7 @@ use Database\Seeders\UnitSeeder;
 use Database\Seeders\ServiceSeeder;
 use Database\Seeders\RouteSeeder;
 use Database\Seeders\PromoSeeder;
+use Database\Seeders\MenuSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -32,7 +33,8 @@ class DatabaseSeeder extends Seeder
                 UnitSeeder::class,
                 ServiceSeeder::class,
                 RouteSeeder::class,
-                PromoSeeder::class
+                PromoSeeder::class,
+                MenuSeeder::class
             ]
         );
     }

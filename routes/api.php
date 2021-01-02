@@ -18,6 +18,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\DebtorController;
 use App\Http\Controllers\PromoController;
+use App\Http\Controllers\MenuController;
 
 Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -36,6 +37,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::get('user/{id}/edit', [UserController::class, 'edit']);
         Route::put('user/{id}', [UserController::class, 'update']);
         Route::delete('user/{id}', [UserController::class, 'destroy']);
+        Route::get('menu', [MenuController::class, 'index']);
     });
 
     // Fleet
