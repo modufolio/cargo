@@ -36,6 +36,9 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $hidden = [
         'password',
+        'created_at',
+        'updated_at',
+        'deleted_at',
         'remember_token',
     ];
 
@@ -114,5 +117,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function pickups()
     {
         return $this->hasMany(Pickup::class);
+    }
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class);
     }
 }

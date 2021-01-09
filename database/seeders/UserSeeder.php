@@ -30,6 +30,20 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('aaaaaaaa1'),
                 'role_id' => 1,
                 'username' => 'vikyyahya',
+            ],
+            [
+                'name' => 'driver one',
+                'email' => 'driver1@gmail.com',
+                'password' => bcrypt('driver'),
+                'role_id' => 3,
+                'username' => 'driver_one',
+            ],
+            [
+                'name' => 'driver two',
+                'email' => 'driver2@gmail.com',
+                'password' => bcrypt('driver'),
+                'role_id' => 3,
+                'username' => 'driver_two',
             ]
         ]);
         DB::commit();

@@ -15,4 +15,9 @@ class Fleet extends Model
     {
         return $this->hasMany(Route::class);
     }
+
+    public function pickups()
+    {
+        return $this->hasMany(Pickup::class);
+    }
 }

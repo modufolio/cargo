@@ -3,6 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Address;
+use App\Models\Sender;
+use App\Models\Debtor;
+use App\Models\Receiver;
 use App\Models\User;
 use Indonesia;
 use Carbon\Carbon;
@@ -10,14 +13,27 @@ use Carbon\Carbon;
 class AddressRepository
 {
     protected $address;
+    protected $sender;
     protected $user;
     protected $indo;
+    protected $debtor;
+    protected $receiver;
 
-    public function __construct(Address $address, User $user, Indonesia $indo)
+    public function __construct(
+        Address $address,
+        User $user,
+        Indonesia $indo,
+        Sender $sender,
+        Debtor $debtor,
+        Receiver $receiver
+    )
     {
         $this->address = $address;
         $this->user = $user;
         $this->indo = $indo;
+        $this->sender = $sender;
+        $this->debtor = $debtor;
+        $this->receiver = $receiver;
     }
 
     /**
@@ -134,5 +150,37 @@ class AddressRepository
     {
         $addressUser = $this->address->where('user_id', $userId)->where('id', '!==', $addressId)->update(['is_primary' => $isPrimary]);
         return $addressUser->fresh();
+    }
+
+    public function validateAddress($data, $userId)
+    {
+        $sender = $this->sender->findOrFail($data['senderId']);
+        if ($sender->user_id == $userId) {
+            $sender = true;
+        } else {
+            $sender = false;
+        }
+
+        $receiver = $this->receiver->findOrFail($data['receiverId']);
+        if ($receiver->user_id == $userId) {
+            $receiver = true;
+        } else {
+            $receiver = false;
+        }
+
+        $debtor = $this->debtor->findOrFail($data['debtorId']);
+        if ($debtor->user_id == $userId) {
+            $debtor = true;
+        } else {
+            $debtor = false;
+        }
+
+        $data = (object)[
+            'sender' => $sender,
+            'receiver' => $receiver,
+            'debtor' => $debtor
+        ];
+        return $data;
+
     }
 }

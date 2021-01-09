@@ -28,7 +28,7 @@ class PickupController extends BaseController
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -55,9 +55,9 @@ class PickupController extends BaseController
             'promoId',
             'name',
             'phone',
-            'addressSender',
-            'addressReceiver',
-            'addressBilling',
+            'senderId',
+            'receiverId',
+            'debtorId',
             'notes',
             'items',
             'origin',
@@ -119,5 +119,24 @@ class PickupController extends BaseController
     public function destroy($id)
     {
         //
+    }
+
+    public function paginate(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'name',
+            'city',
+            'district',
+            'village',
+            'picktime'
+        ]);
+        try {
+            $result = $this->pickupService->getAllPaginate($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
     }
 }

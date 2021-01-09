@@ -22,11 +22,11 @@ class RouteController extends BaseController
     }
 
     /**
-     * Get fleet
-     * @param Array $request
-     * @param fleet_id fleetId
-     * @param origin origin
-     * @param destination destination
+     * Get route by fleet and origin destination
+     * @param Request $request
+     * @param int fleetId
+     * @param string origin
+     * @param string destination
      */
     public function getByFleetOriginDestination(Request $request)
     {
@@ -38,6 +38,27 @@ class RouteController extends BaseController
         DB::beginTransaction();
         try {
             $result = $this->routeService->getByFleetOriginDestination($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * Get route paginate
+     */
+    public function getAllPaginate(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'origin',
+            'destination',
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->routeService->getAllPaginate($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

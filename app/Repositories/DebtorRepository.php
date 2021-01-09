@@ -47,7 +47,7 @@ class DebtorRepository
      */
     public function getByUserId($id)
     {
-        return $this->user->find($id)->debtors()->get();
+        return $this->user->find($id)->debtors()->where('temporary', false)->get();
     }
 
     /**
@@ -74,7 +74,6 @@ class DebtorRepository
      */
     public function save($data)
     {
-
         $user = $this->user->find($data['userId']);
 
         $debtor = $user->debtors()->create([
@@ -87,6 +86,7 @@ class DebtorRepository
             'village'       => $data['village'],
             'postal_code'   => $data['postal_code'],
             'street'        => $data['street'],
+            'temporary'     => $data['temporary'],
             'notes'         => $data['notes'] ?? null,
             'created_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
             'updated_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),

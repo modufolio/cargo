@@ -38,13 +38,17 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::put('user/{id}', [UserController::class, 'update']);
         Route::delete('user/{id}', [UserController::class, 'destroy']);
         Route::get('menu', [MenuController::class, 'index']);
+        Route::prefix('route')->group(function() {
+            Route::post('paginate', [RouteController::class, 'getAllPaginate']);
+        });
     });
 
     // Fleet
     Route::resource('fleet', FleetController::class);
 
     // Pickup
-    Route::resource('pickup', PickupController::class);
+    Route::post('pickup', [PickupController::class, 'store']);
+    Route::post('pickup-paginate', [PickupController::class, 'paginate']);
 
     // Sender
     Route::resource('sender', SenderController::class);

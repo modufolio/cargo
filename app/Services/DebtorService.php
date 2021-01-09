@@ -147,6 +147,7 @@ class DebtorService {
             'village'       => 'bail|required|max:255',
             'postal_code'   => 'bail|required|integer|max:99999',
             'street'        => 'bail|required|max:255',
+            'temporary'     => 'bail|required|boolean',
             'notes'         => 'bail|max:255'
         ]);
 

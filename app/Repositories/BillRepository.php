@@ -99,6 +99,9 @@ class BillRepository
      */
     public function calculatePrice($items, $route, $promo)
     {
+        // dd($items);
+        // dd($route);
+        // dd($promo);
         $result = $data = [];
         $totalWeight = array_sum(array_column($items, 'unit_total'));
         if ($totalWeight >= intval($route['minimum_weight'])) {
@@ -133,7 +136,7 @@ class BillRepository
     public function addingPromo($total, $promo)
     {
         $total = intval($total);
-        if ($promo !== null || $promo !== false) {
+        if ($promo) {
             $minValue = intval($promo['min_value']);
             $promoDiscount = intval($promo['discount']);
             $promoDiscountMax = intval($promo['discount_max']);

@@ -16,6 +16,7 @@ class CreateDebtorsTable extends Migration
         Schema::create('debtors', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->boolean('temporary')->default(0);
             $table->string('title')->nullable();
             $table->string('name');
             $table->string('phone');

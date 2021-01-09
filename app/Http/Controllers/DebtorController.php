@@ -64,6 +64,7 @@ class DebtorController extends BaseController
             'postal_code',
             'street',
             'notes',
+            'temporary'
         ]);
 
         try {

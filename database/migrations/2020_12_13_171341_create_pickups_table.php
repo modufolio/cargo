@@ -21,9 +21,12 @@ class CreatePickupsTable extends Migration
             $table->timestamp('picktime');
             $table->string('name');
             $table->string('phone');
-            $table->text('address_sender');
-            $table->text('address_receiver');
-            $table->text('address_billing');
+            // $table->text('address_sender');
+            $table->unsignedBigInteger('sender_id');
+            // $table->text('address_receiver');
+            $table->unsignedBigInteger('receiver_id');
+            // $table->text('address_billing');
+            $table->unsignedBigInteger('debtor_id');
             $table->text('notes');
             $table->softDeletes();
             $table->timestamps();

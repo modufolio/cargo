@@ -7,6 +7,7 @@ use App\Repositories\ItemRepository;
 use App\Repositories\BillRepository;
 use App\Repositories\PromoRepository;
 use App\Repositories\RouteRepository;
+use App\Repositories\AddressRepository;
 use Exception;
 use DB;
 use Log;
@@ -20,18 +21,22 @@ class PickupService {
     protected $billRepository;
     protected $promoRepository;
     protected $routeRepository;
+    protected $addressRepository;
 
     public function __construct(PickupRepository $pickupRepository,
         ItemRepository $itemRepository,
         BillRepository $billRepository,
         PromoRepository $promoRepository,
-        RouteRepository $routeRepository)
+        RouteRepository $routeRepository,
+        AddressRepository $addressRepository
+    )
     {
         $this->pickupRepository = $pickupRepository;
         $this->itemRepository = $itemRepository;
         $this->billRepository = $billRepository;
         $this->promoRepository = $promoRepository;
         $this->routeRepository = $routeRepository;
+        $this->addressRepository = $addressRepository;
     }
 
     /**
@@ -49,9 +54,9 @@ class PickupService {
             'promoId'               => 'bail|nullable|max:19',
             'name'                  => 'bail|required|max:255',
             'phone'                 => 'bail|required|max:14',
-            'addressSender'         => 'bail|required|max:500',
-            'addressReceiver'       => 'bail|required|max:500',
-            'addressBilling'        => 'bail|required|max:500',
+            'senderId'              => 'bail|required|max:19',
+            'receiverId'            => 'bail|required|max:19',
+            'debtorId'              => 'bail|required|max:19',
             'notes'                 => 'bail|required|max:500',
             'picktime'              => 'bail|date',
             'origin'                => 'bail|required|max:50',
@@ -66,13 +71,34 @@ class PickupService {
 
         DB::beginTransaction();
 
+        // VALIDATE SENDER, RECEIVER, AND DEBTOR
+        try {
+            $address = $this->addressRepository->validateAddress($data, $data['userId']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5001)');
+        }
+        if (!$address->sender) {
+            DB::rollback();
+            throw new InvalidArgumentException('Alamat pengirim salah');
+        }
+        if (!$address->receiver) {
+            DB::rollback();
+            throw new InvalidArgumentException('Alamat tujuan pengiriman salah');
+        }
+        if (!$address->debtor) {
+            DB::rollback();
+            throw new InvalidArgumentException('Alamat penagihan salah');
+        }
+
         // PROMO
         try {
             $promo = $this->promoRepository->getById($data['promoId']);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5001)');
+            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5002)');
         }
 
         if ($promo !== false) {
@@ -89,7 +115,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5002)');
+            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5003)');
         }
         // END SAVE PICKUP
 
@@ -99,7 +125,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5003)');
+            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5004)');
         }
         // END SAVE ITEM
 
@@ -109,7 +135,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5004)');
+            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5005)');
         }
 
         if (!$route) {
@@ -124,7 +150,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5005)');
+            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5006)');
         }
 
         if (!$price->success) {
@@ -142,5 +168,27 @@ class PickupService {
             'price' => $price
         ];
         return $result;
+    }
+
+    /**
+     * Get all pickup paginate
+     */
+    public function getAllPaginate($data)
+    {
+        $validator = Validator::make($data, [
+            'perPage'               => 'bail|required|max:2'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $pickup = $this->pickupRepository->getAllPickupPaginate($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapatkan data pickup');
+        }
+        return $pickup;
     }
 }

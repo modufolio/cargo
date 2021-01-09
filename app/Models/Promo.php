@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class Promo extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
     public $timestamps = true;
     protected $guarded = [];
 
@@ -21,6 +19,11 @@ class Promo extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function pickup()
+    {
+        return $this->hasOne(Pickup::class);
     }
 
     public function getCreatedAtAttribute($value)

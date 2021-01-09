@@ -165,6 +165,8 @@ return [
         /*
          * Package Service Providers...
          */
+        Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
+        Laravel\Socialite\SocialiteServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -175,7 +177,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
-        Laravel\Socialite\SocialiteServiceProvider::class,
         // Laravolt\Indonesia\ServiceProvider::class
     ],
 
