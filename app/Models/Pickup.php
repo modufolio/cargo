@@ -19,7 +19,9 @@ class Pickup extends Model
     public $sortable = [
         'created_at',
         'sender',
-        'picktime'
+        'picktime',
+        'id',
+        'user'
     ];
 
     protected $hidden = [

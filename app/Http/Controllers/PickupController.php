@@ -129,7 +129,8 @@ class PickupController extends BaseController
             'city',
             'district',
             'village',
-            'picktime'
+            'picktime',
+            'sort'
         ]);
         try {
             $result = $this->pickupService->getAllPaginate($data);

@@ -66,6 +66,7 @@ class PickupRepository
         $district = $data['district'];
         $village = $data['village'];
         $picktime = $data['picktime'];
+        $sort = $data['sort'];
 
         $pickup = $this->pickup->with(['user','sender','receiver','debtor','fleet','promo']);
 
@@ -73,35 +74,83 @@ class PickupRepository
             $perPage = 10;
         }
 
-        if (!empty($name)) {
-            $pickup = $pickup->sortable([
-                'sender.name' => $name
-            ]);
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'id':
+                    $pickup = $pickup->sortable([
+                        'id' => $order
+                    ]);
+                    break;
+                case 'user.name':
+                    $pickup = $pickup->sortable([
+                        'user.name' => $order
+                    ]);
+                    break;
+                case 'sender.city':
+                    $pickup = $pickup->sortable([
+                        'sender.city' => $order
+                    ]);
+                    break;
+                case 'sender.district':
+                    $pickup = $pickup->sortable([
+                        'sender.district' => $order
+                    ]);
+                    break;
+                case 'sender.village':
+                    $pickup = $pickup->sortable([
+                        'sender.village' => $order
+                    ]);
+                    break;
+                case 'picktime':
+                    $pickup = $pickup->sortable([
+                        'picktime' => $order
+                    ]);
+                    break;
+                default:
+                    $pickup = $pickup->sortable([
+                        'id' => 'desc'
+                    ]);
+                    break;
+            }
         }
 
-        if (!empty($city)) {
-            $pickup = $pickup->sortable([
-                'sender.city' => $city
-            ]);
-        }
+        // if (!empty($name)) {
+        //     $pickup = $pickup->sortable([
+        //         'sender.name' => $name
+        //     ]);
+        // }
 
-        if (!empty($district)) {
-            $pickup = $pickup->sortable([
-                'sender.district' => $district
-            ]);
-        }
+        // if (!empty($city)) {
+        //     $pickup = $pickup->sortable([
+        //         'sender.city' => $city
+        //     ]);
+        // }
 
-        if (!empty($village)) {
-            $pickup = $pickup->sortable([
-                'sender.village' => $village
-            ]);
-        }
+        // if (!empty($district)) {
+        //     $pickup = $pickup->sortable([
+        //         'sender.district' => $district
+        //     ]);
+        // }
 
-        if (!empty($picktime)) {
-            $pickup = $pickup->sortable([
-                'picktime' => $picktime
-            ]);
-        }
+        // if (!empty($village)) {
+        //     $pickup = $pickup->sortable([
+        //         'sender.village' => $village
+        //     ]);
+        // }
+
+        // if (!empty($picktime)) {
+        //     $pickup = $pickup->sortable([
+        //         'picktime' => $picktime
+        //     ]);
+        // }
 
         $result = $pickup->simplePaginate($perPage);
 
