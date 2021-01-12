@@ -20,18 +20,21 @@ class UnitSeeder extends Seeder
         DB::table('units')->insert([
             [
                 'name'          => 'Satuan',
+                'slug'          => 'Buah',
                 'price'         => 1000,
                 'created_at'    => Carbon::now('Asia/Jakarta'),
                 'updated_at'    => Carbon::now('Asia/Jakarta'),
             ],
             [
                 'name'          => 'Kilogram',
+                'slug'          => 'Kg',
                 'price'         => 2000,
                 'created_at'    => Carbon::now('Asia/Jakarta'),
                 'updated_at'    => Carbon::now('Asia/Jakarta'),
             ],
             [
                 'name'          => 'Volume',
+                'slug'          => 'L',
                 'price'         => 3000,
                 'created_at'    => Carbon::now('Asia/Jakarta'),
                 'updated_at'    => Carbon::now('Asia/Jakarta'),
