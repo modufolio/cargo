@@ -125,8 +125,10 @@ class PickupController extends BaseController
     {
         $data = $request->only([
             'perPage',
+            'page',
             'name',
             'city',
+            'id',
             'district',
             'village',
             'picktime',

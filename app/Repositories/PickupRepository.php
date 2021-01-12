@@ -61,6 +61,8 @@ class PickupRepository
     public function getAllPickupPaginate($data = [])
     {
         $perPage = $data['perPage'];
+        $page = $data['page'];
+        $id = $data['id'];
         $name = $data['name'];
         $city = $data['city'];
         $district = $data['district'];
@@ -122,37 +124,37 @@ class PickupRepository
             }
         }
 
-        // if (!empty($name)) {
-        //     $pickup = $pickup->sortable([
-        //         'sender.name' => $name
-        //     ]);
-        // }
+        if (!empty($id)) {
+            $pickup = $pickup->where('id', 'ilike', '%'.$id.'%');
+        }
 
-        // if (!empty($city)) {
-        //     $pickup = $pickup->sortable([
-        //         'sender.city' => $city
-        //     ]);
-        // }
+        if (!empty($name)) {
+            $pickup = $pickup->where('name', 'ilike', '%'.$name.'%');
+        }
 
-        // if (!empty($district)) {
-        //     $pickup = $pickup->sortable([
-        //         'sender.district' => $district
-        //     ]);
-        // }
+        if (!empty($city)) {
+            $pickup = $pickup->whereHas('sender', function($q) use ($city) {
+                $q->where('city', 'ilike', '%'.$city.'%');
+            });
+        }
 
-        // if (!empty($village)) {
-        //     $pickup = $pickup->sortable([
-        //         'sender.village' => $village
-        //     ]);
-        // }
+        if (!empty($district)) {
+            $pickup = $pickup->whereHas('sender', function($q) use ($district) {
+                $q->where('district', 'ilike', '%'.$district.'%');
+            });
+        }
 
-        // if (!empty($picktime)) {
-        //     $pickup = $pickup->sortable([
-        //         'picktime' => $picktime
-        //     ]);
-        // }
+        if (!empty($village)) {
+            $pickup = $pickup->whereHas('sender', function($q) use ($village) {
+                $q->where('village', 'ilike', '%'.$village.'%');
+            });
+        }
 
-        $result = $pickup->simplePaginate($perPage);
+        if (!empty($picktime)) {
+            $pickup = $pickup->where('picktime', 'ilike', '%'.$picktime.'%');
+        }
+
+        $result = $pickup->paginate($perPage);
 
         return $result;
     }

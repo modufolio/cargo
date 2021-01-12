@@ -175,14 +175,6 @@ class PickupService {
      */
     public function getAllPaginate($data)
     {
-        $validator = Validator::make($data, [
-            'perPage'               => 'bail|required|max:2'
-        ]);
-
-        if ($validator->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
-
         try {
             $pickup = $this->pickupRepository->getAllPickupPaginate($data);
         } catch (Exception $e) {
