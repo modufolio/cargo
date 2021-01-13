@@ -33,7 +33,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::get('user/create', [UserController::class, 'create']);
         Route::post('user-paginate', [UserController::class, 'paginate']);
         Route::post('user', [UserController::class, 'store']);
-        Route::get('user/{id}', [UserController::class, 'show']);
+        Route::get('user-by-id', [UserController::class, 'show']);
         Route::get('user/{id}/edit', [UserController::class, 'edit']);
         Route::put('user/{id}', [UserController::class, 'update']);
         Route::delete('user/{id}', [UserController::class, 'destroy']);

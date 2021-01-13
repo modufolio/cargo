@@ -88,7 +88,13 @@ class UserService {
      */
     public function getById($id)
     {
-        return $this->userRepository->getById($id);
+        try {
+            $user = $this->userRepository->getById($id);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat data user');
+        }
+        return $user;
     }
 
     /**
