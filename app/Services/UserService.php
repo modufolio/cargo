@@ -63,14 +63,6 @@ class UserService {
      */
     public function getAllPaginate($data)
     {
-        $validator = Validator::make($data, [
-            'per_page'  => 'bail|required',
-        ]);
-
-        if ($validator->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
-
         try {
             $user = $this->userRepository->getPaginate($data);
         } catch (Exception $e) {

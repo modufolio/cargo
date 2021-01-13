@@ -33,7 +33,7 @@ class RoleService {
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Unable to delete role data');
+            throw new InvalidArgumentException('Gagal menghapus data peran');
         }
         DB::commit();
         return $role;
@@ -47,7 +47,13 @@ class RoleService {
      */
     public function getAll()
     {
-        return $this->roleRepository->getAll();
+        try {
+            $role = $this->roleRepository->getAll();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat semua data peran');
+        }
+        return $role;
     }
 
     /**

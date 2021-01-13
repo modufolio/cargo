@@ -9,13 +9,14 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Mail\Mailable;
 use Laravel\Passport\HasApiTokens;
+use Kyslik\ColumnSortable\Sortable;
 
 use App\Models\Feature;
 use App\Models\Role;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
+    use HasFactory, Notifiable, SoftDeletes, HasApiTokens, Sortable;
 
     /**
      * The attributes that are mass assignable.
@@ -52,7 +53,13 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     public $timestamps = true;
-    // protected $appends = ['feature','role'];
+
+    public $sortable = [
+        'created_at',
+        'name',
+        'id',
+        'role'
+    ];
 
     public function role()
     {

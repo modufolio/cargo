@@ -50,7 +50,12 @@ class UserController extends BaseController
     public function paginate(Request $request)
     {
         $data = $request->only([
-            'per_page'
+            'perPage',
+            'page',
+            'name',
+            'email',
+            'role',
+            'sort'
         ]);
         try {
             $result = $this->userService->getAllPaginate($data);

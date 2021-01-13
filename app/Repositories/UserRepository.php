@@ -33,9 +33,75 @@ class UserRepository
      */
     public function getPaginate($data)
     {
-        $user = new $this->user;
-        $user = $user->paginate($data['per_page']);
-        return $user;
+        $perPage = $data['perPage'];
+        $page = $data['page'];
+
+        $name = $data['name'];
+        $email = $data['email'];
+        $role = $data['role'];
+
+        $sort = $data['sort'];
+
+        $user = $this->user->with(['role']);
+
+        if (empty($perPage)) {
+            $perPage = 10;
+        }
+
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'id':
+                    $user = $user->sortable([
+                        'id' => $order
+                    ]);
+                    break;
+                case 'name':
+                    $user = $user->sortable([
+                        'name' => $order
+                    ]);
+                    break;
+                case 'created_at':
+                    $user = $user->sortable([
+                        'created_at' => $order
+                    ]);
+                    break;
+                default:
+                    $user = $user->sortable([
+                        'id' => 'desc'
+                    ]);
+                    break;
+            }
+        }
+
+        if (!empty($id)) {
+            $user = $user->where('id', 'like', '%'.$id.'%');
+        }
+
+        if (!empty($name)) {
+            $user = $user->where('name', 'ilike', '%'.$name.'%');
+        }
+
+        if (!empty($email)) {
+            $user = $user->where('email', 'ilike', '%'.$email.'%');
+        }
+
+        if (!empty($role)) {
+            $user = $user->whereHas('role', function($q) use ($role) {
+                $q->where('slug', $role);
+            });
+        }
+
+        $result = $user->paginate($perPage);
+
+        return $result;
     }
 
     /**
