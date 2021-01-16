@@ -78,8 +78,9 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
 
     // Promo
     Route::prefix('promo')->group(function() {
-        Route::post('user', [PromoController::class, 'getPromoUser']);
-        Route::post('creator', [PromoController::class, 'getCreatorPromo']);
+        Route::get('user', [PromoController::class, 'getPromoUser']);
+        Route::get('creator', [PromoController::class, 'getCreatorPromo']);
+        Route::post('select', [PromoController::class, 'selectPromo']);
     });
 
     // Admin Only

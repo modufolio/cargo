@@ -41,7 +41,22 @@ class PromoController extends BaseController
         ]);
 
         try {
-            $result = $this->promoService->getCreatedBy($data);
+            $result = $this->promoService->getPromoCreator($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    public function selectPromo(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+            'promoId',
+            'value'
+        ]);
+        try {
+            $result = $this->promoService->selectPromo($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }

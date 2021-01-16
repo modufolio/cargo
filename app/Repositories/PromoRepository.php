@@ -5,19 +5,17 @@ namespace App\Repositories;
 use App\Models\Promo;
 use App\Models\User;
 use Carbon\Carbon;
-use App\Models\Pickup;
+use InvalidArgumentException;
 
 class PromoRepository
 {
     protected $promo;
     protected $user;
-    protected $pickup;
 
-    public function __construct(Promo $promo, User $user, Pickup $pickup)
+    public function __construct(Promo $promo, User $user)
     {
         $this->promo = $promo;
         $this->user = $user;
-        $this->pickup = $pickup;
     }
 
     /**
@@ -76,7 +74,7 @@ class PromoRepository
      */
     public function getCreatedBy($data)
     {
-        return $this->user->find($data['userId'])->promoOwnerships->get();
+        return $this->user->find($data['userId'])->promoOwnerships;
     }
 
     /**
@@ -150,14 +148,58 @@ class PromoRepository
         return $promo;
     }
 
-    public function canUsePromo($promoCode, $userId)
+    /**
+     * validate and check user can used promo
+     *
+     * @param Promo $promo
+     * @param array $data
+     * @
+     */
+    public function validatePromo($promo, $data)
     {
-        $promo = $this->getByCode($promoCode);
-        $pickup = $this->pickup->where([
-            ['promo_id', '=', $promo['id']],
-            ['user_id'], '=', $userId
-        ])->get();
+        if ($promo['max_used'] == 0) {
+            throw new InvalidArgumentException('Promo habis');
+        }
 
+        if ($promo['user_id'] !== $data['userId']) {
+            throw new InvalidArgumentException('Promo tidak dapat digunakan oleh pengguna ini');
+        }
+
+        if (intval($promo['min_value']) > intval($data['value'])) {
+            throw new InvalidArgumentException('Total harga tidak memenuhi syarat');
+        }
+
+        $result = true;
+    }
+
+    /**
+     * Select promo
+     *
+     * @param array $data
+     * @param Promo $promo
+     * @return mixed
+     */
+    public function selectPromo($promo, $data)
+    {
+        $total = intval($data['value']);
+        $minValue = intval($promo['min_value']);
+        $promoDiscount = intval($promo['discount']);
+        $promoDiscountMax = intval($promo['discount_max']);
+        $discount = ($total * $promoDiscount) / 100;
+
+        if (intval($discount) >= $promoDiscountMax) {
+            $total = $total - $promoDiscountMax;
+            $discount = intval($promoDiscountMax);
+        } else {
+            $total = $total - intval($discount);
+        }
+
+        $result = (object)[
+            'value' => $total,
+            'discount' => $discount,
+            'promo_result' => $total,
+        ];
+        return $result;
     }
 
 }

@@ -64,4 +64,47 @@ class PromoService {
         }
         return $promo;
     }
+
+    /**
+     * Select promo
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public function selectPromo($data)
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required|max:19',
+            'promoId' => 'bail|required|max:19',
+            'value' => 'bail|required|max:10',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        // get promo
+        try {
+            $promo = $this->promoRepository->getById($data['promoId']);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Promo tidak ditemukan');
+        }
+
+        try {
+            $this->promoRepository->validatePromo($promo, $data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        try {
+            $result = $this->promoRepository->selectPromo($promo, $data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal menggunakan promo ini');
+        }
+
+        return $result;
+    }
 }
