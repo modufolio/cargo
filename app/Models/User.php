@@ -40,6 +40,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'created_at',
         'updated_at',
         'deleted_at',
+        'role_id',
+        'google_id',
         'remember_token',
     ];
 
@@ -129,5 +131,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function driver()
     {
         return $this->hasOne(Driver::class);
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 }

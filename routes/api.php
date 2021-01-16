@@ -19,7 +19,9 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\DebtorController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\BranchController;
 
+// All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('check-user', [AuthController::class, 'checkLogin']);
@@ -28,18 +30,30 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::resource('role', RoleController::class);
 
     // User
+    Route::get('user-by-id', [UserController::class, 'show']);
+
+    // Admin Only
     Route::group(['middleware' => ['admin.panel']], function () {
+        // User
         Route::get('user', [UserController::class, 'index']);
         Route::get('user/create', [UserController::class, 'create']);
         Route::post('user-paginate', [UserController::class, 'paginate']);
         Route::post('user', [UserController::class, 'store']);
-        Route::get('user-by-id', [UserController::class, 'show']);
         Route::get('user/{id}/edit', [UserController::class, 'edit']);
         Route::put('user/{id}', [UserController::class, 'update']);
         Route::delete('user/{id}', [UserController::class, 'destroy']);
+
+        // Menu
         Route::get('menu', [MenuController::class, 'index']);
+
+        // Route
         Route::prefix('route')->group(function() {
-            Route::post('paginate', [RouteController::class, 'getAllPaginate']);
+            Route::post('paginate', [RouteController::class, 'paginate']);
+        });
+
+        // Branch
+        Route::prefix('branch')->group(function() {
+            Route::post('paginate', [BranchController::class, 'paginate']);
         });
     });
 
@@ -64,6 +78,8 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
 
     // Debtor
     Route::resource('debtor', DebtorController::class);
+
+    // Address
     Route::get('get-provinces', [RegionController::class, 'getProvinces']);
     Route::get('province/{provinceId}', [RegionController::class, 'getProvince']);
     Route::get('get-cities/{provinceId}', [RegionController::class, 'getCities']);
@@ -74,23 +90,34 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::get('village/{villageId}', [RegionController::class, 'getVillage']);
     Route::post('get-regions', [RegionController::class, 'getRegions']);
     Route::post('get-regions-paginate', [RegionController::class, 'getPaginateRegions']);
+
+    // Bill
     Route::prefix('bill')->group(function() {
         Route::post('calculate', [BillController::class, 'calculatePrice']);
     });
+
+    // Route
     Route::prefix('route')->group(function() {
         Route::post('get-fleet-origin-destination', [RouteController::class, 'getByFleetOriginDestination']);
     });
+
+    // Promo
     Route::prefix('promo')->group(function() {
         Route::post('user', [PromoController::class, 'getPromoUser']);
         Route::post('creator', [PromoController::class, 'getCreatorPromo']);
     });
-    Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
-    Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
 });
 
+// Guest / All User
 Route::middleware('guest')->group(function () {
+    // Auth
+    Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
+    Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('refresh-token', [AuthController::class, 'refreshToken'])->name('refreshToken');
+
+    // Test
     Route::resource('test', TestController::class);
 });

@@ -48,8 +48,9 @@ class RouteController extends BaseController
 
     /**
      * Get route paginate
+     * @param Request $request
      */
-    public function getAllPaginate(Request $request)
+    public function paginate(Request $request)
     {
         $data = $request->only([
             'perPage',

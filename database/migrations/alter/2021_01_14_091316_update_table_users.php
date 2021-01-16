@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUnitsTable extends Migration
+class UpdateTableUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateUnitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('units', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
-            $table->float('price');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('branch_id')->nullable();
         });
     }
 
@@ -29,6 +25,8 @@ class CreateUnitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('units');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('branch_id');
+        });
     }
 }

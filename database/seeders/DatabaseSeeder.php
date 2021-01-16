@@ -15,6 +15,7 @@ use Database\Seeders\PromoSeeder;
 use Database\Seeders\MenuSeeder;
 use Database\Seeders\DriverSeeder;
 use Database\Seeders\VehicleSeeder;
+use Database\Seeders\BranchSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -38,7 +39,8 @@ class DatabaseSeeder extends Seeder
                 PromoSeeder::class,
                 MenuSeeder::class,
                 DriverSeeder::class,
-                VehicleSeeder::class
+                VehicleSeeder::class,
+                BranchSeeder::class,
             ]
         );
     }

@@ -42,7 +42,9 @@ class UserRepository
 
         $sort = $data['sort'];
 
-        $user = $this->user->with(['role']);
+        $user = $this->user->select('id','name','email','role_id','phone')->whereHas('role',)->with(['role' => function($q) {
+            $q->select('id','name','slug');
+        }]);
 
         if (empty($perPage)) {
             $perPage = 10;

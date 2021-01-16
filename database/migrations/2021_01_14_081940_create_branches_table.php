@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUnitsTable extends Migration
+class CreateBranchesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,17 @@ class CreateUnitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('units', function (Blueprint $table) {
+        Schema::create('branches', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->string('slug')->unique();
-            $table->float('price');
+            $table->string('province');
+            $table->string('city');
+            $table->string('district');
+            $table->string('village');
+            $table->smallInteger('postal_code');
+            $table->text('street');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -29,6 +35,6 @@ class CreateUnitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('units');
+        Schema::dropIfExists('branches');
     }
 }
