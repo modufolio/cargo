@@ -9,7 +9,8 @@ use Database\Seeders\Menus\DashboardSeeder;
 use Database\Seeders\Menus\FinanceMenuSeeder;
 use Database\Seeders\Menus\ReportMenuSeeder;
 use Database\Seeders\Menus\ResiMenuSeeder;
-use Database\Seeders\Menus\ShippingMenuSeeder;
+use Database\Seeders\Menus\OrderMenuSeeder;
+use Database\Seeders\Menus\RoutingMenuSeeder;
 use DB;
 
 class MenuSeeder extends Seeder
@@ -38,7 +39,8 @@ class MenuSeeder extends Seeder
         $this->call(DashboardSeeder::class);
         $this->call(MasterDataSeeder::class);
         $this->call(UserMenuSeeder::class);
-        $this->call(ShippingMenuSeeder::class);
+        $this->call(OrderMenuSeeder::class);
+        $this->call(RoutingMenuSeeder::class);
         $this->call(ResiMenuSeeder::class);
         $this->call(ReportMenuSeeder::class);
         $this->call(FinanceMenuSeeder::class);

@@ -65,7 +65,7 @@ class PromoRepository
      */
     public function getUserId($data)
     {
-        return $this->user->find($data['userId'])->promos->get();
+        return $this->user->find($data['userId'])->promos;
     }
 
     /**

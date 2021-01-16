@@ -25,7 +25,7 @@ class PromoService {
     public function getPromoUser($data)
     {
         $validator = Validator::make($data, [
-            'userId'                => 'bail|required|max:19',
+            'userId' => 'bail|required|max:19',
         ]);
 
         if ($validator->fails()) {

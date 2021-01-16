@@ -32,31 +32,6 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     // User
     Route::get('user-by-id', [UserController::class, 'show']);
 
-    // Admin Only
-    Route::group(['middleware' => ['admin.panel']], function () {
-        // User
-        Route::get('user', [UserController::class, 'index']);
-        Route::get('user/create', [UserController::class, 'create']);
-        Route::post('user-paginate', [UserController::class, 'paginate']);
-        Route::post('user', [UserController::class, 'store']);
-        Route::get('user/{id}/edit', [UserController::class, 'edit']);
-        Route::put('user/{id}', [UserController::class, 'update']);
-        Route::delete('user/{id}', [UserController::class, 'destroy']);
-
-        // Menu
-        Route::get('menu', [MenuController::class, 'index']);
-
-        // Route
-        Route::prefix('route')->group(function() {
-            Route::post('paginate', [RouteController::class, 'paginate']);
-        });
-
-        // Branch
-        Route::prefix('branch')->group(function() {
-            Route::post('paginate', [BranchController::class, 'paginate']);
-        });
-    });
-
     // Fleet
     Route::resource('fleet', FleetController::class);
 
@@ -105,6 +80,31 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::prefix('promo')->group(function() {
         Route::post('user', [PromoController::class, 'getPromoUser']);
         Route::post('creator', [PromoController::class, 'getCreatorPromo']);
+    });
+
+    // Admin Only
+    Route::group(['middleware' => ['admin.panel']], function () {
+        // User
+        Route::get('user', [UserController::class, 'index']);
+        Route::get('user/create', [UserController::class, 'create']);
+        Route::post('user-paginate', [UserController::class, 'paginate']);
+        Route::post('user', [UserController::class, 'store']);
+        Route::get('user/{id}/edit', [UserController::class, 'edit']);
+        Route::put('user/{id}', [UserController::class, 'update']);
+        Route::delete('user/{id}', [UserController::class, 'destroy']);
+
+        // Menu
+        Route::get('menu', [MenuController::class, 'index']);
+
+        // Route
+        Route::prefix('route')->group(function() {
+            Route::post('paginate', [RouteController::class, 'paginate']);
+        });
+
+        // Branch
+        Route::prefix('branch')->group(function() {
+            Route::post('paginate', [BranchController::class, 'paginate']);
+        });
     });
 
 });

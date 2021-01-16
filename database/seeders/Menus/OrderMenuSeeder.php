@@ -7,7 +7,7 @@ use App\Models\Menu;
 use App\Models\Submenu;
 use Carbon\Carbon;
 
-class ShippingMenuSeeder extends Seeder
+class OrderMenuSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -17,20 +17,20 @@ class ShippingMenuSeeder extends Seeder
     public function run()
     {
         $menu = new Menu;
-        $menu->name = 'Pengiriman';
-        $menu->slug = 'shipping';
-        $menu->icon = 'pengiriman';
+        $menu->name = 'Order';
+        $menu->slug = 'order';
+        $menu->icon = 'order';
         $menu->save();
         $submenu = [
             [
                 'menu_id' => $menu->id,
-                'name' => 'Daftar Pengguna',
-                'slug' => 'shipping-1',
+                'name' => 'Pickup',
+                'slug' => 'pickup',
             ],
             [
                 'menu_id' => $menu->id,
-                'name' => 'Pengaturan Peran',
-                'slug' => 'shipping-2',
+                'name' => 'Drop',
+                'slug' => 'drop',
             ],
         ];
         Submenu::insert($submenu);

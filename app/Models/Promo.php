@@ -10,6 +10,12 @@ class Promo extends Model
     use HasFactory;
     public $timestamps = true;
     protected $guarded = [];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'created_by',
+        'user_id'
+    ];
 
     public function user()
     {
