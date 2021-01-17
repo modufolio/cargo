@@ -99,9 +99,6 @@ class BillRepository
      */
     public function calculatePrice($items, $route, $promo)
     {
-        // dd($items);
-        // dd($route);
-        // dd($promo);
         $result = $data = [];
         $totalWeight = array_sum(array_column($items, 'unit_total'));
         if ($totalWeight >= intval($route['minimum_weight'])) {
@@ -150,5 +147,44 @@ class BillRepository
             }
         }
         return $total;
+    }
+
+    /**
+     * @param array $items
+     * @param array $route
+     * @param array $promo
+     *
+     * @return object
+     */
+    public function calculatePriceWithoutPromo($items, $route)
+    {
+        $result = $data = [];
+        $totalWeight = array_sum(array_column($items, 'unit_total'));
+        if ($totalWeight >= intval($route['minimum_weight'])) {
+            foreach ($items as $key => $value) {
+                $unit               = $this->unit->where('id', $value['unit_id'])->select('price','slug')->first();
+                $service            = $this->service->where('id', $value['service_id'])->select('name','price')->first();
+                $servicePrice       = $service['price'] ?? 0;
+                $data['price']      = ($value['unit_total'] * intval($route['price'])) + $servicePrice;
+                $data['name']       = $value['name'];
+                $data['unit']       = $unit;
+                $data['unit_total'] = $value['unit_total'];
+                $data['service']    = $service ?? null;
+                $itemData[] = $data;
+            }
+            $total = array_sum(array_column($itemData, 'price'));
+            $result = (object)[
+                'success'       => true,
+                'total_weight'  => $totalWeight,
+                'items'         => $itemData,
+                'total_price'   => $total
+            ];
+        } else {
+            $result = (object)[
+                'success' => false,
+                'message' => 'Total berat barang tidak memenuhi minimum persyaratan pengiriman'
+            ];
+        }
+        return $result;
     }
 }

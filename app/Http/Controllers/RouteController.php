@@ -37,7 +37,7 @@ class RouteController extends BaseController
         ]);
         DB::beginTransaction();
         try {
-            $result = $this->routeService->getByFleetOriginDestination($data);
+            $result = $this->routeService->getByFleetOriginDestinationService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

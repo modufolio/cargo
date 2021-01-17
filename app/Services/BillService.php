@@ -59,4 +59,28 @@ class BillService {
         }
         return $result;
     }
+
+    /**
+     * Calculate price.
+     *
+     * @param Array $data
+     * @return mixed
+     */
+    public function calculatePriceWithoutPromo($items = [], $route = [])
+    {
+        if (empty($items)) {
+            throw new InvalidArgumentException('Item tidak ditemukan');
+        }
+        if (empty($route)) {
+            throw new InvalidArgumentException('Rute tidak masuk dalam jangkauan');
+        }
+
+        try {
+            $result = $this->billRepository->calculatePriceWithoutPromo($items, $route);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal memperkirakan biaya');
+        }
+        return $result;
+    }
 }

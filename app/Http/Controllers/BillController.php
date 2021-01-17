@@ -37,17 +37,21 @@ class BillController extends BaseController
             'destination',
             'fleetId'
         ]);
-        DB::beginTransaction();
+
         try {
-            $route = $this->routeService->getByFleetOriginDestination($data);
-            dd($route);
-            $result = $this->billService->calculatePrice($data['items'], $route);
+            $route = $this->routeService->getByCityService($data);
         } catch (Exception $e) {
-            DB::rollback();
             Log::info($e->getMessage());
             return $this->sendError($e->getMessage());
         }
-        DB::commit();
+
+        try {
+            $result = $this->billService->calculatePriceWithoutPromo($data['items'], $route);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            return $this->sendError($e->getMessage());
+        }
+
         return $this->sendResponse(null, $result);
     }
 }

@@ -19,12 +19,13 @@ class RouteRepository
     }
 
     /**
-     * Get bill by pickup id
+     * Get route by fleet / armada,
+     * origin, destination city, and destination district
      *
-     * @param $pickupId
-     * @return mixed
+     * @param array $data
+     * @return Route
      */
-    public function getByFleetOriginDestination($data)
+    public function getRouteRepo($data)
     {
         $route = $this->route->where([
             ['fleet_id', '=', $data['fleetId']],
@@ -60,6 +61,23 @@ class RouteRepository
         }
 
         // $route = $this->route->sortable(['created_at' => 'desc'])->simplePaginate($perPage);
+        return $route;
+    }
+
+    /**
+     * Get route by fleet / armada,
+     * origin, and destination city
+     *
+     * @param array $data
+     * @return Route
+     */
+    public function getRouteByCityRepo($data)
+    {
+        $route = $this->route->where([
+            ['fleet_id', '=', $data['fleetId']],
+            ['origin', '=', $data['origin']],
+            ['destination_city', '=', $data['destination']],
+        ])->first();
         return $route;
     }
 }

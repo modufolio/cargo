@@ -131,7 +131,7 @@ class PickupService {
 
         // GET ROUTE
         try {
-            $route = $this->routeRepository->getByFleetOriginDestination($data);
+            $route = $this->routeRepository->getRouteRepo($data);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
