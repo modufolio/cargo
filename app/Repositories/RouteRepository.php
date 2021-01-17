@@ -48,17 +48,21 @@ class RouteRepository
         $perPage = $data['perPage'];
         $destination = $data['destination'];
 
+        $route = $this->route->sortable();
+
         if (empty($perPage)) {
             $perPage = 15;
         }
 
         if (!empty($origin)) {
-            $route = $this->route->sortable()->where('origin', 'like', '%'.$origin.'%')->simplePaginate($perPage);
+            $route = $this->route->sortable()->where('origin', 'like', '%'.$origin.'%');
         }
 
         if (!empty($destination)) {
-            $route = $this->route->sortable()->where('destination_district', 'like', '%'.$destination.'%')->simplePaginate($perPage);
+            $route = $this->route->sortable()->where('destination_district', 'like', '%'.$destination.'%');
         }
+
+        $route = $route->paginate($perPage);
 
         // $route = $this->route->sortable(['created_at' => 'desc'])->simplePaginate($perPage);
         return $route;

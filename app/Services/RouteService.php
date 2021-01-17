@@ -29,7 +29,7 @@ class RouteService {
         $validator = Validator::make($data, [
             'origin'                    => 'bail|required|max:50',
             'destination_city'          => 'bail|required|max:50',
-            'destination_disctrict'     => 'bail|required|max:50',
+            'destination_district'     => 'bail|required|max:50',
             'fleetId'                   => 'bail|required|integer'
         ]);
 

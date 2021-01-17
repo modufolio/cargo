@@ -33,16 +33,14 @@ class RouteController extends BaseController
         $data = $request->only([
             'fleetId',
             'origin',
-            'destination',
+            'destination_city',
+            'destination_district'
         ]);
-        DB::beginTransaction();
         try {
             $result = $this->routeService->getByFleetOriginDestinationService($data);
         } catch (Exception $e) {
-            DB::rollback();
             return $this->sendError($e->getMessage());
         }
-        DB::commit();
         return $this->sendResponse(null, $result);
     }
 
