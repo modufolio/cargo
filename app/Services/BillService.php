@@ -81,6 +81,11 @@ class BillService {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal memperkirakan biaya');
         }
+
+        if (!$result->success) {
+            throw new InvalidArgumentException($result->nessage);
+        }
+
         return $result;
     }
 }
