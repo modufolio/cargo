@@ -9,6 +9,7 @@ use App\Models\Receiver;
 use App\Models\User;
 use Indonesia;
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 class AddressRepository
 {
@@ -154,25 +155,19 @@ class AddressRepository
 
     public function validateAddress($data, $userId)
     {
-        $sender = $this->sender->findOrFail($data['senderId']);
-        if ($sender->user_id == $userId) {
-            $sender = true;
-        } else {
-            $sender = false;
+        $sender = $this->sender->find($data['senderId']);
+        if (!$sender || $sender->user_id !== $userId) {
+            throw new InvalidArgumentException('Alamat pengirim tidak ditemukan');
         }
 
-        $receiver = $this->receiver->findOrFail($data['receiverId']);
-        if ($receiver->user_id == $userId) {
-            $receiver = true;
-        } else {
-            $receiver = false;
+        $receiver = $this->receiver->find($data['receiverId']);
+        if (!$receiver || $receiver->user_id !== $userId) {
+            throw new InvalidArgumentException('Alamat penerima tidak ditemukan');
         }
 
-        $debtor = $this->debtor->findOrFail($data['debtorId']);
-        if ($debtor->user_id == $userId) {
-            $debtor = true;
-        } else {
-            $debtor = false;
+        $debtor = $this->debtor->find($data['debtorId']);
+        if (!$debtor || $debtor->user_id !== $userId) {
+            throw new InvalidArgumentException('Alamat penagihan tidak ditemukan');
         }
 
         $data = (object)[
@@ -180,7 +175,7 @@ class AddressRepository
             'receiver' => $receiver,
             'debtor' => $debtor
         ];
-        return $data;
 
+        return $data;
     }
 }

@@ -77,19 +77,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5001)');
-        }
-        if (!$address->sender) {
-            DB::rollback();
-            throw new InvalidArgumentException('Alamat pengirim salah');
-        }
-        if (!$address->receiver) {
-            DB::rollback();
-            throw new InvalidArgumentException('Alamat tujuan pengiriman salah');
-        }
-        if (!$address->debtor) {
-            DB::rollback();
-            throw new InvalidArgumentException('Alamat penagihan salah');
+            throw new InvalidArgumentException($e->getMessage());
         }
 
         // PROMO
@@ -98,7 +86,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5002)');
+            throw new InvalidArgumentException($e->getMessage());
         }
 
         if ($promo !== false) {
@@ -109,13 +97,28 @@ class PickupService {
         }
         // END PROMO
 
+        // GET ROUTE
+        try {
+            $route = $this->routeRepository->getRouteRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Rute pengiriman tidak ditemukan');
+        }
+
+        if (!$route) {
+            DB::rollback();
+            throw new InvalidArgumentException('Mohon maaf, untuk saat ini kota tujuan yang Anda mau belum masuk kedalam jangkauan kami');
+        }
+        // END GET ROUTE
+
         // SAVE PICKUP
         try {
             $pickup = $this->pickupRepository->save($data, $promo);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5003)');
+            throw new InvalidArgumentException('Gagal menyimpan data pickup');
         }
         // END SAVE PICKUP
 
@@ -125,24 +128,9 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5004)');
+            throw new InvalidArgumentException('Gagal menyimpan item / barang');
         }
         // END SAVE ITEM
-
-        // GET ROUTE
-        try {
-            $route = $this->routeRepository->getRouteRepo($data);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5005)');
-        }
-
-        if (!$route) {
-            DB::rollback();
-            throw new InvalidArgumentException('Mohon maaf, untuk saat ini kota tujuan yang Anda mau belum masuk kedalam jangkauan kami');
-        }
-        // END GET ROUTE
 
         // CALCULATE PRICE
         try {
@@ -150,7 +138,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal membuat permintaan pickup (code: 5006)');
+            throw new InvalidArgumentException('Gagal memperkirakan biaya pengiriman');
         }
 
         if (!$price->success) {
