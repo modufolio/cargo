@@ -9,13 +9,15 @@ class Driver extends Model
 {
     use HasFactory;
 
+    protected $hidden = ['created_at', 'updated_at', 'user_id'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function vehicle()
+    public function vehicles()
     {
-        return $this->belongsTo(Vehicle::class);
+        return $this->hasMany(Vehicle::class);
     }
 }

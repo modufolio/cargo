@@ -10,8 +10,15 @@ class Vehicle extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public function drivers()
+    protected $hidden = [
+        'created_at',
+        'deleted_at',
+        'updated_at',
+        'driver_id',
+    ];
+
+    public function driver()
     {
-        return $this->hasMany(Driver::class);
+        return $this->belongsTo(Driver::class);
     }
 }

@@ -137,4 +137,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(Branch::class);
     }
+
+    public function creatorPickups()
+    {
+        return $this->hasMany(Pickup::class, 'created_by');
+    }
+
+    public function deletorPickups()
+    {
+        return $this->hasMany(Pickup::class, 'deleted_by');
+    }
 }

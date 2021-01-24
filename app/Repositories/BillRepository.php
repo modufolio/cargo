@@ -110,6 +110,7 @@ class BillRepository
                 $data['name']       = $value['name'];
                 $data['unit']       = $unit;
                 $data['unit_total'] = $value['unit_total'];
+                $data['unit_count'] = $value['unit_count'];
                 $data['service']    = $service ?? null;
                 $itemData[] = $data;
             }
@@ -169,6 +170,7 @@ class BillRepository
                 $data['name']       = $value['name'];
                 $data['unit']       = $unit;
                 $data['unit_total'] = $value['unit_total'];
+                $data['unit_count'] = $value['unit_count'];
                 $data['service']    = $service ?? null;
                 $itemData[] = $data;
             }

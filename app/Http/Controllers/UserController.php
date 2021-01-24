@@ -137,9 +137,23 @@ class UserController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $data = $request->only([
+            'name',
+            'password',
+            'userId',
+            'username',
+            'phone',
+        ]);
+
+        try {
+            $result = $this->userService->update($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
     }
 
     /**

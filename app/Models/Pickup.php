@@ -84,4 +84,14 @@ class Pickup extends Model
         $data = Carbon::parse($value)->format('Y-m-d h:m:s');
         return $data;
     }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function deletedBy()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
 }

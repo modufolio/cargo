@@ -43,6 +43,25 @@ class PickupRepository
         return $pickup->fresh();
     }
 
+    public function savePickupPlanRepo($data)
+    {
+        $pickup = new $this->pickup;
+
+        $pickup->fleet_id           = $data['fleetId'];
+        $pickup->user_id            = $data['userId'];
+        $pickup->promo_id           = $promo['id'] ?? null;
+        $pickup->name               = $data['name'];
+        $pickup->phone              = $data['phone'];
+        $pickup->sender_id          = $data['senderId'];
+        $pickup->receiver_id        = $data['receiverId'];
+        $pickup->debtor_id          = $data['debtorId'];
+        $pickup->notes              = $data['notes'];
+        $pickup->picktime           = $data['picktime'];
+        $pickup->save();
+
+        return $pickup->fresh();
+    }
+
     /**
      * Save get pickup by userId
      *

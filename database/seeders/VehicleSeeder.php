@@ -19,7 +19,7 @@ class VehicleSeeder extends Seeder
         DB::table('vehicles')->truncate();
         DB::table('vehicles')->insert([
             [
-                'driver_id' => Arr::random([3,4]),
+                'driver_id' => Arr::random([1,2]),
                 'name' => 'L 300',
                 'license_plate' => 'B 2906 LMF',
                 'type' => 'L 300',
@@ -27,7 +27,7 @@ class VehicleSeeder extends Seeder
                 'max_weight' => 1200,
             ],
             [
-                'driver_id' => Arr::random([3,4]),
+                'driver_id' => Arr::random([1,2]),
                 'name' => 'KN 20',
                 'license_plate' => 'B 9683 MXG',
                 'type' => 'KN 20',
@@ -35,7 +35,7 @@ class VehicleSeeder extends Seeder
                 'max_weight' => 1000,
             ],
             [
-                'driver_id' => Arr::random([3,4]),
+                'driver_id' => Arr::random([1,2]),
                 'name' => 'C 200',
                 'license_plate' => 'B 5125 PSW',
                 'type' => 'C 200',
@@ -43,7 +43,7 @@ class VehicleSeeder extends Seeder
                 'max_weight' => 800,
             ],
             [
-                'driver_id' => Arr::random([3,4]),
+                'driver_id' => Arr::random([1,2]),
                 'name' => 'C 300',
                 'license_plate' => 'B 1452 HUI',
                 'type' => 'C 300',

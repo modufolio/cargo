@@ -153,4 +153,29 @@ class UserService {
 
         return $result;
     }
+
+    /**
+     * Validate user data.
+     * Update to DB if there are no errors.
+     *
+     * @param array $data
+     * @return String
+     */
+    public function update($data)
+    {
+        $validator = Validator::make($data, [
+            'name' => 'bail|required|max:255',
+            'email' => 'bail|required|max:255|email|unique:users',
+            'username' => 'bail|required|max:255|unique:users,username',
+            'phone' => 'bail|max:15|unique:users,phone',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        $result = $this->userRepository->update($data);
+
+        return $result;
+    }
 }

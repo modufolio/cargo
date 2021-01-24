@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateItemsTable extends Migration
+class CreatePickupPlansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('pickup_plans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('pickup_id');
-            $table->unsignedBigInteger('unit_id');
-            $table->unsignedBigInteger('service_id')->nullable();
-            $table->string('name');
-            $table->string('unit_total');
-            $table->string('unit_count');
-            $table->float('price')->nullable();
+            $table->string('status');
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('deleted_by');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ class CreateItemsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('pickup_plans');
     }
 }

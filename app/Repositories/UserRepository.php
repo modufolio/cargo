@@ -149,4 +149,26 @@ class UserRepository
 
         return $user->fresh();
     }
+
+    /**
+     * Update User
+     *
+     * @param $data
+     * @return User
+     */
+    public function update($data)
+    {
+        $user = $this->user->findOrFail($data['id']);
+
+        $user->name         = $data['name'];
+        $user->email        = strtolower($data['email']);
+        $user->password     = bcrypt($data['password']);
+        $user->username     = $data['username'];
+        $user->role_id      = $data['role_id'];
+        $user->google_id    = $data['google_id'] ?? null;
+        $user->phone        = $data['phone'] ?? null;
+        $user->save();
+
+        return $user->fresh();
+    }
 }

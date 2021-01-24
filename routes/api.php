@@ -20,6 +20,8 @@ use App\Http\Controllers\DebtorController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\DriverController;
 
 // All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom']], function () {
@@ -31,6 +33,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
 
     // User
     Route::get('user-by-id', [UserController::class, 'show']);
+    Route::post('user/update', [UserController::class, 'update']);
 
     // Fleet
     Route::resource('fleet', FleetController::class);
@@ -91,7 +94,6 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::post('user-paginate', [UserController::class, 'paginate']);
         Route::post('user', [UserController::class, 'store']);
         Route::get('user/{id}/edit', [UserController::class, 'edit']);
-        Route::put('user/{id}', [UserController::class, 'update']);
         Route::delete('user/{id}', [UserController::class, 'destroy']);
 
         // Menu
@@ -102,9 +104,19 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('paginate', [RouteController::class, 'paginate']);
         });
 
+        // Vehicle
+        Route::prefix('vehicle')->group(function() {
+            Route::post('search', [VehicleController::class, 'search']);
+        });
+
         // Branch
         Route::prefix('branch')->group(function() {
             Route::post('paginate', [BranchController::class, 'paginate']);
+        });
+
+        // Driver
+        Route::prefix('driver')->group(function() {
+            Route::post('get-by-vehicle', [DriverController::class, 'searchByVehicle']);
         });
     });
 
