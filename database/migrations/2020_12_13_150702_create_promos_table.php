@@ -17,7 +17,7 @@ class CreatePromosTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('deleted_by');
+            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->integer('discount');
             $table->integer('discount_max');
             $table->integer('min_value');

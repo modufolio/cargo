@@ -29,8 +29,8 @@ class CreatePickupsTable extends Migration
             // $table->text('address_billing');
             $table->unsignedBigInteger('debtor_id');
             $table->text('notes');
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('deleted_by');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

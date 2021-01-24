@@ -18,7 +18,7 @@ class CreatePickupPlansTable extends Migration
             $table->unsignedBigInteger('pickup_id');
             $table->string('status');
             $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('deleted_by');
+            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
