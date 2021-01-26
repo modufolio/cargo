@@ -22,6 +22,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\PickupPlanController;
 
 // All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom']], function () {
@@ -116,7 +117,12 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
 
         // Driver
         Route::prefix('driver')->group(function() {
-            Route::post('get-by-vehicle', [DriverController::class, 'searchByVehicle']);
+            Route::post('search', [DriverController::class, 'search']);
+        });
+
+        // Pickup Plan
+        Route::prefix('pickup-plan')->group(function() {
+            Route::post('save', [PickupPlanController::class, 'save']);
         });
     });
 

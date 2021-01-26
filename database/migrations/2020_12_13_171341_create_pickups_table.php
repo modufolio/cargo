@@ -21,7 +21,7 @@ class CreatePickupsTable extends Migration
             $table->timestamp('picktime');
             $table->string('name');
             $table->string('phone');
-            $table->string('status')->default('applied'); // applied, cancel
+            $table->enum('status', ['request', 'cancel', 'picked'])->default('order');
             // $table->text('address_sender');
             $table->unsignedBigInteger('sender_id');
             // $table->text('address_receiver');
@@ -29,6 +29,7 @@ class CreatePickupsTable extends Migration
             // $table->text('address_billing');
             $table->unsignedBigInteger('debtor_id');
             $table->text('notes');
+            $table->unsignedBigInteger('pickup_plan_id')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->softDeletes();

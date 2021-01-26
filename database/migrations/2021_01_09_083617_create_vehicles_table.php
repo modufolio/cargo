@@ -21,6 +21,7 @@ class CreateVehiclesTable extends Migration
             $table->string('type');
             $table->float('max_volume');
             $table->float('max_weight');
+            $table->enum('status', ['available', 'on-duty']); // status ketersediaan kendaraan
             $table->softDeletes();
             $table->timestamps();
         });

@@ -25,14 +25,15 @@ class DriverController extends BaseController
      * @param Request $request
      * @return Driver
      */
-    public function searchByVehicle(Request $request)
+    public function search(Request $request)
     {
         $data = $request->only([
-            'vehicleId',
+            'value',
+            'type'
         ]);
 
         try {
-            $result = $this->driverService->getByVehicleService($data);
+            $result = $this->driverService->getDriverService($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }

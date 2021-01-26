@@ -36,14 +36,14 @@ class VehicleService {
 
         if ($data['type'] == 'number') {
             try {
-                $result = $this->vehicleRepository->getVehicleByNumberRepo($data);
+                $result = $this->vehicleRepository->getAvailableVehicleByNumberRepo($data);
             } catch (Exception $e) {
                 Log::info($e->getMessage());
                 throw new InvalidArgumentException('Gagal mendapat data kendaraan');
             }
         } else {
             try {
-                $result = $this->vehicleRepository->getVehicleByNameRepo($data);
+                $result = $this->vehicleRepository->getAvailableVehicleByNameRepo($data);
             } catch (Exception $e) {
                 Log::info($e->getMessage());
                 throw new InvalidArgumentException('Gagal mendapat data kendaraan');

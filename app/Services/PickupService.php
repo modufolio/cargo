@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Models\Pickup;
+// use App\Models\Pickup;
 use App\Repositories\PickupRepository;
 use App\Repositories\ItemRepository;
 use App\Repositories\BillRepository;
@@ -81,19 +81,23 @@ class PickupService {
         }
 
         // PROMO
-        try {
-            $promo = $this->promoRepository->getById($data['promoId']);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException($e->getMessage());
-        }
-
-        if ($promo !== false) {
-            if ($promo['user_id'] !== $data['userId']) {
+        if ($data['promoId'] !== null) {
+            try {
+                $promo = $this->promoRepository->getById($data['promoId']);
+            } catch (Exception $e) {
                 DB::rollback();
-                throw new InvalidArgumentException('Promo tidak dapat digunakan');
+                Log::info($e->getMessage());
+                throw new InvalidArgumentException($e->getMessage());
             }
+
+            if ($promo !== false) {
+                if ($promo['user_id'] !== $data['userId']) {
+                    DB::rollback();
+                    throw new InvalidArgumentException('Promo tidak dapat digunakan');
+                }
+            }
+        } else {
+            $promo = null;
         }
         // END PROMO
 

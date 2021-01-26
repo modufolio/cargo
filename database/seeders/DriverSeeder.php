@@ -21,11 +21,13 @@ class DriverSeeder extends Seeder
             [
                 'type' => Arr::random(['internal','external']),
                 'user_id' => 3,
+                'status' => 'available',
                 'active' => true
             ],
             [
                 'type' => Arr::random(['internal','external']),
                 'user_id' => 4,
+                'status' => 'available',
                 'active' => true,
             ]
         ]);

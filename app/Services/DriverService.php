@@ -23,22 +23,33 @@ class DriverService {
      * @param array $data
      * @return String
      */
-    public function getByVehicleService($data)
+    public function getDriverService($data)
     {
         $validator = Validator::make($data, [
-            'vehicleId' => 'bail|required|max:50',
+            'value' => 'bail|required|max:50',
+            'type' => 'bail|required|max:50'
         ]);
 
         if ($validator->fails()) {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
-        try {
-            $result = $this->driverRepository->getDriverByVehicleRepo($data);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal mendapat data driver');
+        if ($data['type'] == 'id') {
+            try {
+                $result = $this->driverRepository->getAvailableDriverByVehicleRepo($data['value']);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                throw new InvalidArgumentException('Gagal mendapat data driver');
+            }
+        } else {
+            try {
+                $result = $this->driverRepository->getAvailableDriverByNameRepo($data['value']);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                throw new InvalidArgumentException('Gagal mendapat data driver');
+            }
         }
+
         return $result;
     }
 }

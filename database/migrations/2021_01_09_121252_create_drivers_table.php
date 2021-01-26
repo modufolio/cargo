@@ -16,8 +16,9 @@ class CreateDriversTable extends Migration
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
             $table->enum('type', ['internal', 'external']);
+            $table->enum('status', ['available', 'on-duty']); // status ketersediaan driver
             $table->unsignedBigInteger('user_id')->unique();
-            $table->boolean('active')->default(0);
+            $table->boolean('active')->default(0); // pengganti soft delete
             $table->timestamps();
         });
     }

@@ -38,6 +38,7 @@ class PickupRepository
         $pickup->debtor_id          = $data['debtorId'];
         $pickup->notes              = $data['notes'];
         $pickup->picktime           = $data['picktime'];
+        $pickup->status             = 'request';
         $pickup->save();
 
         return $pickup->fresh();

@@ -94,4 +94,9 @@ class Pickup extends Model
     {
         return $this->belongsTo(User::class, 'deleted_by');
     }
+
+    public function pickupPlan()
+    {
+        return $this->belongsTo(PickupPlan::class, 'pickup_plan_id');
+    }
 }
