@@ -123,6 +123,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         // Pickup Plan
         Route::prefix('pickup-plan')->group(function() {
             Route::post('save', [PickupPlanController::class, 'save']);
+            Route::post('get-pickup', [PickupPlanController::class, 'getPaginatePickup']);
         });
     });
 

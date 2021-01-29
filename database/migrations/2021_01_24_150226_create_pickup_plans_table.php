@@ -15,7 +15,7 @@ class CreatePickupPlansTable extends Migration
     {
         Schema::create('pickup_plans', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['pending', 'cancel'])->default('pending');
+            $table->string('status')->default('pending'); // ['pending', 'cancel']
             $table->unsignedBigInteger('vehicle_id');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('deleted_by')->nullable();

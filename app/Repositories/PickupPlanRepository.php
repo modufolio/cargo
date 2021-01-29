@@ -28,6 +28,7 @@ class PickupPlanRepository
     public function savePickupPlanRepo($pickupId, $vehicleId, $userId)
     {
         $pickupPlan = new $this->pickupPlan;
+        $pickupPlan->status = 'pending';
         $pickupPlan->vehicle_id = $vehicleId;
         $pickupPlan->created_by = $userId;
         $pickupPlan->save();
