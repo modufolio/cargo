@@ -118,7 +118,7 @@ class DriverRepository
             throw new InvalidArgumentException('Driver tidak ditemukan');
         }
         if ($driver->status == 'available') {
-            $driver->active == false;
+            $driver->active = false;
             $driver->save();
             return $driver->fresh();
         } else {
