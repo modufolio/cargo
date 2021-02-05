@@ -18,9 +18,9 @@ class BranchRepository
      *
      * @return Branch
      */
-    public function getAll()
+    public function getAllBranchRepo()
     {
-        return $this->branch->get();
+        return $this->branch->select('name', 'id')->get();
     }
 
     /**

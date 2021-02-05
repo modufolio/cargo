@@ -91,25 +91,15 @@ class AddressRepository
     public function save($data)
     {
 
-        if ($data['is_primary']) {
-            $addressUser = $this->address->where('user_id', $data['userId'])->update(['is_primary' => false]);
-        }
-
         $user = $this->user->find($data['userId']);
 
-        $address = $user->addresses()->create([
-            'is_primary'    => $data['is_primary'],
-            'temporary'     => $data['temporary'],
-            'title'         => $data['title'],
-            'receiptor'     => $data['receiptor'],
-            'phone'         => $data['phone'],
+        $address = $user->address()->create([
             'province'      => $data['province'],
             'city'          => $data['city'],
             'district'      => $data['district'],
             'village'       => $data['village'],
             'postal_code'   => $data['postal_code'],
             'street'        => $data['street'],
-            'notes'         => $data['notes'],
             'created_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
             'updated_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
         ]);
@@ -125,26 +115,17 @@ class AddressRepository
      */
     public function update($data, $id)
     {
-        if ($data['is_primary']) {
-            $this->updatePrimaryAddress($data['userId'], $id, false);
-        }
+        $address = $this->user->find($id)->address;
 
-        $address = $this->address->find($id);
-
-        $address->is_primary = $data['is_primary'];
-        $address->title = $data['title'];
-        $address->receiptor = $data['receiptor'];
-        $address->phone = $data['phone'];
         $address->province = $data['province'];
         $address->city = $data['city'];
         $address->district = $data['district'];
         $address->postal_code = $data['postal_code'];
         $address->street = $data['street'];
-        $address->notes = $data['notes'];
 
-        $address->update();
+        $address->save();
 
-        return $address;
+        return $address->fresh();
     }
 
     public function updatePrimaryAddress($userId, $addressId, $isPrimary)

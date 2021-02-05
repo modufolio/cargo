@@ -88,9 +88,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $data;
     }
 
-    public function addresses()
+    public function address()
     {
-        return $this->hasMany(Address::class);
+        return $this->hasOne(Address::class);
     }
 
     public function verifyUser()

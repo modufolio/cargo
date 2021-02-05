@@ -42,7 +42,7 @@ class RouteRepository
      * @param $pickupId
      * @return mixed
      */
-    public function getAllPaginate($data = [])
+    public function getAllPaginateRepo($data = [])
     {
         $origin = $data['origin'];
         $perPage = $data['perPage'];

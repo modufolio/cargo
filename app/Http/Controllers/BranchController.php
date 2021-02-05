@@ -51,4 +51,20 @@ class BranchController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Branch
+     * @param Request $request
+     */
+    public function list(Request $request)
+    {
+        try {
+            $result = $this->branchService->getAllBranchService();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

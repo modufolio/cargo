@@ -94,6 +94,8 @@ class TestController extends BaseController
      */
     public function store(Request $request)
     {
+        $arr = explode("@", $request->email, 2);
+        dd($arr[0]);
         $data = Route::where([['origin',$request->origin],['destination', $request->destination]])->exists();
 
         return response()->json($data);

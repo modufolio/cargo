@@ -102,19 +102,13 @@ class AddressService {
     public function saveAddressData($data)
     {
         $validator = Validator::make($data, [
-            'is_primary'    => 'bail|required|boolean',
-            'temporary'     => 'bail|required|boolean',
             'userId'        => 'bail|required|integer',
-            'title'         => 'bail|required|max:255',
-            'receiptor'     => 'bail|required|max:255',
-            'phone'         => 'bail|required|max:255',
             'province'      => 'bail|required|max:255',
             'city'          => 'bail|required|max:255',
             'district'      => 'bail|required|max:255',
             'village'       => 'bail|required|max:255',
             'postal_code'   => 'bail|required|integer|max:99999',
             'street'        => 'bail|required|max:255',
-            'notes'         => 'bail|max:255'
         ]);
 
         if ($validator->fails()) {

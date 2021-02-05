@@ -44,10 +44,10 @@ class BranchService {
      *
      * @return Branch
      */
-    public function getAll()
+    public function getAllBranchService()
     {
         try {
-            $branch = $this->branchRepository->getAll();
+            $branch = $this->branchRepository->getAllBranchRepo();
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mendapat semua branch');

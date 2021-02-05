@@ -57,7 +57,7 @@ class RouteController extends BaseController
         ]);
         DB::beginTransaction();
         try {
-            $result = $this->routeService->getAllPaginate($data);
+            $result = $this->routeService->getAllPaginateService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

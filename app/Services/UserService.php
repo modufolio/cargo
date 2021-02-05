@@ -178,4 +178,27 @@ class UserService {
 
         return $result;
     }
+
+    /**
+     * Validate user data.
+     * Update to DB if there are no errors.
+     *
+     * @param array $data
+     * @return String
+     */
+    public function updateBranchService($data)
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'branchId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        $result = $this->userRepository->updateBranchRepo($data);
+
+        return $result;
+    }
 }

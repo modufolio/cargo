@@ -171,4 +171,30 @@ class UserRepository
 
         return $user->fresh();
     }
+
+    public function updateBranchRepo($data)
+    {
+        $user = $this->user->findOrFail($data['userId']);
+        $user->branch_id = $data['branchId'];
+        $user->save();
+        return $user->fresh();
+    }
+
+    /**
+     * Update data driver
+     *
+     * @param $data
+     * @return User
+     */
+    public function updateUserOfDriver($data)
+    {
+        $user = $this->user->where('email', $data['email']);
+        $user->update([
+            'name' => $data['name'],
+            'phone' => $data['phone'],
+            'branch_id' => $data['branchId'],
+        ]);
+        $user = $user->first();
+        return $user;
+    }
 }

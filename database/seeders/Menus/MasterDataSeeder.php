@@ -18,7 +18,7 @@ class MasterDataSeeder extends Seeder
     {
         $menu = new Menu;
         $menu->name = 'Master Data';
-        $menu->slug = 'master-data';
+        $menu->slug = 'master';
         $menu->icon = 'master-data';
         $menu->save();
         $submenu = [

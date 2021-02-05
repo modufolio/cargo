@@ -86,10 +86,10 @@ class RouteService {
     /**
      * Get all routes pagination
      */
-    public function getAllPaginate($data)
+    public function getAllPaginateService($data)
     {
         try {
-            $result = $this->routeRepository->getAllPaginate($data);
+            $result = $this->routeRepository->getAllPaginateRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException($e->getMessage());

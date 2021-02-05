@@ -113,11 +113,16 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         // Branch
         Route::prefix('branch')->group(function() {
             Route::post('paginate', [BranchController::class, 'paginate']);
+            Route::get('list', [BranchController::class, 'list']);
         });
 
         // Driver
         Route::prefix('driver')->group(function() {
             Route::post('search', [DriverController::class, 'search']);
+            Route::post('paginate', [DriverController::class, 'paginate']);
+            Route::post('edit', [DriverController::class, 'edit']);
+            Route::post('disable', [DriverController::class, 'disable']);
+            Route::post('create', [DriverController::class, 'create']);
         });
 
         // Pickup Plan
