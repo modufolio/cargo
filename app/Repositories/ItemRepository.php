@@ -106,7 +106,7 @@ class ItemRepository
         $item->street = $data['street'];
         $item->notes = $data['notes'];
 
-        $item->update();
+        $item->save();
 
         return $item;
     }

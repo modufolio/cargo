@@ -37,7 +37,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::post('user/update', [UserController::class, 'update']);
 
     // Fleet
-    Route::resource('fleet', FleetController::class);
+    Route::get('fleet', [FleetController::class, 'index']);
 
     // Pickup
     Route::post('pickup', [PickupController::class, 'store']);
@@ -63,6 +63,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::get('province/{provinceId}', [RegionController::class, 'getProvince']);
     Route::get('get-cities/{provinceId}', [RegionController::class, 'getCities']);
     Route::get('city/{cityId}', [RegionController::class, 'getCity']);
+    Route::get('get-all-cities', [RegionController::class, 'getAllCities']);
     Route::get('get-districts/{cityId}', [RegionController::class, 'getDistricts']);
     Route::get('district/{districtId}', [RegionController::class, 'getDistrict']);
     Route::get('get-villages/{districtId}', [RegionController::class, 'getVillages']);
@@ -107,6 +108,8 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         // Route
         Route::prefix('route')->group(function() {
             Route::post('paginate', [RouteController::class, 'paginate']);
+            Route::post('create', [RouteController::class, 'create']);
+            Route::get('island', [RouteController::class, 'listIsland']);
         });
 
         // Vehicle
@@ -133,6 +136,11 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::prefix('pickup-plan')->group(function() {
             Route::post('save', [PickupPlanController::class, 'save']);
             Route::post('get-pickup', [PickupPlanController::class, 'getPaginatePickup']);
+        });
+
+         // Fleet
+         Route::prefix('fleet')->group(function() {
+            Route::post('list', [FleetController::class, 'list']);
         });
     });
 

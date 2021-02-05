@@ -13,8 +13,9 @@ class Driver extends Model
     protected $hidden = ['created_at', 'updated_at', 'user_id'];
 
     public $sortable = [
-        'user_id',
+        'user',
         'type',
+        'active',
         'status',
         'created_at'
     ];

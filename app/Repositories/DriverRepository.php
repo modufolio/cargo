@@ -70,11 +70,121 @@ class DriverRepository
     public function getAllPaginateRepo($data = [])
     {
         $perPage = $data['perPage'];
+        $page = $data['page'];
+        $id = $data['id'];
+        $active = $data['active'];
+        $status = $data['status'];
+        $type = $data['type'];
+        $name = $data['name'];
+        $email = $data['email'];
+        $branch = $data['branch'];
+        $phone = $data['phone'];
+        $sort = $data['sort'];
 
         $driver = $this->driver->with(['user', 'user.address'])->sortable();
 
         if (empty($perPage)) {
             $perPage = 15;
+        }
+
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'id':
+                    $driver = $driver->sortable([
+                        'id' => $order
+                    ]);
+                    break;
+                case 'active':
+                    $driver = $driver->sortable([
+                        'active' => $order
+                    ]);
+                    break;
+                case 'type':
+                    $driver = $driver->sortable([
+                        'type' => $order
+                    ]);
+                    break;
+                case 'status':
+                    $driver = $driver->sortable([
+                        'status' => $order
+                    ]);
+                    break;
+                case 'user.name':
+                    $driver = $driver->sortable([
+                        'user.name' => $order
+                    ]);
+                    break;
+                case 'user.email':
+                    $driver = $driver->sortable([
+                        'user.email' => $order
+                    ]);
+                    break;
+                case 'user.branch':
+                    $driver = $driver->sortable([
+                        'user.branch' => $order
+                    ]);
+                    break;
+                case 'user.phone':
+                    $driver = $driver->sortable([
+                        'user.phone' => $order
+                    ]);
+                    break;
+                default:
+                    $driver = $driver->sortable([
+                        'id' => 'desc'
+                    ]);
+                    break;
+            }
+        }
+
+        if (!empty($id)) {
+            $driver = $driver->where('id', 'ilike', '%'.$id.'%');
+        }
+
+        if (!empty($type)) {
+            $driver = $driver->where('type', 'ilike', '%'.$type.'%');
+        }
+
+        if (!empty($active)) {
+            $driver = $driver->where('active', 'ilike', '%'.$active.'%');
+        }
+
+        if (!empty($status)) {
+            $driver = $driver->where('status', 'ilike', '%'.$status.'%');
+        }
+
+        if (!empty($name)) {
+            $driver = $driver->whereHas('user', function($q) use ($name) {
+                $q->where('name', 'ilike', '%'.$name.'%');
+            });
+        }
+
+        if (!empty($email)) {
+            $driver = $driver->whereHas('user', function($q) use ($email) {
+                $q->where('email', 'ilike', '%'.$email.'%');
+            });
+        }
+
+        if (!empty($phone)) {
+            $driver = $driver->whereHas('user', function($q) use ($phone) {
+                $q->where('phone', 'ilike', '%'.$phone.'%');
+            });
+        }
+
+        if (!empty($branch)) {
+            $driver = $driver->whereHas('user', function($q) use ($branch) {
+                $q->whereHas('branch', function($x) use ($branch) {
+                    $x->where('name', 'ilike', '%'.$branch.'%');
+                });
+            });
         }
 
         $driver = $driver->paginate($perPage);

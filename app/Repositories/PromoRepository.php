@@ -134,7 +134,7 @@ class PromoRepository
         $promo->description = $data['description'];
         $promo->code = $data['code'];
         $promo->term = $data['term'];
-        $promo->update();
+        $promo->save();
         return $promo->fresh();
     }
 

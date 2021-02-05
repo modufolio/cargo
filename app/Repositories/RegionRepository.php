@@ -19,6 +19,12 @@ class RegionRepository
         return $data;
     }
 
+    public function getAllCityRepo()
+    {
+        $data = $this->indo::allCities();
+        return $data;
+    }
+
     public function getProvince($provinceId)
     {
         $data = $this->indo::findProvince($provinceId);

@@ -14,7 +14,7 @@ class Route extends Model
         'minimum_weight' => 'float'
     ];
     public $sortable = [
-        'fleet_id',
+        'fleet',
         'origin',
         'destination_district',
         'destination_city',

@@ -46,25 +46,94 @@ class RouteRepository
     {
         $origin = $data['origin'];
         $perPage = $data['perPage'];
-        $destination = $data['destination'];
+        $destinationCity = $data['destinationCity'];
+        $destinationDistrict = $data['destinationDistrict'];
+        $price = $data['price'];
+        $minWeight = $data['minWeight'];
+        $fleet = $data['fleet'];
 
-        $route = $this->route->sortable();
+        $route = $this->route->with('fleet')->sortable();
 
         if (empty($perPage)) {
             $perPage = 15;
         }
 
-        if (!empty($origin)) {
-            $route = $this->route->sortable()->where('origin', 'like', '%'.$origin.'%');
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'fleet.name':
+                    $route = $route->sortable([
+                        'fleet.name' => $order
+                    ]);
+                    break;
+                case 'origin':
+                    $route = $route->sortable([
+                        'origin' => $order
+                    ]);
+                    break;
+                case 'destination_city':
+                    $route = $route->sortable([
+                        'destination_city' => $order
+                    ]);
+                    break;
+                case 'destination_district':
+                    $route = $route->sortable([
+                        'destination_district' => $order
+                    ]);
+                    break;
+                case 'min_weight':
+                    $route = $route->sortable([
+                        'min_weight' => $order
+                    ]);
+                    break;
+                case 'price':
+                    $route = $route->sortable([
+                        'price' => $order
+                    ]);
+                    break;
+                default:
+                    $route = $route->sortable([
+                        'id' => 'desc'
+                    ]);
+                    break;
+            }
         }
 
-        if (!empty($destination)) {
-            $route = $this->route->sortable()->where('destination_district', 'like', '%'.$destination.'%');
+        if (!empty($origin)) {
+            $route = $route->where('origin', 'ilike', '%'.$origin.'%');
+        }
+
+        if (!empty($destinationDistrict)) {
+            $route = $route->where('destination_district', 'ilike', '%'.$destinationDistrict.'%');
+        }
+
+        if (!empty($destinationCity)) {
+            $route = $route->where('destination_city', 'ilike', '%'.$destinationCity.'%');
+        }
+
+        if (!empty($minWeight)) {
+            $route = $route->where('min_weight', 'like', '%'.$minWeight.'%');
+        }
+
+        if (!empty($price)) {
+            $route = $route->where('price', 'like', '%'.$price.'%');
+        }
+
+        if (!empty($fleet)) {
+            $route = $route->whereHas('fleet', function($q) use ($fleet) {
+                $q->where('type', 'ilike', '%'.$fleet.'%');
+            });
         }
 
         $route = $route->paginate($perPage);
 
-        // $route = $this->route->sortable(['created_at' => 'desc'])->simplePaginate($perPage);
         return $route;
     }
 
@@ -83,5 +152,51 @@ class RouteRepository
             ['destination_city', '=', $data['destination']],
         ])->first();
         return $route;
+    }
+
+    /**
+     * Get route destination island,
+     *
+     * @return Route
+     */
+    public function getDestinationIslandRepo()
+    {
+        $island = $this->route->select('destination_island')->get();
+        $route = [];
+        foreach ($island as $key => $value) {
+            if (!in_array($value, $route)) {
+                $route[] = $value;
+            }
+        }
+        return $route;
+    }
+
+    /**
+     * create route,
+     *
+     * @param array $data
+     * @return Route
+     */
+    public function createRouteRepo($data = [])
+    {
+        $route = $this->route->where('origin', $data['origin'])
+                ->where('destination_city', $data['destinationCity'])
+                ->where('destination_district', $data['destinationDistrict'])
+                ->where('fleet_id', $data['fleet'])->first();
+
+        if ($route) {
+            throw new InvalidArgumentException('rute asal sampai tujuan dengan armada yang ini sudah ada');
+        }
+
+        $route = new $this->route;
+        $route->fleet_id = $data['fleet'];
+        $route->origin = $data['origin'];
+        $route->destination_island = $data['destinationIsland'];
+        $route->destination_city = $data['destinationCity'];
+        $route->destination_district = $data['destinationDistrict'];
+        $route->price = $data['price'];
+        $route->minimum_weight = $data['minWeight'];
+        $route->save();
+        return $route->fresh();
     }
 }

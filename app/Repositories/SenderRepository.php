@@ -127,7 +127,7 @@ class SenderRepository
         $sender->street = $data['street'];
         $sender->notes = $data['notes'];
 
-        $sender->update();
+        $sender->save();
 
         return $sender;
     }

@@ -123,7 +123,7 @@ class ReceiverRepository
         $receiver->notes = $data['notes'];
         $receiver->temporary = $data['temporary'];
 
-        $receiver->update();
+        $receiver->save();
 
         return $receiver;
     }

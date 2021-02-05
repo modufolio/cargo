@@ -6,6 +6,7 @@ use Exception;
 use DB;
 use Log;
 use Validator;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class BaseService {

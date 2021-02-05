@@ -7,6 +7,7 @@ use Exception;
 use DB;
 use Log;
 use Validator;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class RouteService {
@@ -110,6 +111,63 @@ class RouteService {
             Log::info($e->getMessage());
             throw new InvalidArgumentException($e->getMessage());
         }
+        return $result;
+    }
+
+    /**
+     * Get route destination island
+     *
+     * @param array $data
+     */
+    public function getDestinationIslandService()
+    {
+        try {
+            $result = $this->routeRepository->getDestinationIslandRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
+
+    /**
+     * Create route service
+     *
+     * @param array $data
+     */
+    public function createRouteService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'origin' => [
+                'bail','required','max:50',
+            ],
+            'destinationCity' => [
+                'bail','required','max:50',
+            ],
+            'destinationDistrict' => [
+                'bail','required','max:50',
+            ],
+            'destinationIsland' => 'bail|required|max:50',
+            'fleet' => 'bail|required',
+            'price' => 'bail|required',
+            'minWeight' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        // dd($data);
+
+        DB::beginTransaction();
+        try {
+            $result = $this->routeRepository->createRouteRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
         return $result;
     }
 }

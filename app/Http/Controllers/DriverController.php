@@ -70,6 +70,16 @@ class DriverController extends BaseController
     {
         $data = $request->only([
             'perPage',
+            'page',
+            'id',
+            'email',
+            'name',
+            'active',
+            'status',
+            'type',
+            'branch',
+            'phone',
+            'sort'
         ]);
 
         try {

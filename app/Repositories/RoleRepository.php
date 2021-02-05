@@ -67,7 +67,7 @@ class RoleRepository
         $role->slug = $data['slug'];
         $role->ranking = $data['ranking'];
         $role->features = $data['features'];
-        $role->update();
+        $role->save();
 
         return $role;
     }

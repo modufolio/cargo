@@ -23,6 +23,12 @@ class RegionService {
         return $result;
     }
 
+    public function getAllCityService()
+    {
+        $result = $this->regionRepository->getAllCityRepo();
+        return $result;
+    }
+
     public function getProvince($provinceId)
     {
         $result = $this->regionRepository->getProvince($provinceId);

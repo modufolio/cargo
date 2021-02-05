@@ -120,7 +120,7 @@ class DebtorRepository
         $debtor->postal_code = $data['postal_code'];
         $debtor->street = $data['street'];
         $debtor->notes = $data['notes'];
-        $debtor->update();
+        $debtor->save();
         return $debtor;
     }
 }

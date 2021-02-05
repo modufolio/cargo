@@ -45,6 +45,16 @@ class RegionController extends BaseController
         return $this->sendResponse(null, $response);
     }
 
+    public function getAllCities()
+    {
+        try {
+            $response = $this->regionService->getAllCityService();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $response);
+    }
+
     public function getCity($cityId)
     {
         try {
