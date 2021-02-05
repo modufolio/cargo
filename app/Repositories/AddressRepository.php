@@ -115,7 +115,20 @@ class AddressRepository
      */
     public function update($data, $id)
     {
-        $address = $this->user->find($id)->address;
+        $user = $this->user->find($id);
+        $address = $user->address;
+        if (!$address) {
+            $address = $user->address()->create([
+                'province'      => $data['province'],
+                'city'          => $data['city'],
+                'district'      => $data['district'],
+                'village'       => $data['village'],
+                'postal_code'   => $data['postal_code'],
+                'street'        => $data['street'],
+                'created_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'updated_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+            ]);
+        }
 
         $address->province = $data['province'];
         $address->city = $data['city'];
