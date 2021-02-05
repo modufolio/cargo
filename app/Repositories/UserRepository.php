@@ -156,17 +156,15 @@ class UserRepository
      * @param $data
      * @return User
      */
-    public function update($data)
+    public function updateUserRepo($data)
     {
-        $user = $this->user->findOrFail($data['id']);
+        $user = $this->user->findOrFail($data['userId']);
 
         $user->name         = $data['name'];
-        $user->email        = strtolower($data['email']);
-        $user->password     = bcrypt($data['password']);
         $user->username     = $data['username'];
-        $user->role_id      = $data['role_id'];
-        $user->google_id    = $data['google_id'] ?? null;
-        $user->phone        = $data['phone'] ?? null;
+        if ($user->phone !== $data['phone']) {
+            $user->phone        = $data['phone'] ?? null;
+        }
         $user->save();
 
         return $user->fresh();

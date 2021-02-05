@@ -7,6 +7,7 @@ use Exception;
 use DB;
 use Log;
 use Validator;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class UserService {
@@ -112,7 +113,7 @@ class UserService {
         DB::beginTransaction();
 
         try {
-            $user = $this->userRepository->update($data, $id);
+            $user = $this->userRepository->updateUserRepo($data, $id);
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -161,20 +162,39 @@ class UserService {
      * @param array $data
      * @return String
      */
-    public function update($data)
+    public function updateUserService($data)
     {
         $validator = Validator::make($data, [
             'name' => 'bail|required|max:255',
-            'email' => 'bail|required|max:255|email|unique:users',
-            'username' => 'bail|required|max:255|unique:users,username',
-            'phone' => 'bail|max:15|unique:users,phone',
+            'username' => [
+                'bail',
+                'required',
+                'max:255',
+                Rule::unique('users', 'username')->ignore($data['userId'])
+            ],
+            'phone' => [
+                'bail',
+                'max:15',
+                Rule::unique('users', 'phone')->ignore($data['userId'])
+            ]
         ]);
 
         if ($validator->fails()) {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
-        $result = $this->userRepository->update($data);
+        DB::beginTransaction();
+
+        try {
+            $result = $this->userRepository->updateUserRepo($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mengubah data user');
+        }
+
+        DB::commit();
+
 
         return $result;
     }

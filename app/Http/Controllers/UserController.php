@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Exception;
+use DB;
 
 use App\Services\UserService;
 use App\Http\Controllers\BaseController;
@@ -119,16 +120,30 @@ class UserController extends BaseController
         return $this->sendResponse(null, $result);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+    // /**
+    //  * Show the form for editing the specified resource.
+    //  *
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function edit(Request $request)
+    // {
+    //     $data = $request->only([
+    //         'name',
+    //         'password',
+    //         'password_confirmation',
+    //         'username',
+    //         'phone',
+    //     ]);
+
+    //     try {
+    //         $result = $this->userService->editUser($data);
+    //     } catch (Exception $e) {
+    //         return $this->sendError($e->getMessage());
+    //     }
+
+    //     return $this->sendResponse(null, $result);
+    // }
 
     /**
      * Update the specified resource in storage.
@@ -141,18 +156,19 @@ class UserController extends BaseController
     {
         $data = $request->only([
             'name',
-            'password',
-            'userId',
             'username',
             'phone',
+            'userId'
         ]);
 
+        DB::beginTransaction();
         try {
-            $result = $this->userService->update($data);
+            $result = $this->userService->updateUserService($data);
         } catch (Exception $e) {
+            DB::rollback();
             return $this->sendError($e->getMessage());
         }
-
+        DB::commit();
         return $this->sendResponse(null, $result);
     }
 

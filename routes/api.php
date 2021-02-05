@@ -87,14 +87,18 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::post('select', [PromoController::class, 'selectPromo']);
     });
 
+    // User
+    Route::prefix('user')->group(function() {
+        Route::post('update', [UserController::class, 'update']);
+    });
+
     // Admin Only
     Route::group(['middleware' => ['admin.panel']], function () {
         // User
         Route::get('user', [UserController::class, 'index']);
-        Route::get('user/create', [UserController::class, 'create']);
+        Route::post('user/create', [UserController::class, 'create']);
         Route::post('user-paginate', [UserController::class, 'paginate']);
         Route::post('user', [UserController::class, 'store']);
-        Route::get('user/{id}/edit', [UserController::class, 'edit']);
         Route::delete('user/{id}', [UserController::class, 'destroy']);
 
         // Menu
