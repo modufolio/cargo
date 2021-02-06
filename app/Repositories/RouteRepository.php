@@ -45,6 +45,7 @@ class RouteRepository
     public function getAllPaginateRepo($data = [])
     {
         $origin = $data['origin'];
+        $sort = $data['sort'];
         $perPage = $data['perPage'];
         $destinationCity = $data['destinationCity'];
         $destinationDistrict = $data['destinationDistrict'];
@@ -68,9 +69,9 @@ class RouteRepository
                 $order = 'desc';
             }
             switch ($sort['field']) {
-                case 'fleet.name':
+                case 'fleet.type':
                     $route = $route->sortable([
-                        'fleet.name' => $order
+                        'fleet.type' => $order
                     ]);
                     break;
                 case 'origin':

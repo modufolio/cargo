@@ -57,7 +57,8 @@ class RouteController extends BaseController
             'destinationDistrict',
             'price',
             'minWeight',
-            'fleet'
+            'fleet',
+            'sort'
         ]);
         DB::beginTransaction();
         try {
