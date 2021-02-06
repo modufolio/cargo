@@ -60,7 +60,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'created_at',
         'name',
         'id',
-        'role'
+        'role',
+        'branch',
+        'address'
     ];
 
     public function role()

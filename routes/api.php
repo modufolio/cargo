@@ -117,6 +117,9 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         // Vehicle
         Route::prefix('vehicle')->group(function() {
             Route::post('search', [VehicleController::class, 'search']);
+            Route::post('edit', [VehicleController::class, 'edit']);
+            Route::post('create', [VehicleController::class, 'create']);
+            Route::post('paginate', [VehicleController::class, 'paginate']);
         });
 
         // Branch

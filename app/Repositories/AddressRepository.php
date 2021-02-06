@@ -133,8 +133,9 @@ class AddressRepository
         $address->province = $data['province'];
         $address->city = $data['city'];
         $address->district = $data['district'];
-        $address->postal_code = $data['postal_code'];
+        $address->village = $data['village'];
         $address->street = $data['street'];
+        $address->postal_code = $data['postal_code'];
 
         $address->save();
 

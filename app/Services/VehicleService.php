@@ -52,4 +52,79 @@ class VehicleService {
 
         return $result;
     }
+
+    /**
+     * Pagination vehicle
+     */
+    public function paginateVehicleService($data = [])
+    {
+        try {
+            $result = $this->vehicleRepository->vehiclePaginationRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat data kendaraan');
+        }
+        return $result;
+    }
+
+    /**
+     * edit vehicle
+     */
+    public function editVehicleService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'id' => 'bail|required|max:50',
+            'licensePlate' => 'bail|required|max:50',
+            'name' => 'bail|required|max:50',
+            'type' => 'bail|required|max:50',
+            'maxVolume' => 'bail|required|max:50',
+            'maxWeight' => 'bail|required|max:50',
+            'status' => 'bail|required|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $result = $this->vehicleRepository->editVehicleRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mengubah data kendaraan');
+        }
+        DB::commit();
+        return $result;
+    }
+
+    /**
+     * edit vehicle
+     */
+    public function createVehicleService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'licensePlate' => 'bail|required|max:50',
+            'name' => 'bail|required|max:50',
+            'type' => 'bail|required|max:50',
+            'maxVolume' => 'bail|required|max:50',
+            'maxWeight' => 'bail|required|max:50',
+            'status' => 'bail|required|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $result = $this->vehicleRepository->createVehicleRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal menambahkan data kendaraan');
+        }
+        DB::commit();
+        return $result;
+    }
 }

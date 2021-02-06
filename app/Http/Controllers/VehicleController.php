@@ -39,4 +39,86 @@ class VehicleController extends BaseController
 
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * pagination vehicle.
+     *
+     * @param Request $request
+     * @return Vehicle
+     */
+    public function paginate(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'sort',
+            'id',
+            'licensePlate',
+            'name',
+            'type',
+            'maxVolume',
+            'maxWeight',
+            'status'
+        ]);
+
+        try {
+            $result = $this->vehicleService->paginateVehicleService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * edit vehicle.
+     *
+     * @param Request $request
+     * @return Vehicle
+     */
+    public function edit(Request $request)
+    {
+        $data = $request->only([
+            'id',
+            'licensePlate',
+            'name',
+            'type',
+            'maxVolume',
+            'maxWeight',
+            'status'
+        ]);
+
+        try {
+            $result = $this->vehicleService->editVehicleService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * create vehicle.
+     *
+     * @param Request $request
+     * @return Vehicle
+     */
+    public function create(Request $request)
+    {
+        $data = $request->only([
+            'licensePlate',
+            'name',
+            'type',
+            'maxVolume',
+            'maxWeight',
+            'status'
+        ]);
+
+        try {
+            $result = $this->vehicleService->createVehicleService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
 }
