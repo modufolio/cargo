@@ -70,6 +70,7 @@ class DriverRepository
     public function getAllPaginateRepo($data = [])
     {
         $perPage = $data['perPage'];
+        $sort = $data['sort'];
         $page = $data['page'];
         $id = $data['id'];
         $active = $data['active'];
@@ -79,9 +80,8 @@ class DriverRepository
         $email = $data['email'];
         $branch = $data['branch'];
         $phone = $data['phone'];
-        $sort = $data['sort'];
 
-        $driver = $this->driver->with(['user', 'user.address'])->sortable();
+        $driver = $this->driver->with(['user', 'user.address', 'user.branch']);
 
         if (empty($perPage)) {
             $perPage = 15;
@@ -120,16 +120,6 @@ class DriverRepository
                 case 'user.name':
                     $driver = $driver->sortable([
                         'user.name' => $order
-                    ]);
-                    break;
-                case 'user.email':
-                    $driver = $driver->sortable([
-                        'user.email' => $order
-                    ]);
-                    break;
-                case 'user.branch':
-                    $driver = $driver->sortable([
-                        'user.branch' => $order
                     ]);
                     break;
                 case 'user.phone':
