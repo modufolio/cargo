@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\Branch;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class BranchRepository
 {
@@ -24,27 +26,26 @@ class BranchRepository
     }
 
     /**
-     * Get All Branch
+     * Get all branch paginate
      *
-     * @return Branch
+     * @param array $data
+     * @return mixed
      */
-    public function getPaginate($data)
+    public function getAllPaginateRepo($data = [])
     {
+        $sort = $data['sort'];
         $perPage = $data['perPage'];
-        $page = $data['page'];
 
         $name = $data['name'];
-        $email = $data['email'];
-        $role = $data['role'];
+        $id = $data['id'];
+        $province = $data['province'];
+        $city = $data['city'];
+        $district = $data['district'];
 
-        $sort = $data['sort'];
-
-        $branch = $this->branch->select('id','name','email','role_id','phone')->whereHas('role',)->with(['role' => function($q) {
-            $q->select('id','name','slug');
-        }]);
+        $branch = $this->branch;
 
         if (empty($perPage)) {
-            $perPage = 10;
+            $perPage = 15;
         }
 
         if (!empty($sort['field'])) {
@@ -57,19 +58,29 @@ class BranchRepository
                 $order = 'desc';
             }
             switch ($sort['field']) {
-                case 'id':
-                    $branch = $branch->sortable([
-                        'id' => $order
-                    ]);
-                    break;
                 case 'name':
                     $branch = $branch->sortable([
                         'name' => $order
                     ]);
                     break;
-                case 'created_at':
+                case 'province':
                     $branch = $branch->sortable([
-                        'created_at' => $order
+                        'province' => $order
+                    ]);
+                    break;
+                case 'city':
+                    $branch = $branch->sortable([
+                        'city' => $order
+                    ]);
+                    break;
+                case 'district':
+                    $branch = $branch->sortable([
+                        'district' => $order
+                    ]);
+                    break;
+                case 'id':
+                    $branch = $branch->sortable([
+                        'id' => $order
                     ]);
                     break;
                 default:
@@ -80,27 +91,29 @@ class BranchRepository
             }
         }
 
-        if (!empty($id)) {
-            $branch = $branch->where('id', 'like', '%'.$id.'%');
-        }
-
         if (!empty($name)) {
             $branch = $branch->where('name', 'ilike', '%'.$name.'%');
         }
 
-        if (!empty($email)) {
-            $branch = $branch->where('email', 'ilike', '%'.$email.'%');
+        if (!empty($id)) {
+            $branch = $branch->where('id', 'ilike', '%'.$id.'%');
         }
 
-        if (!empty($role)) {
-            $branch = $branch->whereHas('role', function($q) use ($role) {
-                $q->where('slug', $role);
-            });
+        if (!empty($province)) {
+            $branch = $branch->where('province', 'ilike', '%'.$province.'%');
         }
 
-        $result = $branch->paginate($perPage);
+        if (!empty($district)) {
+            $branch = $branch->where('district', 'ilike', '%'.$district.'%');
+        }
 
-        return $result;
+        if (!empty($city)) {
+            $branch = $branch->where('city', 'like', '%'.$city.'%');
+        }
+
+        $branch = $branch->paginate($perPage);
+
+        return $branch;
     }
 
     /**
@@ -131,21 +144,22 @@ class BranchRepository
      * @param $data
      * @return Branch
      */
-    public function save($data)
+    public function saveBranchRepo($data = [])
     {
         $branch = new $this->branch;
 
         $branch->name = $data['name'];
-        $branch->slug = strtolower($data['slug']);
+        $slug = Str::of($data['name'])->slug('-');
+        $branch->slug = $slug;
         $branch->province = $data['province'];
         $branch->city = $data['city'];
         $branch->district = $data['district'];
         $branch->village = $data['village'];
-        $branch->postal_code = $data['postal_code'];
+        $branch->postal_code = $data['postalCode'];
         $branch->street = $data['street'];
         $branch->save();
 
-        return $branch->fresh();
+        return $branch;
     }
 
     /**
@@ -158,6 +172,34 @@ class BranchRepository
     {
         $branch = $this->branch->findOrFail($id);
         $branch->delete();
+        return $branch;
+    }
+
+    /**
+     * edit Branch
+     *
+     * @param $data
+     * @return Branch
+     */
+    public function updateBranchRepo($data = [])
+    {
+        $branch = $this->branch->find($data['id']);
+
+        if (!$branch) {
+            throw new InvalidArgumentException('Cabang tidak ditemukan');
+        }
+
+        $branch->name = $data['name'];
+        $slug = Str::slug($data['name'], '-');
+        $branch->slug = $slug;
+        $branch->province = $data['province'];
+        $branch->city = $data['city'];
+        $branch->district = $data['district'];
+        $branch->village = $data['village'];
+        $branch->postal_code = $data['postalCode'];
+        $branch->street = $data['street'];
+        $branch->save();
+
         return $branch;
     }
 }

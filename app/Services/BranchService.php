@@ -63,7 +63,7 @@ class BranchService {
     public function getAllPaginate($data)
     {
         try {
-            $branch = $this->branchRepository->getPaginate($data);
+            $branch = $this->branchRepository->getAllPaginateRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mendapat semua branch');
@@ -133,23 +133,67 @@ class BranchService {
      * @param array $data
      * @return Branch
      */
-    public function save($data)
+    public function createBranchService($data)
     {
         $validator = Validator::make($data, [
             'name' => 'bail|required|max:255',
-            'email' => 'bail|required|max:255|email|unique:users',
-            'password' => 'bail|required|max:255|confirmed',
-            'role_id' => 'bail|required|max:1',
-            'username' => 'bail|required|max:255|unique:users,username',
-            'phone' => 'bail|max:15|unique:users,phone',
+            'province' => 'bail|required|max:255',
+            'city' => 'bail|required|max:255',
+            'district' => 'bail|required|max:255',
+            'village' => 'bail|required|max:255',
+            'postalCode' => 'bail|required|max:255',
+            'street' => 'bail|required|max:99999',
         ]);
 
         if ($validator->fails()) {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
-        $result = $this->branchRepository->save($data);
+        DB::beginTransaction();
+        try {
+            $result = $this->branchRepository->saveBranchRepo($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal menambah data cabang');
+        }
+        DB::commit();
+        return $result;
+    }
 
+    /**
+     * Validate branch data.
+     * update to DB if there are no errors.
+     *
+     * @param array $data
+     * @return Branch
+     */
+    public function updateBranchService($data)
+    {
+        $validator = Validator::make($data, [
+            'id' => 'bail|required',
+            'name' => 'bail|required|max:255',
+            'province' => 'bail|required|max:255',
+            'city' => 'bail|required|max:255',
+            'district' => 'bail|required|max:255',
+            'village' => 'bail|required|max:255',
+            'postalCode' => 'bail|required|max:255',
+            'street' => 'bail|required|max:99999',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $result = $this->branchRepository->updateBranchRepo($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal merubah data cabang');
+        }
+        DB::commit();
         return $result;
     }
 }

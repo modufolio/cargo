@@ -42,6 +42,8 @@ class BranchController extends BaseController
             'name',
             'city',
             'district',
+            'province',
+            'id',
             'sort'
         ]);
         try {
@@ -62,6 +64,74 @@ class BranchController extends BaseController
     {
         try {
             $result = $this->branchService->getAllBranchService();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * Delete branch
+     * @param Request $request
+     */
+    public function delete(Request $request)
+    {
+        $data = $request->only([
+            'branchId'
+        ]);
+        try {
+            $result = $this->branchService->deleteBranchService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * create branch.
+     *
+     * @return Branch
+     * @param Request $request
+     */
+    public function create(Request $request)
+    {
+        $data = $request->only([
+            'name',
+            'city',
+            'district',
+            'province',
+            'village',
+            'postalCode',
+            'street'
+        ]);
+        try {
+            $result = $this->branchService->createBranchService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * update branch.
+     *
+     * @return Branch
+     * @param Request $request
+     */
+    public function update(Request $request)
+    {
+        $data = $request->only([
+            'name',
+            'id',
+            'city',
+            'district',
+            'province',
+            'village',
+            'postalCode',
+            'street'
+        ]);
+        try {
+            $result = $this->branchService->updateBranchService($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }

@@ -15,7 +15,10 @@ class Branch extends Model
         'created_at',
         'name',
         'id',
-        'slug'
+        'slug',
+        'province',
+        'city',
+        'district'
     ];
 
     protected $hidden = [

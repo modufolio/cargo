@@ -126,6 +126,9 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         // Branch
         Route::prefix('branch')->group(function() {
             Route::post('paginate', [BranchController::class, 'paginate']);
+            Route::post('create', [BranchController::class, 'create']);
+            Route::post('delete', [BranchController::class, 'delete']);
+            Route::post('update', [BranchController::class, 'update']);
             Route::get('list', [BranchController::class, 'list']);
         });
 
