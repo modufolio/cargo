@@ -34,16 +34,6 @@ class MasterDataSeeder extends Seeder
             ],
             [
                 'menu_id' => $menu->id,
-                'name' => 'Satuan',
-                'slug' => 'unit',
-            ],
-            [
-                'menu_id' => $menu->id,
-                'name' => 'Armada',
-                'slug' => 'fleet',
-            ],
-            [
-                'menu_id' => $menu->id,
                 'name' => 'Promo',
                 'slug' => 'promo',
             ],
