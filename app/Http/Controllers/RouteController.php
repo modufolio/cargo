@@ -97,6 +97,33 @@ class RouteController extends BaseController
     }
 
     /**
+     * Edit route
+     * @param Request $request
+     */
+    public function edit(Request $request)
+    {
+        $data = $request->only([
+            'fleet',
+            'id',
+            'origin',
+            'destinationIsland',
+            'destinationCity',
+            'destinationDistrict',
+            'price',
+            'minWeight',
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->routeService->editRouteService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
      * Get destination island
      * @return Route
      */
@@ -107,6 +134,26 @@ class RouteController extends BaseController
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * Delete route
+     * @param Request $request
+     */
+    public function delete(Request $request)
+    {
+        $data = $request->only([
+            'routeId'
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->routeService->deleteRouteService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
         return $this->sendResponse(null, $result);
     }
 }

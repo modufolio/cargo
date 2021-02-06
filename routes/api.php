@@ -109,6 +109,8 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::prefix('route')->group(function() {
             Route::post('paginate', [RouteController::class, 'paginate']);
             Route::post('create', [RouteController::class, 'create']);
+            Route::post('delete', [RouteController::class, 'delete']);
+            Route::post('edit', [RouteController::class, 'edit']);
             Route::get('island', [RouteController::class, 'listIsland']);
         });
 

@@ -170,4 +170,70 @@ class RouteService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * edit route service
+     *
+     * @param array $data
+     */
+    public function editRouteService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'origin' => [
+                'bail','required','max:50',
+            ],
+            'destinationCity' => [
+                'bail','required','max:50',
+            ],
+            'destinationDistrict' => [
+                'bail','required','max:50',
+            ],
+            'destinationIsland' => 'bail|required|max:50',
+            'fleet' => 'bail|required',
+            'price' => 'bail|required',
+            'minWeight' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $result = $this->routeRepository->editRouteRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
+        return $result;
+    }
+
+    /**
+     * delete route service
+     *
+     * @param array $data
+     */
+    public function deleteRouteService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'routeId' => 'bail|required|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $result = $this->routeRepository->deleteRouteRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
+        return $result;
+    }
 }

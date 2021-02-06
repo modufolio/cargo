@@ -199,4 +199,51 @@ class RouteRepository
         $route->save();
         return $route->fresh();
     }
+
+    /**
+     * edit route,
+     *
+     * @param array $data
+     * @return Route
+     */
+    public function editRouteRepo($data = [])
+    {
+        $route = $this->route->where('id', '!=', $data['id'])->where('origin', $data['origin'])
+                ->where('destination_city', $data['destinationCity'])
+                ->where('destination_district', $data['destinationDistrict'])
+                ->where('fleet_id', $data['fleet'])->first();
+
+        if ($route) {
+            throw new InvalidArgumentException('rute asal sampai tujuan dengan armada yang ini sudah ada');
+        }
+
+        $route = $this->route->find($data['id']);
+        if (!$route) {
+            throw new InvalidArgumentException('Rute tidak ditemukan');
+        }
+        $route->fleet_id = $data['fleet'];
+        $route->origin = $data['origin'];
+        $route->destination_island = $data['destinationIsland'];
+        $route->destination_city = $data['destinationCity'];
+        $route->destination_district = $data['destinationDistrict'];
+        $route->price = $data['price'];
+        $route->minimum_weight = $data['minWeight'];
+        $route->save();
+        return $route->fresh();
+    }
+
+    /**
+     * Delete route repository
+     *
+     * @param array $data
+     */
+    public function deleteRouteRepo($data = [])
+    {
+        $route = $this->route->find($data['routeId']);
+        if (!$route) {
+            throw new InvalidArgumentException('Rute tidak ditemukan');
+        }
+        $route->delete();
+        return $route;
+    }
 }
