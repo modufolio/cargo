@@ -121,4 +121,21 @@ class VehicleController extends BaseController
 
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * Delete vehicle
+     * @param Request $request
+     */
+    public function delete(Request $request)
+    {
+        $data = $request->only([
+            'vehicleId'
+        ]);
+        try {
+            $result = $this->vehicleService->deleteVehicleService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

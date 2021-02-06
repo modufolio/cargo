@@ -127,4 +127,31 @@ class VehicleService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * delete vehicle service
+     *
+     * @param array $data
+     */
+    public function deleteVehicleService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'vehicleId' => 'bail|required|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $result = $this->vehicleRepository->deleteVehicleRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
+        return $result;
+    }
 }

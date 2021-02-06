@@ -204,4 +204,19 @@ class VehicleRepository
         $vehicle->save();
         return $vehicle;
     }
+
+    /**
+     * Delete vehicle
+     *
+     * @param array $data
+     */
+    public function deleteVehicleRepo($data = [])
+    {
+        $vehicle = $this->vehicle->find($data['vehicleId']);
+        if (!$vehicle) {
+            throw new InvalidArgumentException('Kendaraan tidak ditemukan');
+        }
+        $vehicle->delete();
+        return $vehicle;
+    }
 }
