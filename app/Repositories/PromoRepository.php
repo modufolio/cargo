@@ -205,4 +205,115 @@ class PromoRepository
         return $result;
     }
 
+
+    /**
+     * Get all promo paginate
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public function getAllPaginateRepo($data = [])
+    {
+        $sort = $data['sort'];
+        $perPage = $data['perPage'];
+
+        $discount = $data['discount'];
+        $discountMax = $data['discountMax'];
+        $minValue = $data['minValue'];
+        $startAt = $data['startAt'];
+        $endAt = $data['endAt'];
+        $id = $data['id'];
+
+        $promo = $this->promo->with(['user' => function($q) {
+            $q->select('name','email','id');
+        },'creator' => function($q) {
+            $q->select('name','email','id');
+        }]);
+
+        if (empty($perPage)) {
+            $perPage = 15;
+        }
+
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'discount':
+                    $promo = $promo->sortable([
+                        'discount' => $order
+                    ]);
+                    break;
+                case 'discount_max':
+                    $promo = $promo->sortable([
+                        'discount_max' => $order
+                    ]);
+                    break;
+                case 'discount':
+                    $promo = $promo->sortable([
+                        'discount' => $order
+                    ]);
+                    break;
+                case 'start_at':
+                    $promo = $promo->sortable([
+                        'start_at' => $order
+                    ]);
+                    break;
+                case 'min_value':
+                    $promo = $promo->sortable([
+                        'min_value' => $order
+                    ]);
+                    break;
+                case 'id':
+                    $promo = $promo->sortable([
+                        'id' => $order
+                    ]);
+                    break;
+                case 'end_at':
+                    $promo = $promo->sortable([
+                        'end_at' => $order
+                    ]);
+                    break;
+                default:
+                    $promo = $promo->sortable([
+                        'id' => 'desc'
+                    ]);
+                    break;
+            }
+        }
+
+        if (!empty($discount)) {
+            $promo = $promo->where('discount', 'ilike', '%'.$discount.'%');
+        }
+
+        if (!empty($id)) {
+            $promo = $promo->where('id', 'ilike', '%'.$id.'%');
+        }
+
+        if (!empty($discountMax)) {
+            $promo = $promo->where('discount_max', 'ilike', '%'.$discountMax.'%');
+        }
+
+        if (!empty($minValue)) {
+            $promo = $promo->where('min_value', 'ilike', '%'.$minValue.'%');
+        }
+
+        if (!empty($startAt)) {
+            $promo = $promo->where('start_at', 'ilike', '%'.$startAt.'%');
+        }
+
+        if (!empty($endAt)) {
+            $promo = $promo->where('end_at', 'ilike', '%'.$endAt.'%');
+        }
+
+        $promo = $promo->paginate($perPage);
+
+        return $promo;
+    }
+
 }

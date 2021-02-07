@@ -129,4 +129,21 @@ class RoleService {
 
         return $result;
     }
+
+    /**
+     * validate and check role data.
+     *
+     * @param array $user
+     * @return String
+     */
+    public function validateRoleLogin($user)
+    {
+        try {
+            $result = $this->roleRepository->checkRoleRepo($user);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }

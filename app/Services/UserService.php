@@ -221,4 +221,38 @@ class UserService {
 
         return $result;
     }
+
+    /**
+     * Get user by name.
+     *
+     * @param string $name
+     * @return String
+     */
+    public function getByNameService($name)
+    {
+        try {
+            $user = $this->userRepository->getByNameRepo($name);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat data user');
+        }
+        return $user;
+    }
+
+    /**
+     * Get user by email.
+     *
+     * @param string $email
+     * @return String
+     */
+    public function getByEmailService($email)
+    {
+        try {
+            $user = $this->userRepository->getByEmailRepo($email);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat data user');
+        }
+        return $user;
+    }
 }

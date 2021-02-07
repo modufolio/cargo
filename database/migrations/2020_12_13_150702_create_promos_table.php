@@ -27,6 +27,7 @@ class CreatePromosTable extends Migration
             $table->text('description');
             $table->text('terms');
             $table->string('code');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

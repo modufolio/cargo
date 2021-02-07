@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Kyslik\ColumnSortable\Sortable;
+
 class Promo extends Model
 {
-    use HasFactory;
+    use HasFactory, Sortable;
     public $timestamps = true;
     protected $guarded = [];
     protected $hidden = [
@@ -15,6 +17,14 @@ class Promo extends Model
         'updated_at',
         'created_by',
         'user_id'
+    ];
+    public $sortable = [
+        'id',
+        'discount',
+        'discount_max',
+        'start_at',
+        'end_at',
+        'min_value',
     ];
 
     public function user()

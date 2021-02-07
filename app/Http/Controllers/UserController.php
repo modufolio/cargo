@@ -182,4 +182,38 @@ class UserController extends BaseController
     {
         //
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function searchName(Request $request)
+    {
+        try {
+            $result = $this->userService->getByNameService($request->query);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function searchEmail(Request $request)
+    {
+        try {
+            $result = $this->userService->getByEmailService($request->query);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
 }

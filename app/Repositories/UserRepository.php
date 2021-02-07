@@ -195,4 +195,30 @@ class UserRepository
         $user = $user->first();
         return $user;
     }
+
+    /**
+     * search user by name
+     *
+     * @param string $name
+     * @return User
+     */
+    public function getByNameRepo($name)
+    {
+        return $this->user->select('id','name')->whereHas('role', function($q) {
+            $q->where('slug', 'customer');
+        })->where('name', 'ilike', '%'.$name.'%')->get();
+    }
+
+    /**
+     * search user by email
+     *
+     * @param string $email
+     * @return User
+     */
+    public function getByEmailRepo($email)
+    {
+        return $this->user->select('id','email')->whereHas('role', function($q) {
+            $q->where('slug', 'customer');
+        })->where('email', 'ilike', '%'.$email.'%')->get();
+    }
 }

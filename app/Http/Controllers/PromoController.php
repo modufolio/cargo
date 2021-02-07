@@ -62,4 +62,31 @@ class PromoController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * Display a listing of the resource paginate.
+     *
+     * @return Branch with paginate
+     * @param Request $request
+     */
+    public function paginate(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'discount',
+            'discountMax',
+            'minValue',
+            'startAt',
+            'endAt',
+            'id',
+            'sort'
+        ]);
+        try {
+            $result = $this->promoService->getPromoPaginateService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

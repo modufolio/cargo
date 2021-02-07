@@ -97,10 +97,14 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::group(['middleware' => ['admin.panel']], function () {
         // User
         Route::get('user', [UserController::class, 'index']);
-        Route::post('user/create', [UserController::class, 'create']);
         Route::post('user-paginate', [UserController::class, 'paginate']);
         Route::post('user', [UserController::class, 'store']);
         Route::delete('user/{id}', [UserController::class, 'destroy']);
+        Route::prefix('user')->group(function() {
+            Route::post('create', [UserController::class, 'create']);
+            Route::post('search-name', [UserController::class, 'searchName']);
+            Route::post('search-email', [UserController::class, 'searchEmail']);
+        });
 
         // Menu
         Route::get('menu', [MenuController::class, 'index']);
@@ -112,6 +116,14 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('delete', [RouteController::class, 'delete']);
             Route::post('edit', [RouteController::class, 'edit']);
             Route::get('island', [RouteController::class, 'listIsland']);
+        });
+
+        // Promo
+        Route::prefix('promo')->group(function() {
+            Route::post('paginate', [PromoController::class, 'paginate']);
+            Route::post('create', [PromoController::class, 'create']);
+            Route::post('delete', [PromoController::class, 'delete']);
+            Route::post('update', [PromoController::class, 'update']);
         });
 
         // Vehicle
@@ -162,6 +174,7 @@ Route::middleware('guest')->group(function () {
     Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('login', [AuthController::class, 'login'])->name('login');
+    Route::post('login-web', [AuthController::class, 'loginWeb'])->name('loginWeb');
     Route::post('refresh-token', [AuthController::class, 'refreshToken'])->name('refreshToken');
 
     // Test

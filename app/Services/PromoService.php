@@ -107,4 +107,20 @@ class PromoService {
 
         return $result;
     }
+
+    /**
+     * Get all promo paginate.
+     * @param array $data
+     * @return mixed
+     */
+    public function getPromoPaginateService($data)
+    {
+        try {
+            $branch = $this->promoRepository->getAllPaginateRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat semua promo');
+        }
+        return $branch;
+    }
 }

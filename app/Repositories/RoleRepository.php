@@ -3,14 +3,18 @@
 namespace App\Repositories;
 
 use App\Models\Role;
+use App\Models\User;
+use InvalidArgumentException;
 
 class RoleRepository
 {
     protected $role;
+    protected $user;
 
-    public function __construct(Role $role)
+    public function __construct(Role $role, User $user)
     {
         $this->role = $role;
+        $this->user = $user;
     }
 
     /**
@@ -83,5 +87,18 @@ class RoleRepository
         $role = $this->role->find($id);
         $role->delete();
         return $role;
+    }
+
+    /**
+     * Check role user
+     * @param array $data
+     */
+    public function checkRoleRepo($data = [])
+    {
+        $role = $this->user->find($data['id'])->role;
+        if ($role->slug == 'admin') {
+            return $role;
+        }
+        throw new InvalidArgumentException('Maaf role anda tidak diizinkan');
     }
 }
