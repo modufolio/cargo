@@ -4,17 +4,21 @@ namespace App\Repositories;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Feature;
 use InvalidArgumentException;
+use Illuminate\Support\Str;
 
 class RoleRepository
 {
     protected $role;
     protected $user;
+    protected $feature;
 
-    public function __construct(Role $role, User $user)
+    public function __construct(Role $role, User $user, Feature $feature)
     {
         $this->role = $role;
         $this->user = $user;
+        $this->feature = $feature;
     }
 
     /**
@@ -44,16 +48,16 @@ class RoleRepository
      * @param $data
      * @return Role
      */
-    public function save($data)
+    public function saveRoleRepo($data)
     {
         $role = new $this->role;
 
         $role->name = $data['name'];
-        $role->slug = $data['slug'];
         $role->ranking = $data['ranking'];
-        $role->features = $data['features'];
+        $slug = Str::of($data['name'])->slug('-');
+        $role->slug = $slug;
         $role->save();
-
+        $role->features()->attach($data['features']);
         return $role->fresh();
     }
 
@@ -63,17 +67,19 @@ class RoleRepository
      * @param $data
      * @return Role
      */
-    public function update($data, $id)
+    public function updateRoleRepo($data)
     {
-        $role = $this->role->find($id);
-
+        $role = $this->role->find($data['id']);
+        if (!$role) {
+            throw new InvalidArgumentException('Maaf, data peran tidak ditemukan');
+        }
         $role->name = $data['name'];
-        $role->slug = $data['slug'];
+        $slug = Str::of($data['name'])->slug('-');
+        $role->slug = $slug;
         $role->ranking = $data['ranking'];
-        $role->features = $data['features'];
         $role->save();
-
-        return $role;
+        $role->features()->sync($data['features'], false);;
+        return $role->fresh();
     }
 
     /**
@@ -85,6 +91,9 @@ class RoleRepository
     public function delete($id)
     {
         $role = $this->role->find($id);
+        if (!$role) {
+            throw new InvalidArgumentException('Maaf, data peran tidak ditemukan');
+        }
         $role->delete();
         return $role;
     }
@@ -100,5 +109,76 @@ class RoleRepository
             return $role;
         }
         throw new InvalidArgumentException('Maaf role anda tidak diizinkan');
+    }
+
+    /**
+     * Role Pagination
+     *
+     * @param array $data
+     */
+
+    public function rolePaginationRepo($data = [])
+    {
+        $perPage = $data['perPage'];
+        $sort = $data['sort'];
+        $id = $data['id'];
+        $name = $data['name'];
+        $ranking = $data['ranking'];
+
+        $role = $this->role->with(['features']);
+
+        if (empty($perPage)) {
+            $perPage = 15;
+        }
+
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'id':
+                    $role = $role->sortable(['id' => $order]);
+                    break;
+                case 'ranking':
+                    $role = $role->sortable(['ranking' => $order]);
+                    break;
+                case 'name':
+                    $role = $role->sortable(['name' => $order]);
+                    break;
+                default:
+                    $role = $role->sortable(['id' => 'desc']);
+                    break;
+            }
+        }
+
+        if (!empty($ranking)) {
+            $role = $role->where('ranking', 'ilike', '%'.$ranking.'%');
+        }
+
+        if (!empty($name)) {
+            $role = $role->where('name', 'ilike', '%'.$name.'%');
+        }
+
+        if (!empty($id)) {
+            $role = $role->where('id', 'ilike', '%'.$id.'%');
+        }
+
+        $role = $role->paginate($perPage);
+
+        return $role;
+    }
+
+    /**
+     * Get list feature
+     */
+    public function featureListRepo()
+    {
+        $feature = $this->feature->select('name','id','slug')->get();
+        return $feature;
     }
 }

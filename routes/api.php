@@ -30,7 +30,10 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::get('check-user', [AuthController::class, 'checkLogin']);
 
     // Role
-    Route::resource('role', RoleController::class);
+    Route::get('role', [RoleController::class, 'index']);
+    Route::prefix('role')->group(function() {
+        Route::get('by-id/{id}', [RoleController::class, 'show']);
+    });
 
     // User
     Route::get('user-by-id', [UserController::class, 'show']);
@@ -104,6 +107,15 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('create', [UserController::class, 'create']);
             Route::post('search-name', [UserController::class, 'searchName']);
             Route::post('search-email', [UserController::class, 'searchEmail']);
+        });
+
+        // Role
+        Route::prefix('role')->group(function() {
+            Route::get('list-feature', [RoleController::class, 'featureList']);
+            Route::post('paginate', [RoleController::class, 'paginate']);
+            Route::post('update', [RoleController::class, 'update']);
+            Route::post('create', [RoleController::class, 'store']);
+            Route::post('delete', [RoleController::class, 'destroy']);
         });
 
         // Menu

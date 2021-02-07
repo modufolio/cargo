@@ -52,6 +52,13 @@ class UserSeeder extends Seeder
                 'role_id' => 1,
                 'username' => 'customer',
             ],
+            [
+                'name' => 'sisil 5',
+                'email' => 'sisil5@gmail.com',
+                'password' => bcrypt('sisil123'),
+                'role_id' => 9,
+                'username' => 'shisilsm27'
+            ]
         ]);
         DB::commit();
     }

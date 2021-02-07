@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Base;
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 class BaseRepository
 {

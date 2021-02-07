@@ -8,6 +8,7 @@ use DB;
 use Log;
 use Validator;
 use InvalidArgumentException;
+use Illuminate\Validation\Rule;
 
 class RoleService {
 
@@ -27,13 +28,12 @@ class RoleService {
     public function deleteById($id)
     {
         DB::beginTransaction();
-
         try {
             $role = $this->roleRepository->delete($id);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-            throw new InvalidArgumentException('Gagal menghapus data peran');
+            throw new InvalidArgumentException($e->getMessage());
         }
         DB::commit();
         return $role;
@@ -74,13 +74,18 @@ class RoleService {
      * @param array $data
      * @return String
      */
-    public function updateRole($data, $id)
+    public function updateRole($data = [])
     {
         $validator = Validator::make($data, [
-            'name' => 'bail|min:2',
-            'slug' => 'bail|max:255',
-            'ranking' => 'bail|max:255',
-            'features' => 'bail|max:255',
+            'id' => 'bail|required',
+            'name' => [
+                'bail',
+                'required',
+                'min:2',
+                Rule::unique('roles', 'name')->ignore($data['id'])
+            ],
+            'ranking' => 'bail|required',
+            'features' => 'bail|required|array',
         ]);
 
         if ($validator->fails()) {
@@ -90,17 +95,14 @@ class RoleService {
         DB::beginTransaction();
 
         try {
-            $role = $this->roleRepository->update($data, $id);
-
+            $role = $this->roleRepository->updateRoleRepo($data);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
-
-            throw new InvalidArgumentException('Unable to update role data');
+            throw new InvalidArgumentException($e->getMessage());
         }
 
         DB::commit();
-
         return $role;
 
     }
@@ -115,18 +117,25 @@ class RoleService {
     public function saveRoleData($data)
     {
         $validator = Validator::make($data, [
-            'name' => 'bail|min:2',
-            'slug' => 'bail|max:255',
-            'ranking' => 'bail|max:255',
-            'features' => 'bail|max:255',
+            'name' => 'bail|required|unique:roles,name',
+            'ranking' => 'bail|required',
+            'features' => 'bail|required|array',
         ]);
 
         if ($validator->fails()) {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
-        $result = $this->roleRepository->save($data);
+        DB::beginTransaction();
 
+        try {
+            $result = $this->roleRepository->saveRoleRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
         return $result;
     }
 
@@ -143,6 +152,36 @@ class RoleService {
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
+
+    /**
+     * Pagination role
+     *
+     * @param array $data
+     */
+    public function paginateRoleService($data = [])
+    {
+        try {
+            $result = $this->roleRepository->rolePaginationRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat data peran');
+        }
+        return $result;
+    }
+
+    /**
+     * List feature
+     */
+    public function listFeatureService()
+    {
+        try {
+            $result = $this->roleRepository->featureListRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat data fitur');
         }
         return $result;
     }

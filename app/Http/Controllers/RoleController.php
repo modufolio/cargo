@@ -109,17 +109,17 @@ class RoleController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $data = $request->only([
+            'id',
             'name',
-            'slug',
             'ranking',
             'features'
         ]);
 
         try {
-            $result = $this->roleService->updatePost($data, $id);
+            $result = $this->roleService->updateRole($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
@@ -133,13 +133,56 @@ class RoleController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
         try {
-            $result = $this->roleService->deleteById($id);
+            $result = $this->roleService->deleteById($request->roleId);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
+        return $this->sendResponse(null, $result);
+    }
+
+
+    /**
+     * pagination role.
+     *
+     * @param Request $request
+     * @return Role
+     */
+    public function paginate(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'sort',
+            'id',
+            'name',
+            'ranking',
+        ]);
+
+        try {
+            $result = $this->roleService->paginateRoleService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * list features.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function featureList()
+    {
+        try {
+            $result = $this->roleService->listFeatureService();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
         return $this->sendResponse(null, $result);
     }
 }
