@@ -84,7 +84,8 @@ class VehicleController extends BaseController
             'type',
             'maxVolume',
             'maxWeight',
-            'status'
+            'status',
+            'active'
         ]);
 
         try {

@@ -17,7 +17,7 @@ class OrderMenuSeeder extends Seeder
     public function run()
     {
         $menu = new Menu;
-        $menu->name = 'Order';
+        $menu->name = 'Pengiriman';
         $menu->slug = 'order';
         $menu->icon = 'order';
         $menu->save();

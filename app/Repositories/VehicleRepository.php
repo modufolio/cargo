@@ -184,6 +184,7 @@ class VehicleRepository
         $vehicle->status = $data['status'];
         $vehicle->max_volume = $data['maxVolume'];
         $vehicle->max_weight = $data['maxWeight'];
+        $vehicle->active = $data['active'];
         $vehicle->save();
         return $vehicle;
     }

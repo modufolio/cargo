@@ -17,7 +17,7 @@ class RoutingMenuSeeder extends Seeder
     public function run()
     {
         $menu = new Menu;
-        $menu->name = 'Routing';
+        $menu->name = 'Rute';
         $menu->slug = 'routing';
         $menu->icon = 'routing';
         $menu->save();

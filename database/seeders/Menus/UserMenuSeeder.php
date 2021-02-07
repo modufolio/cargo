@@ -17,7 +17,7 @@ class UserMenuSeeder extends Seeder
     public function run()
     {
         $menu = new Menu;
-        $menu->name = 'User';
+        $menu->name = 'Pengguna';
         $menu->slug = 'user';
         $menu->icon = 'pengguna';
         $menu->save();

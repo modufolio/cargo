@@ -77,9 +77,10 @@ class VehicleService {
             'licensePlate' => 'bail|required|max:50',
             'name' => 'bail|required|max:50',
             'type' => 'bail|required|max:50',
-            'maxVolume' => 'bail|required|max:50',
-            'maxWeight' => 'bail|required|max:50',
+            'maxVolume' => 'bail|required|max:99999',
+            'maxWeight' => 'bail|required|max:99999',
             'status' => 'bail|required|max:50',
+            'active' => 'bail|required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -107,8 +108,8 @@ class VehicleService {
             'licensePlate' => 'bail|required|max:50',
             'name' => 'bail|required|max:50',
             'type' => 'bail|required|max:50',
-            'maxVolume' => 'bail|required|max:50',
-            'maxWeight' => 'bail|required|max:50',
+            'maxVolume' => 'bail|required|max:99999|numeric',
+            'maxWeight' => 'bail|required|max:99999|numeric',
             'status' => 'bail|required|max:50',
         ]);
 
