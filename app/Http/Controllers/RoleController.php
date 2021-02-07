@@ -63,6 +63,7 @@ class RoleController extends BaseController
             'name',
             'slug',
             'ranking',
+            'description',
             'features'
         ]);
 
@@ -115,6 +116,7 @@ class RoleController extends BaseController
             'id',
             'name',
             'ranking',
+            'description',
             'features'
         ]);
 

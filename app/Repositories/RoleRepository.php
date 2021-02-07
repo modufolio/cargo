@@ -56,6 +56,7 @@ class RoleRepository
         $role->ranking = $data['ranking'];
         $slug = Str::of($data['name'])->slug('-');
         $role->slug = $slug;
+        $role->description = $data['description'];
         $role->save();
         $role->features()->attach($data['features']);
         return $role->fresh();
@@ -77,6 +78,7 @@ class RoleRepository
         $slug = Str::of($data['name'])->slug('-');
         $role->slug = $slug;
         $role->ranking = $data['ranking'];
+        $role->description = $data['description'];
         $role->save();
         $role->features()->sync($data['features'], false);;
         return $role->fresh();

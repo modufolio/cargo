@@ -85,6 +85,7 @@ class RoleService {
                 Rule::unique('roles', 'name')->ignore($data['id'])
             ],
             'ranking' => 'bail|required',
+            'description' => 'bail|required|max:255',
             'features' => 'bail|required|array',
         ]);
 
@@ -120,6 +121,7 @@ class RoleService {
             'name' => 'bail|required|unique:roles,name',
             'ranking' => 'bail|required',
             'features' => 'bail|required|array',
+            'description' => 'bail|required|max:255',
         ]);
 
         if ($validator->fails()) {
