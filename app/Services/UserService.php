@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\Address;
 use App\Repositories\UserRepository;
+use App\Repositories\AddressRepository;
 use Exception;
 use DB;
 use Log;
@@ -13,10 +14,15 @@ use InvalidArgumentException;
 class UserService {
 
     protected $userRepository;
+    protected $addressRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(
+        UserRepository $userRepository,
+        AddressRepository $addressRepository
+    )
     {
         $this->userRepository = $userRepository;
+        $this->addressRepository = $addressRepository;
     }
 
     /**
@@ -91,44 +97,6 @@ class UserService {
     }
 
     /**
-     * Update user data
-     * Store to DB if there are no errors.
-     *
-     * @param array $data
-     * @return String
-     */
-    public function updateRole($data, $id)
-    {
-        $validator = Validator::make($data, [
-            'name' => 'bail|min:2',
-            'slug' => 'bail|max:255',
-            'ranking' => 'bail|max:255',
-            'features' => 'bail|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
-
-        DB::beginTransaction();
-
-        try {
-            $user = $this->userRepository->updateUserRepo($data, $id);
-
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::info($e->getMessage());
-
-            throw new InvalidArgumentException('Gagal mengubah data user');
-        }
-
-        DB::commit();
-
-        return $user;
-
-    }
-
-    /**
      * Validate user data.
      * Store to DB if there are no errors.
      *
@@ -150,8 +118,15 @@ class UserService {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
-        $result = $this->userRepository->save($data);
-
+        DB::beginTransaction();
+        try {
+            $result = $this->userRepository->save($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal menyimpan data pengguna');
+        }
+        DB::commit();
         return $result;
     }
 
@@ -170,13 +145,23 @@ class UserService {
                 'bail',
                 'required',
                 'max:255',
-                Rule::unique('users', 'username')->ignore($data['userId'])
+                'alpha_num',
+                Rule::unique('users', 'username')->ignore($data['id'])
             ],
             'phone' => [
                 'bail',
                 'max:15',
-                Rule::unique('users', 'phone')->ignore($data['userId'])
-            ]
+                Rule::unique('users', 'phone')->ignore($data['id'])
+            ],
+            'id' => 'bail|required',
+            'role' => 'bail|required|max:50',
+            'branch' => 'bail|required|max:255',
+            'province' => 'bail|required|max:255',
+            'city' => 'bail|required|max:255',
+            'district' => 'bail|required|max:255',
+            'village' => 'bail|required|max:255',
+            'street' => 'bail|required|max:255',
+            'postalCode' => 'bail|required|max:99999',
         ]);
 
         if ($validator->fails()) {
@@ -187,6 +172,19 @@ class UserService {
 
         try {
             $result = $this->userRepository->updateUserRepo($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        $address = [
+            'postal_code' => $data['postalCode']
+        ];
+        $address = array_merge($address, $data);
+
+        try {
+            $this->addressRepository->update($address, $data['id']);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Role;
 use App\Models\User;
+use InvalidArgumentException;
 
 class UserRepository
 {
@@ -35,16 +36,18 @@ class UserRepository
     {
         $perPage = $data['perPage'];
         $page = $data['page'];
+        $sort = $data['sort'];
 
         $name = $data['name'];
         $email = $data['email'];
         $role = $data['role'];
 
-        $sort = $data['sort'];
 
-        $user = $this->user->select('id','name','email','role_id','phone')->whereHas('role',)->with(['role' => function($q) {
+        $user = $this->user->select('id','name','email','role_id','phone','username','branch_id')->with(['role' => function($q) {
             $q->select('id','name','slug');
-        }]);
+        }, 'branch' => function($q) {
+            $q->select('id','name');
+        }, 'address']);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -114,7 +117,11 @@ class UserRepository
      */
     public function getById($id)
     {
-        return $this->user->findOrFail($id);
+        $user = $this->user->find($id);
+        if (!$user) {
+            throw new InvalidArgumentException('pengguna tidak ditemukan');
+        }
+        return $user;
     }
 
     /**
@@ -143,6 +150,7 @@ class UserRepository
         $user->password     = bcrypt($data['password']);
         $user->username     = $data['username'];
         $user->role_id      = $data['role_id'];
+        $user->branch_id    = $data['branch_id'] ?? null;
         $user->google_id    = $data['google_id'] ?? null;
         $user->phone        = $data['phone'] ?? null;
         $user->save();
@@ -158,13 +166,16 @@ class UserRepository
      */
     public function updateUserRepo($data)
     {
-        $user = $this->user->findOrFail($data['userId']);
-
+        $user = $this->user->find($data['id']);
+        if (!$user) {
+            throw new InvalidArgumentException('pengguna tidak ditemukan');
+        }
         $user->name         = $data['name'];
         $user->username     = $data['username'];
-        if ($user->phone !== $data['phone']) {
-            $user->phone        = $data['phone'] ?? null;
-        }
+        $user->phone        = $data['phone'] ?? null;
+        $user->branch_id    = $data['branch'];
+        $user->role_id      = $data['role'];
+
         $user->save();
 
         return $user->fresh();
@@ -172,7 +183,10 @@ class UserRepository
 
     public function updateBranchRepo($data)
     {
-        $user = $this->user->findOrFail($data['userId']);
+        $user = $this->user->find($data['userId']);
+        if (!$user) {
+            throw new InvalidArgumentException('pengguna tidak ditemukan');
+        }
         $user->branch_id = $data['branchId'];
         $user->save();
         return $user->fresh();
@@ -220,5 +234,21 @@ class UserRepository
         return $this->user->select('id','email')->whereHas('role', function($q) {
             $q->where('slug', 'customer');
         })->where('email', 'ilike', '%'.$email.'%')->get();
+    }
+
+    /**
+     * Delete data user
+     *
+     * @param array $data
+     * @return User
+     */
+    public function delete($id)
+    {
+        $user = $this->user->find($id);
+        if (!$user) {
+            throw new InvalidArgumentException('pengguna tidak ditemukan');
+        }
+        $user->delete();
+        return $user;
     }
 }

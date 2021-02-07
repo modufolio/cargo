@@ -6,25 +6,31 @@ use Illuminate\Http\Request;
 use Exception;
 use DB;
 
+use App\Services\AuthService;
 use App\Services\UserService;
+use App\Services\MailService;
+use App\Services\AddressService;
 use App\Http\Controllers\BaseController;
 
 class UserController extends BaseController
 {
-    /**
-     * @var userService
-     */
     protected $userService;
+    protected $mailService;
+    protected $authService;
+    protected $addressService;
 
-    /**
-     * RoleController Constructor
-     *
-     * @param UserService $userService
-     *
-     */
-    public function __construct(UserService $userService)
+
+    public function __construct(
+        AuthService $authService,
+        UserService $userService,
+        MailService $mailService,
+        AddressService $addressService
+    )
     {
+        $this->authService = $authService;
         $this->userService = $userService;
+        $this->mailService = $mailService;
+        $this->addressService = $addressService;
     }
 
     /**
@@ -67,16 +73,6 @@ class UserController extends BaseController
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -87,20 +83,65 @@ class UserController extends BaseController
         $data = $request->only([
             'name',
             'email',
-            'password',
-            'password_confirmation',
-            'role_id',
-            'username',
+            'role',
             'phone',
+            'branch',
+            'province',
+            'city',
+            'district',
+            'village',
+            'street',
+            'postalCode'
         ]);
 
+        $username = explode("@", $data['email'], 2);
+        $userData = [
+            'password' => 'user1234',
+            'password_confirmation' => 'user1234',
+            'role_id' => $data['role'],
+            'branch_id' => $data['branch'],
+            'username' => $username[0],
+        ];
+        $userData = array_merge($userData, $data);
+
+        DB::beginTransaction();
         try {
-            $result = $this->userService->save($data);
+            $user = $this->userService->save($userData);
         } catch (Exception $e) {
+            DB::rollback();
             return $this->sendError($e->getMessage());
         }
 
-        return $this->sendResponse(null, $result);
+        // create verify user
+        try {
+            $verifyUser = $this->authService->createVerifyUser($user->id);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+
+        // send email verification
+        try {
+            $this->mailService->sendEmailVerification($user, $verifyUser);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+
+        $addressData = [
+            'userId' => $user->id,
+            'postal_code' => $data['postalCode']
+        ];
+        $addressData = array_merge($addressData, $data);
+        // save address
+        try {
+            $this->addressService->saveAddressData($addressData);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse('Pengguna berhasil ditambahkan');
     }
 
     /**
@@ -155,10 +196,18 @@ class UserController extends BaseController
     public function update(Request $request)
     {
         $data = $request->only([
+            'id',
             'name',
             'username',
             'phone',
-            'userId'
+            'role',
+            'branch',
+            'province',
+            'city',
+            'district',
+            'village',
+            'street',
+            'postalCode'
         ]);
 
         DB::beginTransaction();
@@ -178,9 +227,17 @@ class UserController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $data = $request->only([
+            'id'
+        ]);
+        try {
+            $result = $this->userService->deleteById($data['id']);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
     }
 
     /**

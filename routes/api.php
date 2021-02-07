@@ -102,9 +102,10 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::get('user', [UserController::class, 'index']);
         Route::post('user-paginate', [UserController::class, 'paginate']);
         Route::post('user', [UserController::class, 'store']);
-        Route::delete('user/{id}', [UserController::class, 'destroy']);
         Route::prefix('user')->group(function() {
-            Route::post('create', [UserController::class, 'create']);
+            Route::post('delete', [UserController::class, 'destroy']);
+            Route::post('update', [UserController::class, 'update']);
+            Route::post('create', [UserController::class, 'store']);
             Route::post('search-name', [UserController::class, 'searchName']);
             Route::post('search-email', [UserController::class, 'searchEmail']);
         });
