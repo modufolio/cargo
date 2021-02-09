@@ -251,4 +251,21 @@ class UserRepository
         $user->delete();
         return $user;
     }
+
+    /**
+     * Change Password repo
+     *
+     * @param array $data
+     *
+     */
+    public function changePasswordRepo($data)
+    {
+        $user = $this->user->find($data['userId']);
+        if (!$user) {
+            throw new InvalidArgumentException('Pengguna tidak ditemukan');
+        }
+        $user->password = bcrypt($data['password']);
+        $user->save();
+        return $user;
+    }
 }

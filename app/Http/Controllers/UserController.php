@@ -273,4 +273,25 @@ class UserController extends BaseController
 
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * Change Password
+     *
+     * @param Request $request
+     */
+    public function changePassword(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+            'password',
+            'password_confirmation',
+        ]);
+        try {
+            $result = $this->userService->changePasswordService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
 }

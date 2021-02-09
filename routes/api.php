@@ -108,6 +108,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('create', [UserController::class, 'store']);
             Route::post('search-name', [UserController::class, 'searchName']);
             Route::post('search-email', [UserController::class, 'searchEmail']);
+            Route::post('change-password', [UserController::class, 'changePassword']);
         });
 
         // Role

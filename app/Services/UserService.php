@@ -253,4 +253,27 @@ class UserService {
         }
         return $user;
     }
+
+    /**
+     * Change password
+     */
+    public function changePasswordService($data)
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'password' => 'bail|required|min:8|max:255|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $user = $this->userRepository->changePasswordRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $user;
+    }
 }
