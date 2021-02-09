@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\Address;
 use App\Repositories\UserRepository;
 use App\Repositories\AddressRepository;
+use App\Repositories\MailRepository;
 use Exception;
 use DB;
 use Log;
@@ -15,14 +16,17 @@ class UserService {
 
     protected $userRepository;
     protected $addressRepository;
+    protected $mailRepository;
 
     public function __construct(
         UserRepository $userRepository,
-        AddressRepository $addressRepository
+        AddressRepository $addressRepository,
+        MailRepository $mailRepository
     )
     {
         $this->userRepository = $userRepository;
         $this->addressRepository = $addressRepository;
+        $this->mailRepository = $mailRepository;
     }
 
     /**
@@ -275,5 +279,31 @@ class UserService {
             throw new InvalidArgumentException($e->getMessage());
         }
         return $user;
+    }
+
+    /**
+     * Forgot Password
+     */
+    public function forgotPasswordService($data)
+    {
+        DB::beginTransaction();
+        try {
+            $result = $this->userRepository->forgotPasswordRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // send email verification
+        try {
+            $this->mailRepository->sendEmailForgotPassword($result['user'], $result['newPass']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
+        return $result;
     }
 }

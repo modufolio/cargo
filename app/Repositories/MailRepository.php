@@ -32,4 +32,22 @@ class MailRepository
                 ->subject('Selamat bergabung!');
         });
     }
+
+    /**
+     * Send email forgot password
+     *
+     * @param User $user
+     */
+    public function sendEmailForgotPassword($user, $newPass)
+    {
+        $beautymail = app()->make(Beautymail::class);
+        $beautymail->send('emails.forgotpass', ['user' => $user, 'newPass' => $newPass], function($message) use ($user)
+        {
+            $message
+                // ->from('ival@papandayan.com')
+                ->from(env('MAIL_FROM_ADDRESS'))
+                ->to($user->email, $user->name)
+                ->subject('Password telah diubah!');
+        });
+    }
 }

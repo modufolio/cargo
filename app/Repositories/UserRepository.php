@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\Role;
 use App\Models\User;
 use InvalidArgumentException;
-
+use Illuminate\Support\Str;
 class UserRepository
 {
     protected $user;
@@ -267,5 +267,36 @@ class UserRepository
         $user->password = bcrypt($data['password']);
         $user->save();
         return $user;
+    }
+
+    /**
+     * Forgot password
+     */
+    public function forgotPasswordRepo($data)
+    {
+        $useEmail = filter_var(strtolower($data['username']), FILTER_VALIDATE_EMAIL);
+
+        if (!$useEmail) {
+            $user = $this->user->where('username', strtolower($data['username']))->first();
+            if (!$user) {
+                throw new InvalidArgumentException('Username tersebut tidak cocok dengan data kami');
+            }
+        } else {
+            $user = $this->user->where('email', strtolower($data['username']))->first();
+            if (!$user) {
+                throw new InvalidArgumentException('Email tersebut tidak cocok dengan data kami');
+            }
+        }
+
+        // $email = $user->email;
+        $user = $this->user->find($user->id);
+        $random = Str::random(8);
+        $user->password = bcrypt($random);
+        $user->save();
+        $result = [
+            'user' => $user->fresh(),
+            'newPass' => $random
+        ];
+        return $result;
     }
 }

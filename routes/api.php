@@ -190,6 +190,11 @@ Route::middleware('guest')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('login-web', [AuthController::class, 'loginWeb'])->name('loginWeb');
     Route::post('refresh-token', [AuthController::class, 'refreshToken'])->name('refreshToken');
+    Route::prefix('user')->group(function() {
+        Route::post('forgot-password', [UserController::class, 'forgotPassword']);
+    });
+
+
 
     // Test
     Route::resource('test', TestController::class);

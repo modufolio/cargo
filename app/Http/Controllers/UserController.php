@@ -294,4 +294,23 @@ class UserController extends BaseController
 
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * Forgot Password
+     *
+     * @param Request $request
+     */
+    public function forgotPassword(Request $request)
+    {
+        $data = $request->only([
+            'username',
+        ]);
+        try {
+            $result = $this->userService->forgotPasswordService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
 }
