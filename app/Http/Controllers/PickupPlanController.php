@@ -92,4 +92,19 @@ class PickupPlanController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    public function deletePickupOrder(Request $request)
+    {
+        $data = $request->only([
+            'pickupId',
+            'pickupPlanId'
+        ]);
+        try {
+            $result = $this->pickupPlanService->deletePoService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

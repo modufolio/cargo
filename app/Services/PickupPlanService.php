@@ -79,4 +79,31 @@ class PickupPlanService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * delete pickup order
+     *
+     * @param array $data
+     */
+    public function deletePoService($data)
+    {
+        $validator = Validator::make($data, [
+            'pickupId' => 'bail|required',
+            'pickupPlanId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->pickupPlanRepository->deletePoRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        DB::commit();
+        return $result;
+    }
 }

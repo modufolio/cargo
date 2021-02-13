@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\PickupPlan;
 use App\Models\Pickup;
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 class PickupPlanRepository
 {
@@ -38,5 +39,26 @@ class PickupPlanRepository
         }
         $pickupPlan->fresh();
         return $pickupPlan;
+    }
+
+    /**
+     * delete pickup order on pickup plan
+     *
+     * @param array $data
+     */
+    public function deletePoRepo($data)
+    {
+        $pickupPlan = $this->pickupPlan->find($data['pickupPlanId'])->pickups;
+        if (count($pickupPlan) <= 1) {
+            throw new InvalidArgumentException('Maaf anda tidak bisa menghapus pickup order ini');
+        }
+        $pickupPlan = $pickupPlan->where('id', $data['pickupId'])->values();
+        if (count($pickupPlan) == 1) {
+            $pickup = $this->pickup->where('id', $data['pickupId'])->where('pickup_plan_id', $data['pickupPlanId'])->update([
+                'pickup_plan_id' => null
+            ]);
+            return $pickup;
+        }
+        throw new InvalidArgumentException('Pickup order tidak ditemukan');
     }
 }
