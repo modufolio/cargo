@@ -8,6 +8,7 @@ use App\Models\PickupPlan;
 use App\Models\User;
 use Indonesia;
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 class PickupRepository
 {
@@ -507,5 +508,24 @@ class PickupRepository
         $result = $pickup->paginate($perPage);
 
         return $result;
+    }
+
+    /**
+     * check pickups request date
+     *
+     * @param array $data
+     */
+    public function checkPickupRequestDate($data = [])
+    {
+        $pickup = Pickup::select('picktime')->whereIn('id', $data)->get()->pluck('picktime');
+        $pickup = collect($pickup)->toArray();
+        $result = [];
+        foreach ($pickup as $key => $value) {
+            $result[] = Carbon::parse($value)->format('Y-m-d');
+        }
+        if (count(array_unique($result)) === 1) {
+            return $result;
+        }
+        throw new InvalidArgumentException('Maaf, ada permintaan tanggal pickup yang berbeda');
     }
 }

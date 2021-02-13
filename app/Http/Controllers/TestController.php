@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Models\Fleet;
 use App\Models\Route;
 use App\Models\Promo;
+use App\Models\Pickup;
 
 // SERVICE
 use App\Services\AddressService;
@@ -51,6 +52,26 @@ class TestController extends BaseController
      */
     public function index()
     {
+        $pickup = Pickup::select('picktime')->whereIn('id', [1,2,3,4])->get()->pluck('picktime');
+        $pickup = collect($pickup)->toArray();
+        $data = [];
+        foreach ($pickup as $key => $value) {
+            $data[] = Carbon::parse($value)->format('Y-m-d');
+        }
+        // return $data;
+        // foreach ($pickup as $key => $value) {
+        if (count(array_unique($data)) === 1) {
+            return 'sama';
+        }
+        // }
+        // return $pickup;
+
+        // $allvalues = array('true', 'false', 'true');
+        // if (count(array_unique($allvalues)) === 1 && end($allvalues) === 'true') {
+        //     return 'sama';
+        // }
+        return 'berbeda';
+
         $user = User::find(1);
         $user = [
             'user' => $user,
