@@ -74,6 +74,12 @@ class AuthController extends BaseController
             }
         }
 
+        try {
+            $this->roleService->validateRoleLogin($user, 'customer');
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
         $request->merge(['email' => $user->email]);
 
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
