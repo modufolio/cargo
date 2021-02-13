@@ -44,7 +44,6 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
 
     // Pickup
     Route::post('pickup', [PickupController::class, 'store']);
-    Route::post('pickup-paginate', [PickupController::class, 'paginate']);
 
     // Sender
     Route::resource('sender', SenderController::class);
@@ -171,6 +170,13 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::prefix('pickup-plan')->group(function() {
             Route::post('save', [PickupPlanController::class, 'save']);
             Route::post('get-pickup', [PickupPlanController::class, 'getPaginatePickup']);
+            Route::post('list', [PickupPlanController::class, 'getList']);
+        });
+
+        // Pickup
+        Route::prefix('pickup')->group(function() {
+            Route::post('paginate', [PickupController::class, 'paginate']);
+            Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlan']);
         });
 
          // Fleet
@@ -189,6 +195,7 @@ Route::middleware('guest')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('login-web', [AuthController::class, 'loginWeb'])->name('loginWeb');
+    Route::post('login-driver', [AuthController::class, 'loginDriver'])->name('loginDriver');
     Route::post('refresh-token', [AuthController::class, 'refreshToken'])->name('refreshToken');
     Route::prefix('user')->group(function() {
         Route::post('forgot-password', [UserController::class, 'forgotPassword']);

@@ -147,13 +147,23 @@ class RoleService {
      * @param array $user
      * @return String
      */
-    public function validateRoleLogin($user)
+    public function validateRoleLogin($user, $type)
     {
-        try {
-            $result = $this->roleRepository->checkRoleRepo($user);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException($e->getMessage());
+        if ($type == 'admin') {
+            try {
+                $result = $this->roleRepository->checkRoleAdminRepo($user);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                throw new InvalidArgumentException($e->getMessage());
+            }
+        }
+        if ($type == 'driver') {
+            try {
+                $result = $this->roleRepository->checkRoleDriverRepo($user);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                throw new InvalidArgumentException($e->getMessage());
+            }
         }
         return $result;
     }

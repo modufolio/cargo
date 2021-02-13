@@ -101,13 +101,26 @@ class RoleRepository
     }
 
     /**
-     * Check role user
+     * Check role admin user
      * @param array $data
      */
-    public function checkRoleRepo($data = [])
+    public function checkRoleAdminRepo($data = [])
     {
         $role = $this->user->find($data['id'])->role;
         if ($role->slug == 'admin') {
+            return $role;
+        }
+        throw new InvalidArgumentException('Maaf role anda tidak diizinkan');
+    }
+
+    /**
+     * Check role driver user
+     * @param array $data
+     */
+    public function checkRoleDriverRepo($data = [])
+    {
+        $role = $this->user->find($data['id'])->role;
+        if ($role->slug == 'driver' || $role->slug == 'driver-3pl') {
             return $role;
         }
         throw new InvalidArgumentException('Maaf role anda tidak diizinkan');

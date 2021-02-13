@@ -125,7 +125,63 @@ class AuthController extends BaseController
         }
 
         try {
-            $this->roleService->validateRoleLogin($user);
+            $this->roleService->validateRoleLogin($user, 'admin');
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        $request->merge(['email' => $user->email]);
+
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+            DB::beginTransaction();
+            // $user = Auth::user();
+
+            try {
+                $response = $this->authService->getAccessToken(strtolower($request->email), $request->password);
+            } catch (Exception $e) {
+                DB::rollback();
+                return $this->sendError($e->getMessage());
+            }
+            DB::commit();
+
+            return $this->sendResponse('Berhasil login', $response);
+        } else {
+            return $this->sendError('Password tersebut tidak cocok dengan data kami', 4005);
+        }
+    }
+
+    public function loginDriver(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'bail|required',
+            'password' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            if ($validator->errors()->first('userId')) {
+                return $this->sendError($validator->errors()->first('userId'), 4001);
+            }
+            if ($validator->errors()->first('password')) {
+                return $this->sendError($validator->errors()->first('password'), 4002);
+            }
+        }
+
+        $useEmail = filter_var(strtolower($request->userId), FILTER_VALIDATE_EMAIL);
+
+        if (!$useEmail) {
+            $user = User::where('username', strtolower($request->userId))->first();
+            if (!$user) {
+                return $this->sendError('Username tersebut tidak cocok dengan data kami', 4003);
+            }
+        } else {
+            $user = User::where('email', strtolower($request->userId))->first();
+            if (!$user) {
+                return $this->sendError('Email tersebut tidak cocok dengan data kami', 4004);
+            }
+        }
+
+        try {
+            $this->roleService->validateRoleLogin($user, 'driver');
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
