@@ -106,4 +106,31 @@ class PickupPlanService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * add pickup order
+     *
+     * @param array $data
+     */
+    public function addPoService($data)
+    {
+        $validator = Validator::make($data, [
+            'pickupId' => 'bail|required|array',
+            'pickupPlanId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->pickupPlanRepository->addPoRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        DB::commit();
+        return $result;
+    }
 }

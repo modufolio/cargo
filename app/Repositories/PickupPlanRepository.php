@@ -61,4 +61,26 @@ class PickupPlanRepository
         }
         throw new InvalidArgumentException('Pickup order tidak ditemukan');
     }
+
+    /**
+     * add pickup order on pickup plan
+     *
+     * @param array $data
+     */
+    public function addPoRepo($data)
+    {
+        $pickupPlan = $this->pickupPlan->find($data['pickupPlanId']);
+        if (!$pickupPlan) {
+            throw new InvalidArgumentException('Maaf pickup plan tidak ditemukan');
+        }
+        $result = [];
+        foreach ($data['pickupId'] as $key => $value) {
+            $pickup = $this->pickup->find($value);
+            $pickup->pickupPlan()->associate($pickupPlan);
+            $pickup->save();
+            $result[] = $pickup;
+            // $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
+        }
+        return $result;
+    }
 }

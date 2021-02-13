@@ -172,6 +172,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('get-pickup', [PickupPlanController::class, 'getPaginatePickup']);
             Route::post('list', [PickupPlanController::class, 'getList']);
             Route::post('delete-po', [PickupPlanController::class, 'deletePickupOrder']);
+            Route::post('add-po', [PickupPlanController::class, 'addPickupOrder']);
         });
 
         // Pickup
