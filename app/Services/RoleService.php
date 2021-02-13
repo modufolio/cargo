@@ -149,6 +149,14 @@ class RoleService {
      */
     public function validateRoleLogin($user, $type)
     {
+        if ($type == 'customer') {
+            try {
+                $result = $this->roleRepository->checkRoleCustomerRepo($user);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                throw new InvalidArgumentException($e->getMessage());
+            }
+        }
         if ($type == 'admin') {
             try {
                 $result = $this->roleRepository->checkRoleAdminRepo($user);

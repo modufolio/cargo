@@ -127,6 +127,19 @@ class RoleRepository
     }
 
     /**
+     * Check role customer user
+     * @param array $data
+     */
+    public function checkRoleCustomerRepo($data = [])
+    {
+        $role = $this->user->find($data['id'])->role;
+        if ($role->slug == 'customer') {
+            return $role;
+        }
+        throw new InvalidArgumentException('Maaf role anda tidak diizinkan');
+    }
+
+    /**
      * Role Pagination
      *
      * @param array $data
