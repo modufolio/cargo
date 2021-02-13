@@ -32,7 +32,9 @@ class Pickup extends Model
         'receiver_id',
         'debtor_id',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
+        'created_by',
+        'deleted_by'
     ];
 
     /**

@@ -69,4 +69,27 @@ class PickupPlanController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    public function getList(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'startDate',
+            'endDate',
+            'id',
+            'status',
+            'driver',
+            'licenseNumber',
+            'vehicleType',
+            'sort'
+        ]);
+        try {
+            $result = $this->pickupService->getListPickupPlanService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

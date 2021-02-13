@@ -67,7 +67,7 @@ class PickupController extends BaseController
         ]);
         DB::beginTransaction();
         try {
-            $result = $this->pickupService->save($data);
+            $result = $this->pickupService->createPickupService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());
@@ -136,6 +136,29 @@ class PickupController extends BaseController
         ]);
         try {
             $result = $this->pickupService->getAllPaginate($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    public function getByPickupPlan(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'name',
+            'city',
+            'id',
+            'district',
+            'village',
+            'picktime',
+            'pickupPlanId',
+            'sort'
+        ]);
+        try {
+            $result = $this->pickupService->getPickupByPickupPlanService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

@@ -10,9 +10,18 @@ class PickupPlan extends Model
 {
     use HasFactory;
 
+    protected $hidden = [
+        'created_at',
+        'deleted_at',
+        'updated_at',
+        'deleted_by',
+        'vehicle_id',
+    ];
+
+
     public function pickups()
     {
-        return $this->hasMany(Pickup::class);
+        return $this->hasMany(Pickup::class, 'pickup_plan_id');
     }
 
     public function vehicle()

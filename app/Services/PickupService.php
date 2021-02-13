@@ -46,7 +46,7 @@ class PickupService {
      * @param data
      * @return mixed
      */
-    public function save($data)
+    public function createPickupService($data)
     {
         $validator = Validator::make($data, [
             'fleetId'               => 'bail|required|max:19',
@@ -118,7 +118,7 @@ class PickupService {
 
         // SAVE PICKUP
         try {
-            $pickup = $this->pickupRepository->save($data, $promo);
+            $pickup = $this->pickupRepository->createPickupRepo($data, $promo);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -186,6 +186,28 @@ class PickupService {
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mendapatkan data pickup');
+        }
+        return $pickup;
+    }
+
+    public function getListPickupPlanService($data)
+    {
+        try {
+            $pickup = $this->pickupRepository->getListPickupPlanRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $pickup;
+    }
+
+    public function getPickupByPickupPlanService($data)
+    {
+        try {
+            $pickup = $this->pickupRepository->getPickupByPickupPlanRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
         }
         return $pickup;
     }
