@@ -27,6 +27,27 @@ class RoleService {
      */
     public function deleteById($id)
     {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'roleId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        // CHECK CURRENT ROLE USER
+        try {
+            $check = $this->roleRepository->isCurrentRoleEqualWithUserRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        if ($check == true) {
+            throw new InvalidArgumentException('Maaf, peran yang sama dengan peran anda tidak bisa dihapus');
+        }
+
         DB::beginTransaction();
         try {
             $role = $this->roleRepository->delete($id);
@@ -37,7 +58,6 @@ class RoleService {
         }
         DB::commit();
         return $role;
-
     }
 
     /**
@@ -77,6 +97,7 @@ class RoleService {
     public function updateRole($data = [])
     {
         $validator = Validator::make($data, [
+            'userId' => 'bail|required',
             'id' => 'bail|required',
             'name' => [
                 'bail',

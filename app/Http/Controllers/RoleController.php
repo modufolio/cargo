@@ -113,6 +113,7 @@ class RoleController extends BaseController
     public function update(Request $request)
     {
         $data = $request->only([
+            'userId',
             'id',
             'name',
             'ranking',
@@ -137,8 +138,13 @@ class RoleController extends BaseController
      */
     public function destroy(Request $request)
     {
+        $data = $request->only([
+            'roleId',
+            'userId',
+        ]);
+
         try {
-            $result = $this->roleService->deleteById($request->roleId);
+            $result = $this->roleService->deleteById($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }

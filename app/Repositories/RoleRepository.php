@@ -209,4 +209,17 @@ class RoleRepository
         $feature = $this->feature->select('name','id','slug')->get();
         return $feature;
     }
+
+    /**
+     * Check current role of user
+     * @param array $data
+     */
+    public function isCurrentRoleEqualWithUserRepo($data = [])
+    {
+        $role = $this->user->find($data['userId'])->role;
+        if ($role->id == $data['roleId']) {
+            return true;
+        }
+        return false;
+    }
 }
