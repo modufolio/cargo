@@ -313,4 +313,50 @@ class UserController extends BaseController
 
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * update user profile mobile.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateProfile(Request $request)
+    {
+        $data = $request->only([
+            'name',
+            'username',
+            'phone',
+            'userId',
+            'avatar'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $result = $this->userService->updateUserProfileService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * Upload avatar
+     *
+     * @param Request $request
+     */
+    public function uploadAvatar(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $result = $this->userService->uploadAvatarService($request);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
 }

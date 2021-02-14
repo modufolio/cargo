@@ -4,8 +4,15 @@ namespace App\Repositories;
 
 use App\Models\Role;
 use App\Models\User;
+
 use InvalidArgumentException;
+
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+
+use Carbon\Carbon;
+
 class UserRepository
 {
     protected $user;
@@ -298,5 +305,44 @@ class UserRepository
             'newPass' => $random
         ];
         return $result;
+    }
+
+    /**
+     * Update User Profile Mobile
+     *
+     * @param array $data
+     * @return User
+     */
+    public function updateUserProfileRepo($data)
+    {
+        $user = $this->user->find($data['userId']);
+        if (!$user) {
+            throw new InvalidArgumentException('pengguna tidak ditemukan');
+        }
+        $user->name         = $data['name'];
+        $user->username     = $data['username'];
+        $user->phone        = $data['phone'] ?? null;
+        $user->avatar       = $data['avatar'];
+        $user->save();
+        return $user;
+    }
+
+    /**
+     * Upload Avatar
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function uploadAvatar($request)
+    {
+        $avatar              = $request->file('avatar');
+        $avatar_extension    = $avatar->getClientOriginalExtension();
+        $timestamp = Carbon::now('Asia/Jakarta')->timestamp;
+        Storage::disk('storage_profile')->put('avatar'.$timestamp.'.'.$avatar_extension,  File::get($avatar));
+        $avatar_url              = '/upload/webchat/avatar'.$timestamp.'.'.$avatar_extension;
+        return [
+            'base_url' => env('APP_URL'),
+            'path' => $avatar_url
+        ];
     }
 }

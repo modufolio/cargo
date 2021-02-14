@@ -35,10 +35,6 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::get('by-id/{id}', [RoleController::class, 'show']);
     });
 
-    // User
-    Route::get('user-by-id', [UserController::class, 'show']);
-    Route::post('user/update', [UserController::class, 'update']);
-
     // Fleet
     Route::get('fleet', [FleetController::class, 'index']);
 
@@ -91,8 +87,10 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     });
 
     // User
+    Route::get('user-by-id', [UserController::class, 'show']);
     Route::prefix('user')->group(function() {
-        Route::post('update', [UserController::class, 'update']);
+        Route::post('update-profile', [UserController::class, 'updateProfile']);
+        Route::post('upload-avatar', [UserController::class, 'uploadAvatar']);
     });
 
     // Admin Only

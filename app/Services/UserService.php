@@ -11,6 +11,7 @@ use Log;
 use Validator;
 use Illuminate\Validation\Rule;
 use InvalidArgumentException;
+use Illuminate\Http\Request;
 
 class UserService {
 
@@ -302,6 +303,74 @@ class UserService {
             DB::rollback();
             Log::info($e->getMessage());
             throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
+        return $result;
+    }
+
+    /**
+     *
+     * Update user profile mobile.
+     *
+     * @param array $data
+     * @return String
+     */
+    public function updateUserProfileService($data)
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'name' => 'bail|required|max:255',
+            'username' => [
+                'bail',
+                'required',
+                'max:255',
+                'alpha_num',
+                Rule::unique('users', 'username')->ignore($data['userId'])
+            ],
+            'phone' => [
+                'bail',
+                'max:15',
+                Rule::unique('users', 'phone')->ignore($data['userId'])
+            ],
+            'avatar' => 'bail|required',
+        ]);
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+        DB::beginTransaction();
+        try {
+            $result = $this->userRepository->updateUserProfileRepo($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
+        return $result;
+    }
+
+    /**
+     * upload avatar service
+     *
+     * @param array $data
+     * @return object
+     */
+    public function uploadAvatarService($request)
+    {
+        $validator = Validator::make($request->all(), [
+            'avatar' => 'required|file|image|max:512|mimes:jpeg,jpg,png',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->userRepository->uploadAvatar($request);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mengunggah avatar');
         }
         DB::commit();
         return $result;
