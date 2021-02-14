@@ -332,7 +332,6 @@ class UserService {
                 'max:15',
                 Rule::unique('users', 'phone')->ignore($data['userId'])
             ],
-            'avatar' => 'bail|required',
         ]);
         if ($validator->fails()) {
             throw new InvalidArgumentException($validator->errors()->first());
