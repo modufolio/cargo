@@ -220,4 +220,37 @@ class VehicleRepository
         $vehicle->delete();
         return $vehicle;
     }
+
+    /**
+     * Unassign vehicle and driver from pickup plan
+     *
+     * @param array $pickupPlan
+     * @return Vehicle
+     */
+    public function unassignDriverRepo($pickupPlan)
+    {
+        // unassign kendaraan dan update status kendaraan
+        $vehicle = $this->vehicle->find($pickupPlan->vehicle_id);
+        if (!$vehicle) {
+            throw new InvalidArgumentException('Kendaraan tidak ditemukan');
+        }
+        if (!$vehicle->active) {
+            throw new InvalidArgumentException('Kendaraan di nonaktifkan, tidak bisa melanjutkan proses');
+        }
+        $vehicle->status = 'available';
+        $vehicle->save();
+        $vehicle = $vehicle->fresh();
+
+        // update driver status
+        $driver = $this->driver->find($vehicle->driver_id);
+        if (!$driver) {
+            throw new InvalidArgumentException('Driver tidak ditemukan');
+        }
+        if (!$driver->active) {
+            throw new InvalidArgumentException('Driver di nonaktifkan, tidak bisa melanjutkan proses');
+        }
+        $driver->status = 'available';
+        $driver->save();
+        return true;
+    }
 }

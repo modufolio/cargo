@@ -104,7 +104,7 @@ class PickupPlanRepository
             $pickupPlan->deleted_by = $data['userId'];
             $pickupPlan->save();
             $pickupPlan->delete();
-            return true;
+            return $pickupPlan;
         }
         throw new InvalidArgumentException('Maaf, pickup order yang ada di pickup plan tidak bisa dihapus');
     }

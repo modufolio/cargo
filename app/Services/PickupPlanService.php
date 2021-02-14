@@ -155,8 +155,18 @@ class PickupPlanService {
         }
 
         DB::beginTransaction();
+        // DELETE PICKUP PLAN
         try {
-            $result = $this->pickupPlanRepository->deletePickupPlanRepo($data);
+            $pickupPlan = $this->pickupPlanRepository->deletePickupPlanRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // UNASSIGN DRIVER TO CURRENT VEHICLE
+        try {
+            $this->vehicleRepository->unassignDriverRepo($pickupPlan);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -164,6 +174,6 @@ class PickupPlanService {
         }
 
         DB::commit();
-        return $result;
+        return $pickupPlan;
     }
 }
