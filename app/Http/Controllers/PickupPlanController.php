@@ -48,6 +48,29 @@ class PickupPlanController extends BaseController
         return $this->sendResponse(null, $result);
     }
 
+    /**
+     * Delete pickup plan.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function delete(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+            'pickupPlanId',
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->pickupPlanService->deletePickupPlanService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
+
     public function getPaginatePickup(Request $request)
     {
         $data = $request->only([

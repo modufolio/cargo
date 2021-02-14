@@ -168,6 +168,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::prefix('pickup-plan')->group(function() {
             Route::post('save', [PickupPlanController::class, 'save']);
             Route::post('get-pickup', [PickupPlanController::class, 'getPaginatePickup']);
+            Route::post('delete', [PickupPlanController::class, 'delete']);
             Route::post('list', [PickupPlanController::class, 'getList']);
             Route::post('delete-po', [PickupPlanController::class, 'deletePickupOrder']);
             Route::post('add-po', [PickupPlanController::class, 'addPickupOrder']);

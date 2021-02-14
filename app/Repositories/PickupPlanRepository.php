@@ -33,9 +33,11 @@ class PickupPlanRepository
         $pickupPlan->vehicle_id = $vehicleId;
         $pickupPlan->created_by = $userId;
         $pickupPlan->save();
-
         foreach ($pickupId as $key => $value) {
-            $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
+            // $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
+            $pickup = $this->pickup->find($value);
+            $pickup->pickupPlan()->associate($pickupPlan);
+            $pickup->save();
         }
         $pickupPlan->fresh();
         return $pickupPlan;
@@ -82,5 +84,28 @@ class PickupPlanRepository
             // $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
         }
         return $result;
+    }
+
+    /**
+     * delete pickup plan
+     *
+     * @param array $data
+     */
+    public function deletePickupPlanRepo($data = [])
+    {
+        $pickupPlan = $this->pickupPlan->find($data['pickupPlanId']);
+        if (!$pickupPlan) {
+            throw new InvalidArgumentException('Maaf, pickup plan tidak ditemukan');
+        }
+        $pickup = $this->pickup->where('pickup_plan_id', $data['pickupPlanId'])->update([
+            'pickup_plan_id' => null
+        ]);
+        if ($pickup) {
+            $pickupPlan->deleted_by = $data['userId'];
+            $pickupPlan->save();
+            $pickupPlan->delete();
+            return true;
+        }
+        throw new InvalidArgumentException('Maaf, pickup order yang ada di pickup plan tidak bisa dihapus');
     }
 }

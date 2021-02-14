@@ -96,9 +96,11 @@ class PickupPlanService {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
+        DB::beginTransaction();
         try {
             $result = $this->pickupPlanRepository->deletePoRepo($data);
         } catch (Exception $e) {
+            DB::rollback();
             Log::info($e->getMessage());
             throw new InvalidArgumentException($e->getMessage());
         }
@@ -123,9 +125,40 @@ class PickupPlanService {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
+        DB::beginTransaction();
         try {
             $result = $this->pickupPlanRepository->addPoRepo($data);
         } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        DB::commit();
+        return $result;
+    }
+
+    /**
+     * delete pickup plan
+     *
+     * @param array $data
+     */
+    public function deletePickupPlanService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'pickupPlanId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $result = $this->pickupPlanRepository->deletePickupPlanRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
             Log::info($e->getMessage());
             throw new InvalidArgumentException($e->getMessage());
         }
