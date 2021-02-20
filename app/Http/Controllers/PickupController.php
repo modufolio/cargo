@@ -164,4 +164,30 @@ class PickupController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get list pickup untuk customer
+     */
+    public function listPickupCustomer(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'userId',
+            'name',
+            'city',
+            'id',
+            'district',
+            'village',
+            'picktime',
+            'sort'
+        ]);
+        try {
+            $result = $this->pickupService->getPickupPaginateByUserId($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

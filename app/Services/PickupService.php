@@ -211,4 +211,18 @@ class PickupService {
         }
         return $pickup;
     }
+
+    /**
+     * Get pickup paginate by customer id
+     */
+    public function getPickupPaginateByUserId($data)
+    {
+        try {
+            $pickup = $this->pickupRepository->getPickupByCustomerRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapatkan data pickup');
+        }
+        return $pickup;
+    }
 }

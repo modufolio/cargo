@@ -40,6 +40,9 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
 
     // Pickup
     Route::post('pickup', [PickupController::class, 'store']);
+    Route::prefix('pickup')->group(function() {
+        Route::post('list', [PickupController::class, 'listPickupCustomer']);
+    });
 
     // Sender
     Route::resource('sender', SenderController::class);
