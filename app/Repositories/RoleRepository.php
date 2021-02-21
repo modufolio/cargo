@@ -75,8 +75,8 @@ class RoleRepository
             throw new InvalidArgumentException('Maaf, data peran tidak ditemukan');
         }
         $role->name = $data['name'];
-        $slug = Str::of($data['name'])->slug('-');
-        $role->slug = $slug;
+        // $slug = Str::of($data['name'])->slug('-');
+        // $role->slug = $slug;
         $role->ranking = $data['ranking'];
         $role->description = $data['description'];
         $role->save();
