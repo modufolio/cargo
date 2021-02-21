@@ -339,7 +339,7 @@ class UserRepository
         $avatar_extension    = $avatar->getClientOriginalExtension();
         $timestamp = Carbon::now('Asia/Jakarta')->timestamp;
         Storage::disk('storage_profile')->put('avatar'.$timestamp.'.'.$avatar_extension,  File::get($avatar));
-        $avatar_url              = '/upload/webchat/avatar'.$timestamp.'.'.$avatar_extension;
+        $avatar_url              = '/upload/profile/avatar'.$timestamp.'.'.$avatar_extension;
         return [
             'base_url' => env('APP_URL'),
             'path' => $avatar_url
