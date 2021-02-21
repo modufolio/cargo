@@ -249,7 +249,7 @@ class UserController extends BaseController
     public function searchName(Request $request)
     {
         try {
-            $result = $this->userService->getByNameService($request->query);
+            $result = $this->userService->searchByNameService($request->query);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
@@ -266,7 +266,7 @@ class UserController extends BaseController
     public function searchEmail(Request $request)
     {
         try {
-            $result = $this->userService->getByEmailService($request->query);
+            $result = $this->userService->searchByEmailService($request->query);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }

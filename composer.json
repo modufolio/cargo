@@ -12,6 +12,7 @@
         "doctrine/dbal": "^2.12",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
+        "google/apiclient": "^2.9",
         "guzzlehttp/guzzle": "^7.0.1",
         "kyslik/column-sortable": "^6.4",
         "laravel-lang/lang": "~8.0",

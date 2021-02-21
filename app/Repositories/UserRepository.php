@@ -223,7 +223,7 @@ class UserRepository
      * @param string $name
      * @return User
      */
-    public function getByNameRepo($name)
+    public function searchByNameRepo($name)
     {
         return $this->user->select('id','name')->whereHas('role', function($q) {
             $q->where('slug', 'customer');
@@ -236,7 +236,7 @@ class UserRepository
      * @param string $email
      * @return User
      */
-    public function getByEmailRepo($email)
+    public function searchByEmailRepo($email)
     {
         return $this->user->select('id','email')->whereHas('role', function($q) {
             $q->where('slug', 'customer');

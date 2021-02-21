@@ -10,8 +10,12 @@ use App\Models\VerifyUser;
 use App\Utilities\ProxyRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 use DB;
+use InvalidArgumentException;
+
+// VENDOR
+use Carbon\Carbon;
+use Google_Client;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\RefreshTokenRepository;
 class AuthRepository
@@ -97,5 +101,20 @@ class AuthRepository
 
         // Revoke all of the token's refresh tokens...
         $refreshTokenRepository->revokeRefreshTokensByAccessTokenId($tokenId);
+    }
+
+    /**
+     * verify token google repo
+     *
+     * @param array $data
+     */
+    public function verifyTokenGoogleRepo($data = [])
+    {
+        $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
+        $payload = $client->verifyIdToken($data['tokenId']);
+        if ($payload) {
+            return $payload;
+        }
+        throw new InvalidArgumentException('Verifikasi google tidak berhasil');
     }
 }

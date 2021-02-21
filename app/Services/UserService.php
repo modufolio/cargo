@@ -231,10 +231,10 @@ class UserService {
      * @param string $name
      * @return String
      */
-    public function getByNameService($name)
+    public function searchByNameService($name)
     {
         try {
-            $user = $this->userRepository->getByNameRepo($name);
+            $user = $this->userRepository->searchByNameRepo($name);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mendapat data user');
@@ -248,10 +248,10 @@ class UserService {
      * @param string $email
      * @return String
      */
-    public function getByEmailService($email)
+    public function searchByEmailService($email)
     {
         try {
-            $user = $this->userRepository->getByEmailRepo($email);
+            $user = $this->userRepository->searchByEmailRepo($email);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mendapat data user');
@@ -400,5 +400,22 @@ class UserService {
         }
         DB::commit();
         return $result;
+    }
+
+    /**
+     * Get user by email.
+     *
+     * @param string $email
+     * @return String
+     */
+    public function getByEmailService($email)
+    {
+        try {
+            $user = $this->userRepository->getByEmail($email);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat data user');
+        }
+        return $user;
     }
 }

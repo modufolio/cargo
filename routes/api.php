@@ -195,8 +195,10 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
 // Guest / All User
 Route::middleware('guest')->group(function () {
     // Auth
-    Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
-    Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+    Route::prefix('google')->group(function() {
+        Route::post('login', [GoogleController::class, 'loginGoogle']);
+        Route::post('register', [GoogleController::class, 'registerGoogle']);
+    });
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('login-web', [AuthController::class, 'loginWeb'])->name('loginWeb');

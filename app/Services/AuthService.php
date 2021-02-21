@@ -95,4 +95,31 @@ class AuthService {
         DB::commit();
         return $data;
     }
+
+    /**
+     * verify token id google
+     * @param array $data
+    */
+    public function verifyIdTokenService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'tokenId' => 'bail|required|string'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        // verify user or registered user
+        DB::beginTransaction();
+        try {
+            $data = $this->authRepository->verifyTokenGoogleRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
+        return $data;
+    }
 }
