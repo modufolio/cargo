@@ -374,4 +374,31 @@ class UserService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * remove avatar service
+     *
+     * @param array $data
+     * @return object
+     */
+    public function removeAvatarService($data)
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->userRepository->removeAvatar($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal menhapus avatar');
+        }
+        DB::commit();
+        return $result;
+    }
 }

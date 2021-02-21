@@ -359,4 +359,26 @@ class UserController extends BaseController
         DB::commit();
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * Upload avatar
+     *
+     * @param Request $request
+     */
+    public function removeAvatar(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $result = $this->userService->removeAvatarService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
 }

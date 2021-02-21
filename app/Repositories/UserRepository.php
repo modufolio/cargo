@@ -345,4 +345,29 @@ class UserRepository
             'path' => $avatar_url
         ];
     }
+
+    /**
+     * Remove file Avatar
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function removeAvatar($data = [])
+    {
+        $user = $this->user->find($data['userId']);
+        if (!$user) {
+            throw new InvalidArgumentException('Pengguna tidak ditemukan');
+        }
+        $avatar = $user->avatar;
+        $avatar = explode('/', $avatar);
+        $avatar = end($avatar);
+        $file = Storage::disk('storage_profile')->delete($avatar);
+        if ($file) {
+            $user->avatar = null;
+            $user->save();
+        } else {
+            throw new InvalidArgumentException('Avatar gagal dihapus');
+        }
+        return $user;
+    }
 }

@@ -94,6 +94,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     Route::prefix('user')->group(function() {
         Route::post('update-profile', [UserController::class, 'updateProfile']);
         Route::post('upload-avatar', [UserController::class, 'uploadAvatar']);
+        Route::post('remove-avatar', [UserController::class, 'removeAvatar']);
     });
 
     // Admin Only
