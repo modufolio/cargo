@@ -341,7 +341,7 @@ class UserRepository
         Storage::disk('storage_profile')->put('avatar'.$timestamp.'.'.$avatar_extension,  File::get($avatar));
         $avatar_url              = '/upload/profile/avatar'.$timestamp.'.'.$avatar_extension;
         return [
-            'base_url' => env('APP_URL'),
+            'base_url' => env('APP_URL').'/public/storage',
             'path' => $avatar_url
         ];
     }
