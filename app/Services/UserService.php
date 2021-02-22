@@ -156,6 +156,7 @@ class UserService {
             'phone' => [
                 'bail',
                 'max:15',
+                'numeric',
                 Rule::unique('users', 'phone')->ignore($data['id'])
             ],
             'id' => 'bail|required',
