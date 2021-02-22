@@ -71,6 +71,10 @@ class PickupPlanController extends BaseController
         return $this->sendResponse(null, $result);
     }
 
+    /**
+     * get pickup order pagination
+     * only admin
+     */
     public function getPaginatePickup(Request $request)
     {
         $data = $request->only([
@@ -93,6 +97,10 @@ class PickupPlanController extends BaseController
         return $this->sendResponse(null, $result);
     }
 
+    /**
+     * get list pickup plan paginate
+     * only admin
+     */
     public function getList(Request $request)
     {
         $data = $request->only([
@@ -116,6 +124,10 @@ class PickupPlanController extends BaseController
         return $this->sendResponse(null, $result);
     }
 
+    /**
+     * delete pickup order inside pickup plan
+     * only admin
+     */
     public function deletePickupOrder(Request $request)
     {
         $data = $request->only([
@@ -131,6 +143,10 @@ class PickupPlanController extends BaseController
         return $this->sendResponse(null, $result);
     }
 
+    /**
+     * create pickup order inside pickup plan
+     * only admin
+     */
     public function addPickupOrder(Request $request)
     {
         $data = $request->only([
@@ -139,6 +155,33 @@ class PickupPlanController extends BaseController
         ]);
         try {
             $result = $this->pickupPlanService->addPoService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get pickup plan paginate
+     * only driver
+     */
+    public function getDriverPickupPlanList(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'startDate',
+            'endDate',
+            'id',
+            'status',
+            'licenseNumber',
+            'vehicleType',
+            'sort',
+            'userId'
+        ]);
+        try {
+            $result = $this->pickupService->getDriverPickupPlanListService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

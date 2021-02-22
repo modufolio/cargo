@@ -97,6 +97,15 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::post('remove-avatar', [UserController::class, 'removeAvatar']);
     });
 
+    // Driver Only
+    Route::group(['middleware' => ['driver.panel']], function () {
+        Route::prefix('driver')->group(function() {
+            Route::prefix('pickup-plan')->group(function() {
+                Route::post('list', [PickupPlanController::class, 'getDriverPickupPlanList']);
+            });
+        });
+    });
+
     // Admin Only
     Route::group(['middleware' => ['admin.panel']], function () {
         // User

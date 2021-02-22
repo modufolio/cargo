@@ -26,21 +26,12 @@ class PickupPlan extends Model
         'pickups',
         'vehicle',
         'status',
+        'user',
+        'sender',
         'id',
         'created_by',
         'deleted_by'
     ];
-
-
-    public function pickups()
-    {
-        return $this->hasMany(Pickup::class, 'pickup_plan_id');
-    }
-
-    public function vehicle()
-    {
-        return $this->belongsTo(Vehicle::class);
-    }
 
     public function getCreatedAtAttribute($value)
     {
@@ -52,6 +43,16 @@ class PickupPlan extends Model
     {
         $data = Carbon::parse($value)->format('Y-m-d h:m:s');
         return $data;
+    }
+
+    public function pickups()
+    {
+        return $this->hasMany(Pickup::class, 'pickup_plan_id');
+    }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
     }
 
     public function createdBy()

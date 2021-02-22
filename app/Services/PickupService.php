@@ -42,9 +42,7 @@ class PickupService {
     /**
      * Validate pickup data.
      * Store to DB if there are no errors.
-     *
-     * @param data
-     * @return mixed
+     * @param array $data
      */
     public function createPickupService($data)
     {
@@ -164,8 +162,9 @@ class PickupService {
 
     /**
      * Get all pickup paginate
+     * @param array $data
      */
-    public function getAllPaginate($data)
+    public function getAllPaginate($data = [])
     {
         try {
             $pickup = $this->pickupRepository->getAllPickupPaginate($data);
@@ -178,8 +177,9 @@ class PickupService {
 
     /**
      * Get all pickup paginate
+     * @param array $data
      */
-    public function getReadyToPickupService($data)
+    public function getReadyToPickupService($data = [])
     {
         try {
             $pickup = $this->pickupRepository->getReadyToPickupRepo($data);
@@ -190,7 +190,11 @@ class PickupService {
         return $pickup;
     }
 
-    public function getListPickupPlanService($data)
+    /**
+     * get list pickup plan paginate
+     * @param array $data
+     */
+    public function getListPickupPlanService($data = [])
     {
         try {
             $pickup = $this->pickupRepository->getListPickupPlanRepo($data);
@@ -201,7 +205,11 @@ class PickupService {
         return $pickup;
     }
 
-    public function getPickupByPickupPlanService($data)
+    /**
+     * get list pickup inside pickup plan
+     * @param array $data
+     */
+    public function getPickupByPickupPlanService($data = [])
     {
         try {
             $pickup = $this->pickupRepository->getPickupByPickupPlanRepo($data);
@@ -214,14 +222,30 @@ class PickupService {
 
     /**
      * Get pickup paginate by customer id
+     * @param array $data
      */
-    public function getPickupPaginateByUserId($data)
+    public function getPickupPaginateByUserId($data = [])
     {
         try {
             $pickup = $this->pickupRepository->getPickupByCustomerRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mendapatkan data pickup');
+        }
+        return $pickup;
+    }
+
+    /**
+     * get pickup plan current driver
+     * @param array $data
+     */
+    public function getDriverPickupPlanListService($data = [])
+    {
+        try {
+            $pickup = $this->pickupRepository->getListPickupPlanDriverRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
         }
         return $pickup;
     }

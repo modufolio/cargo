@@ -405,7 +405,7 @@ class PickupRepository
     }
 
     /**
-     * get list pickup plan
+     * get list pickup inside pickup plan
      *
      * @param array $data
      */
@@ -620,7 +620,116 @@ class PickupRepository
             $pickup = $pickup->where('picktime', 'ilike', '%'.$picktime.'%');
         }
 
-        $result = $pickup->paginate($perPage);
+        $result = $pickup->simplePaginate($perPage);
+
+        return $result;
+    }
+
+    /**
+     * get list pickup plan driver
+     * @param array $data
+     */
+    public function getListPickupPlanDriverRepo($data = [])
+    {
+        $perPage = $data['perPage'];
+        $page = $data['page'];
+        $id = $data['id'];
+        $userId = $data['userId'];
+        $startDate = $data['startDate'];
+        $endDate = $data['endDate'];
+        $status = $data['status'];
+        $licenseNumber = $data['licenseNumber'];
+        $vehicleType = $data['vehicleType'];
+        $sort = $data['sort'];
+
+        $pickupPlan = $this->pickupPlan->whereHas('vehicle', function($q) use ($userId) {
+            $q->whereHas('driver', function($o) use ($userId) {
+                $o->whereHas('user', function($p) use ($userId) {
+                    $p->where('id', $userId);
+                });
+            });
+        })->with(['vehicle', 'pickups']);
+
+        if (empty($perPage)) {
+            $perPage = 10;
+        }
+
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'id':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'id' => $order
+                    ]);
+                    break;
+                case 'user.name':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'user.name' => $order
+                    ]);
+                    break;
+                case 'sender.city':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'sender.city' => $order
+                    ]);
+                    break;
+                case 'sender.district':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'sender.district' => $order
+                    ]);
+                    break;
+                case 'sender.village':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'sender.village' => $order
+                    ]);
+                    break;
+                case 'picktime':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'picktime' => $order
+                    ]);
+                    break;
+                default:
+                    $pickupPlan = $pickupPlan->sortable([
+                        'id' => 'desc'
+                    ]);
+                    break;
+            }
+        }
+
+        if (!empty($id)) {
+            $pickupPlan = $pickupPlan->where('id', 'ilike', '%'.$id.'%');
+        }
+
+        if (!empty($startDate) && !empty($endDate)) {
+            $pickupPlan = $pickupPlan->whereHas('pickups', function ($q) use ($startDate, $endDate){
+                $q->whereDate('picktime', '>=', date($startDate))
+                    ->whereDate('picktime', '<=', date($endDate));
+            });
+        }
+
+        if (!empty($status)) {
+            $pickupPlan = $pickupPlan->where('status', 'ilike', '%'.$status.'%');
+        }
+
+        if (!empty($licenseNumber)) {
+            $pickupPlan = $pickupPlan->whereHas('vehicle', function($q) use ($licenseNumber) {
+                $q->where('license_plate', 'ilike', '%'.$licenseNumber.'%');
+            });
+        }
+
+        if (!empty($vehicleType)) {
+            $pickupPlan = $pickupPlan->whereHas('vehicle', function($q) use ($vehicleType) {
+                $q->where('type', 'ilike', '%'.$vehicleType.'%');
+            });
+        }
+
+        $result = $pickupPlan->simplePaginate($perPage);
 
         return $result;
     }
