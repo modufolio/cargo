@@ -22,26 +22,6 @@ class PickupController extends BaseController
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -77,40 +57,6 @@ class PickupController extends BaseController
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -143,6 +89,10 @@ class PickupController extends BaseController
         return $this->sendResponse(null, $result);
     }
 
+    /**
+     * get pickup order by pickup plan
+     * admin only
+     */
     public function getByPickupPlan(Request $request)
     {
         $data = $request->only([
@@ -184,6 +134,33 @@ class PickupController extends BaseController
         ]);
         try {
             $result = $this->pickupService->getPickupPaginateByUserId($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get pickup order by pickup plan
+     * driver only
+     */
+    public function getByPickupPlanDriver(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'userId',
+            'name',
+            'city',
+            'id',
+            'district',
+            'village',
+            'pickupPlanId',
+            'sort'
+        ]);
+        try {
+            $result = $this->pickupService->getPickupByPickupPlanDriverService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

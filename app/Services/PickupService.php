@@ -249,4 +249,35 @@ class PickupService {
         }
         return $pickup;
     }
+
+    /**
+     * Get all pickup inside pickup plan paginate
+     * @param array $data
+     */
+    public function getReadyToPickupDriverService($data = [])
+    {
+        try {
+            $pickup = $this->pickupRepository->getReadyToPickupDriverRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapatkan data pickup');
+        }
+        return $pickup;
+    }
+
+    /**
+     * get list pickup inside pickup plan
+     * driver only
+     * @param array $data
+     */
+    public function getPickupByPickupPlanDriverService($data = [])
+    {
+        try {
+            $pickup = $this->pickupRepository->getPickupByPickupPlanDriverRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $pickup;
+    }
 }

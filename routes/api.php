@@ -103,6 +103,10 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::prefix('pickup-plan')->group(function() {
                 Route::post('list', [PickupPlanController::class, 'getDriverPickupPlanList']);
             });
+            // Pickup
+            Route::prefix('pickup')->group(function() {
+                Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlanDriver']);
+            });
         });
     });
 

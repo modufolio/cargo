@@ -72,7 +72,7 @@ class PickupPlanController extends BaseController
     }
 
     /**
-     * get pickup order pagination
+     * get pickup order inside pickup plan pagination
      * only admin
      */
     public function getPaginatePickup(Request $request)
@@ -182,6 +182,33 @@ class PickupPlanController extends BaseController
         ]);
         try {
             $result = $this->pickupService->getDriverPickupPlanListService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get pickup pagination for driver
+     * only driver
+     */
+    public function getPaginatePickupDriver(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'userId',
+            'name',
+            'city',
+            'id',
+            'district',
+            'village',
+            'picktime',
+            'sort'
+        ]);
+        try {
+            $result = $this->pickupService->getReadyToPickupDriverService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());
