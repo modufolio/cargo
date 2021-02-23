@@ -22,10 +22,10 @@ class RoleService {
     /**
      * Delete role by id.
      *
-     * @param $id
+     * @param array $data
      * @return String
      */
-    public function deleteById($id)
+    public function deleteById($data)
     {
         $validator = Validator::make($data, [
             'userId' => 'bail|required',
@@ -50,7 +50,7 @@ class RoleService {
 
         DB::beginTransaction();
         try {
-            $role = $this->roleRepository->delete($id);
+            $role = $this->roleRepository->delete($data['roleId']);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
