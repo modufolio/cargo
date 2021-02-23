@@ -94,7 +94,7 @@ class DriverService {
             'district' => 'bail|required|max:255',
             'village' => 'bail|required|max:255',
             'street' => 'bail|required|max:255',
-            'postalCode' => 'bail|required|max:255',
+            'postalCode' => 'bail|required|numeric|max:255',
         ]);
 
         if ($validator->fails()) {
