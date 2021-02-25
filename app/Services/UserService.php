@@ -116,7 +116,7 @@ class UserService {
             'password' => 'bail|required|max:255|confirmed',
             'role_id' => 'bail|required|numeric',
             'username' => 'bail|required|max:255|unique:users,username',
-            'phone' => 'bail|max:15|unique:users,phone',
+            'phone' => 'bail|max:999999999999999|numeric|unique:users,phone',
         ]);
 
         if ($validator->fails()) {
@@ -155,7 +155,7 @@ class UserService {
             ],
             'phone' => [
                 'bail',
-                'max:15',
+                'max:999999999999999',
                 'numeric',
                 Rule::unique('users', 'phone')->ignore($data['id'])
             ],
@@ -330,7 +330,8 @@ class UserService {
             ],
             'phone' => [
                 'bail',
-                'max:15',
+                'max:999999999999999',
+                'numeric',
                 Rule::unique('users', 'phone')->ignore($data['userId'])
             ],
         ]);

@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
                 'email' => 'ivalrival95@gmail.com',
                 'password' => bcrypt('ival1234'),
                 'role_id' => 9,
+                'phone' => '081944210229',
                 'username' => 'ival',
             ],
             [
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
                 'email' => 'vikyyahya.id@gmail.com',
                 'password' => bcrypt('aaaaaaaa1'),
                 'role_id' => 1,
+                'phone' => '081228271888',
                 'username' => 'vikyyahya',
             ],
             [
@@ -36,6 +38,7 @@ class UserSeeder extends Seeder
                 'email' => 'driver1@gmail.com',
                 'password' => bcrypt('driver'),
                 'role_id' => 3,
+                'phone' => '081728592812',
                 'username' => 'driver_one',
             ],
             [
@@ -43,6 +46,7 @@ class UserSeeder extends Seeder
                 'email' => 'driver2@gmail.com',
                 'password' => bcrypt('driver'),
                 'role_id' => 3,
+                'phone' => '08122412852',
                 'username' => 'driver_two',
             ],
             [
@@ -50,6 +54,7 @@ class UserSeeder extends Seeder
                 'email' => 'customer@gmail.com',
                 'password' => bcrypt('customer'),
                 'role_id' => 1,
+                'phone' => '081288279211',
                 'username' => 'customer',
             ],
             [
@@ -57,6 +62,7 @@ class UserSeeder extends Seeder
                 'email' => 'sisil5@gmail.com',
                 'password' => bcrypt('sisil123'),
                 'role_id' => 9,
+                'phone' => '082199251122',
                 'username' => 'shisilsm27'
             ]
         ]);

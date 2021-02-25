@@ -12,6 +12,7 @@ use DB;
 use Log;
 use Validator;
 use InvalidArgumentException;
+use Illuminate\Validation\Rule;
 
 class DriverService {
 
@@ -84,7 +85,13 @@ class DriverService {
         $validator = Validator::make($data, [
             'id' => 'bail|required|max:50',
             'name' => 'bail|required|max:255',
-            'phone' => 'bail|required|max:255',
+            'phone' => [
+                'bail',
+                'required',
+                'numeric',
+                'max:999999999999999',
+                Rule::unique('users', 'phone')->ignore($data['email'], 'email')
+            ],
             'email' => 'bail|required|max:255',
             'active' => 'bail|required|boolean',
             'branchId' => 'bail|required|max:50',
@@ -94,7 +101,7 @@ class DriverService {
             'district' => 'bail|required|max:255',
             'village' => 'bail|required|max:255',
             'street' => 'bail|required|max:255',
-            'postalCode' => 'bail|required|numeric|max:255',
+            'postalCode' => 'bail|required|numeric|max:999999',
         ]);
 
         if ($validator->fails()) {
