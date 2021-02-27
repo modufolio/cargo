@@ -25,12 +25,12 @@ class RoutingMenuSeeder extends Seeder
             [
                 'menu_id' => $menu->id,
                 'name' => 'Pickup Plan',
-                'slug' => 'pickup-plan',
+                'slug' => 'pickupplan',
             ],
             [
                 'menu_id' => $menu->id,
                 'name' => 'Shipment Plan',
-                'slug' => 'shipment-plan',
+                'slug' => 'shipmentplan',
             ],
         ];
         Submenu::insert($submenu);
