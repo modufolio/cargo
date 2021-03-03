@@ -48,7 +48,7 @@ class DriverRepository
     }
 
     /**
-     * Get Driver by name
+     * Get available driver by name
      *
      * @param string $data
      * @return Driver
@@ -224,5 +224,19 @@ class DriverRepository
         } else {
             throw new InvalidArgumentException('Driver tidak dapat dinonaktifkan, karena sedang bertugas');
         }
+    }
+
+    /**
+     * Get All Driver by name
+     *
+     * @param string $data
+     * @return Driver
+     */
+    public function getAllDriverByNameRepo($data)
+    {
+        $data = $this->driver->with('user')->whereHas('user', function($q) use ($data) {
+            $q->where('name', 'ilike', '%'.$data.'%');
+        })->get();
+        return $data;
     }
 }

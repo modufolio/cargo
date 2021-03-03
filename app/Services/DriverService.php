@@ -53,7 +53,7 @@ class DriverService {
             }
         } else {
             try {
-                $result = $this->driverRepository->getAvailableDriverByNameRepo($data['value']);
+                $result = $this->driverRepository->getAllDriverByNameRepo($data['value']);
             } catch (Exception $e) {
                 Log::info($e->getMessage());
                 throw new InvalidArgumentException('Gagal mendapat data driver');

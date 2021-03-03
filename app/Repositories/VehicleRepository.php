@@ -253,4 +253,16 @@ class VehicleRepository
         $driver->save();
         return true;
     }
+
+    /**
+     * Get all vehicle by number
+     *
+     * @param array $data
+     * @return Vehicle
+     */
+    public function getAllVehicleByNumberRepo($data)
+    {
+        $data = $this->vehicle->where('license_plate', 'ilike', '%'.$data['value'].'%')->get();
+        return $data;
+    }
 }
