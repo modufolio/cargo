@@ -6,7 +6,7 @@ use App\Models\Item;
 use App\Models\User;
 use App\Models\Pickup;
 use Carbon\Carbon;
-
+use InvalidArgumentException;
 class ItemRepository
 {
     protected $item;
@@ -84,36 +84,23 @@ class ItemRepository
     /**
      * Update Item
      *
-     * @param $data
+     * @param array $data
      * @return Item
      */
-    public function update($data, $id)
+    public function updateItemRepo($data = [])
     {
-        if ($data['is_primary']) {
-            $this->updatePrimaryAddress($data['userId'], $id, false);
+        $item = $this->item->find($data['itemId']);
+
+        if (!$item) {
+            throw new InvalidArgumentException('Item tidak ditemukan');
         }
 
-        $item = $this->item->find($id);
-
-        $item->is_primary = $data['is_primary'];
-        $item->title = $data['title'];
-        $item->receiptor = $data['receiptor'];
-        $item->phone = $data['phone'];
-        $item->province = $data['province'];
-        $item->city = $data['city'];
-        $item->district = $data['district'];
-        $item->postal_code = $data['postal_code'];
-        $item->street = $data['street'];
-        $item->notes = $data['notes'];
-
+        $item->name = $data['name'];
+        $item->unit_count = $data['count'];
+        $item->unit_total = $data['total'];
+        $item->service_id = $data['serviceId'] ?? null;
         $item->save();
 
         return $item;
-    }
-
-    public function updatePrimaryAddress($userId, $item, $isPrimary)
-    {
-        $item = $this->item->where('user_id', $userId)->where('id', '!==', $item)->update(['is_primary' => $isPrimary]);
-        return $item->fresh();
     }
 }
