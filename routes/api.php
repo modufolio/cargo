@@ -23,6 +23,8 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\PickupPlanController;
+use App\Http\Controllers\ProofOfPickupController;
+use App\Http\Controllers\ItemController;
 
 // All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom']], function () {
@@ -100,14 +102,26 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     // Driver Only
     Route::group(['middleware' => ['driver.panel']], function () {
         Route::prefix('driver')->group(function() {
+            // pickup plan
             Route::prefix('pickup-plan')->group(function() {
                 Route::post('list', [PickupPlanController::class, 'getDriverPickupPlanList']);
             });
+
             // Pickup
             Route::prefix('pickup')->group(function() {
                 Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlanDriver']);
                 Route::post('total-volume-kilo', [PickupController::class, 'getTotalVolumeAndKiloPickup']);
                 Route::post('detail', [PickupController::class, 'getDetailPickup']);
+            });
+
+            // proof of pickup
+            Route::prefix('pop')->group(function() {
+                Route::post('create', [ProofOfPickupController::class, 'createPOP']);
+            });
+
+            // item
+            Route::prefix('item')->group(function() {
+                Route::post('update', [ItemController::class, 'update']);
             });
         });
     });
@@ -198,7 +212,11 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('paginate', [PickupController::class, 'paginate']);
             Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlan']);
             Route::post('outstanding', [PickupController::class, 'getOutstanding']);
-            Route::post('create-pop', [PickupController::class, 'createPop']);
+        });
+
+        // Proof of pickup
+        Route::prefix('pop')->group(function() {
+            Route::post('create', [ProofOfPickupController::class, 'createPOP']);
         });
 
          // Fleet
