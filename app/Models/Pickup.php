@@ -20,6 +20,8 @@ class Pickup extends Model
     public $sortable = [
         'created_at',
         'sender',
+        'name',
+        'pickup_plan_id',
         'picktime',
         'id',
         'user'

@@ -39,4 +39,29 @@ class ProofOfPickupController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get list pickup outstanding
+     * only admin
+     */
+    public function getOutstanding(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'sort',
+            'general',
+            'customer',
+            'pickupOrderNo',
+            'requestPickupDate',
+            'pickupPlanNo',
+        ]);
+        try {
+            $result = $this->popService->getOutstandingService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

@@ -170,30 +170,6 @@ class PickupController extends BaseController
     }
 
     /**
-     * get list pickup outstanding
-     * only admin
-     */
-    public function getOutstanding(Request $request)
-    {
-        $data = $request->only([
-            'perPage',
-            'page',
-            'sort',
-            'customer',
-            'pickupOrderNo',
-            'requestPickupDate',
-            'pickupPlanNo',
-        ]);
-        try {
-            $result = $this->pickupService->getOutstandingService($data);
-        } catch (Exception $e) {
-            DB::rollback();
-            return $this->sendError($e->getMessage());
-        }
-        return $this->sendResponse(null, $result);
-    }
-
-    /**
      * get total volume and kilo of pickup in pickup plan
      * driver only
      */

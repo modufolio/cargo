@@ -211,12 +211,12 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::prefix('pickup')->group(function() {
             Route::post('paginate', [PickupController::class, 'paginate']);
             Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlan']);
-            Route::post('outstanding', [PickupController::class, 'getOutstanding']);
         });
 
         // Proof of pickup
         Route::prefix('pop')->group(function() {
             Route::post('create', [ProofOfPickupController::class, 'createPOP']);
+            Route::post('outstanding', [ProofOfPickupController::class, 'getOutstanding']);
         });
 
          // Fleet

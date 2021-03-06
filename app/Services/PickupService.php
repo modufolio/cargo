@@ -282,35 +282,6 @@ class PickupService {
     }
 
     /**
-     * get outstanding proof of pickup
-     * @param array $data
-     */
-    public function getOutstandingService($data = [])
-    {
-        $validator = Validator::make($data, [
-            'perPage' => 'bail|present',
-            'sort' => 'bail|present',
-            'page' => 'bail|present',
-            'customer' => 'bail|present',
-            'pickupOrderNo' => 'bail|present',
-            'requestPickupDate' => 'bail|present',
-            'pickupPlanNo' => 'bail|present',
-        ]);
-
-        if ($validator->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
-
-        try {
-            $result = $this->pickupRepository->getOutstandingPickupRepo($data);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException($e->getMessage());
-        }
-        return $result;
-    }
-
-    /**
      * get total volume and kilo in pickup of pickup plan
      * @param array $data
      */
