@@ -966,10 +966,8 @@ class PickupRepository
         $sort = $data['sort'];
         $customer = $data['customer'];
         $pickupOrderNo = $data['pickupOrderNo'];
-        $poCreationDate = $data['poCreationDate'];
+        $requestPickupDate = $data['requestPickupDate'];
         $pickupPlanNo = $data['pickupPlanNo'];
-        $pickupStatus = $data['pickupStatus'];
-        $driverPickingStatus = $data['driverPickingStatus'];
 
         $pickup = $this->pickup->where('status', 'request')->whereNotNull('pickup_plan_id');
 
@@ -1026,17 +1024,15 @@ class PickupRepository
         // }
 
         if (!empty($customer)) {
-            $pickup = $pickup->whereHas('createdBy', function ($o) use ($customer) {
-                    $o->where('name', 'ilike', '%'.$customer.'%');
-            });
+            $pickup = $pickup->where('name', 'ilike', '%'.$customer.'%');
         }
 
         if (!empty($pickupOrderNo)) {
             $pickup = $pickup->where('id', $pickupOrderNo);
         }
 
-        if (!empty($poCreationDate)) {
-            $pickup = $pickup->whereDate('created_at', date($poCreationDate));
+        if (!empty($requestPickupDate)) {
+            $pickup = $pickup->whereDate('picktime', date($requestPickupDate));
         }
 
         if (!empty($pickupPlanNo)) {

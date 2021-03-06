@@ -181,10 +181,8 @@ class PickupController extends BaseController
             'sort',
             'customer',
             'pickupOrderNo',
-            'poCreationDate',
+            'requestPickupDate',
             'pickupPlanNo',
-            'pickupStatus',
-            'driverPickingStatus',
         ]);
         try {
             $result = $this->pickupService->getOutstandingService($data);

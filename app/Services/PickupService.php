@@ -293,10 +293,8 @@ class PickupService {
             'page' => 'bail|present',
             'customer' => 'bail|present',
             'pickupOrderNo' => 'bail|present',
-            'poCreationDate' => 'bail|present',
+            'requestPickupDate' => 'bail|present',
             'pickupPlanNo' => 'bail|present',
-            'pickupStatus' => 'bail|present',
-            'driverPickingStatus' => 'bail|present'
         ]);
 
         if ($validator->fails()) {
