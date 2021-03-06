@@ -43,7 +43,7 @@ class VehicleRepository
     }
 
     /**
-     * Update vehicle
+     * assign driver to pickup plan
      *
      * @param int $vehicleId
      * @param int $driverId
@@ -56,9 +56,9 @@ class VehicleRepository
         if (!$driver->active) {
             throw new InvalidArgumentException('Driver di nonaktifkan, silahkan ganti ke driver lain');
         }
-        if ($driver->status == 'on-duty') {
-            throw new InvalidArgumentException('Driver sedang bertugas, silahkan ganti ke driver lain');
-        }
+        // if ($driver->status == 'on-duty') {
+        //     throw new InvalidArgumentException('Driver sedang bertugas, silahkan ganti ke driver lain');
+        // }
         if (!$driver) {
             throw new InvalidArgumentException('Driver tidak ditemukan');
         }
@@ -67,9 +67,9 @@ class VehicleRepository
 
         // assign kendaraan dan update status kendaraan
         $vehicle = $this->vehicle->find($vehicleId);
-        if ($vehicle->status == 'on-duty') {
-            throw new InvalidArgumentException('Kendaraan sedang digunakan, silahkan ganti ke kendaraan lain');
-        }
+        // if ($vehicle->status == 'on-duty') {
+        //     throw new InvalidArgumentException('Kendaraan sedang digunakan, silahkan ganti ke kendaraan lain');
+        // }
         if (!$vehicle) {
             throw new InvalidArgumentException('Kendaraan tidak ditemukan');
         }
