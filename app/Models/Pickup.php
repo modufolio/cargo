@@ -38,11 +38,6 @@ class Pickup extends Model
         'deleted_by'
     ];
 
-    // protected $appends = ['total_volume'];
-
-    /**
-     * Get the items for the pickup data.
-     */
     public function items()
     {
         return $this->hasMany(Item::class);
@@ -105,20 +100,8 @@ class Pickup extends Model
         return $this->belongsTo(PickupPlan::class, 'pickup_plan_id');
     }
 
-    // public function getTotalVolumeAttribute()
-    // {
-    //     $pickups = Pickup::where('pickup_plan_id', $this->attributes['pickup_plan_id'])->get();
-    //     $totalVolumeItem = 0;
-    //     foreach ($pickups as $key => $value) {
-    //         $items = Item::where('unit_id', 3)->where('pickup_id', $value['id'])->get();
-    //         $sum = 0;
-    //         foreach ($items as $k => $val) {
-    //             if(isset($val['unit_total'])) {
-    //                 $sum += intval($val['unit_total']);
-    //             }
-    //         }
-    //         $totalVolumeItem += $sum;
-    //     }
-    //     return $totalVolumeItem;
-    // }
+    public function proofOfPickup()
+    {
+        return $this->hasOne(ProofOfPickup::class);
+    }
 }
