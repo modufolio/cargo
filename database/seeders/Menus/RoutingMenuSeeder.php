@@ -34,13 +34,8 @@ class RoutingMenuSeeder extends Seeder
             ],
             [
                 'menu_id' => $menu->id,
-                'name' => 'Po Pickup Plan',
-                'slug' => 'po-pickup-plan',
-            ],
-            [
-                'menu_id' => $menu->id,
-                'name' => 'Po of Delivery',
-                'slug' => 'po-delivery',
+                'name' => 'Proof of Pickup',
+                'slug' => 'po-pickup',
             ],
         ];
         Submenu::insert($submenu);

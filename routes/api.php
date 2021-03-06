@@ -106,6 +106,8 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             // Pickup
             Route::prefix('pickup')->group(function() {
                 Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlanDriver']);
+                Route::post('total-volume-kilo', [PickupController::class, 'getTotalVolumeAndKiloPickup']);
+                Route::post('detail', [PickupController::class, 'getDetailPickup']);
             });
         });
     });
@@ -195,6 +197,8 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::prefix('pickup')->group(function() {
             Route::post('paginate', [PickupController::class, 'paginate']);
             Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlan']);
+            Route::post('outstanding', [PickupController::class, 'getOutstanding']);
+            Route::post('create-pop', [PickupController::class, 'createPop']);
         });
 
          // Fleet

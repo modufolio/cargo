@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kyslik\ColumnSortable\Sortable;
+use App\Models\Pickup;
 
 class PickupPlan extends Model
 {
@@ -32,6 +33,8 @@ class PickupPlan extends Model
         'created_by',
         'deleted_by'
     ];
+
+    protected $appends = ['total_pickup_order'];
 
     public function getCreatedAtAttribute($value)
     {
@@ -63,5 +66,12 @@ class PickupPlan extends Model
     public function deletedBy()
     {
         return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    public function getTotalPickupOrderAttribute()
+    {
+        $pickups = Pickup::where('pickup_plan_id', $this->id)->get();
+        $count = count($pickups);
+        return $count;
     }
 }

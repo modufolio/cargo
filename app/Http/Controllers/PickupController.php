@@ -167,4 +167,85 @@ class PickupController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get list pickup outstanding
+     * only admin
+     */
+    public function getOutstanding(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'sort',
+            'customer',
+            'pickupOrderNo',
+            'poCreationDate',
+            'pickupPlanNo',
+            'pickupStatus',
+            'driverPickingStatus',
+        ]);
+        try {
+            $result = $this->pickupService->getOutstandingService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * create proof of pickup
+     * only admin
+     */
+    public function createPop(Request $request)
+    {
+        $data = $request->only([
+            'pickupId',
+            'driverPick'
+        ]);
+        try {
+            $result = $this->pickupService->createPopService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get total volume and kilo of pickup in pickup plan
+     * driver only
+     */
+    public function getTotalVolumeAndKiloPickup(Request $request)
+    {
+        $data = $request->only([
+            'pickupPlanId',
+        ]);
+        try {
+            $result = $this->pickupService->getTotalVolumeAndKiloService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get detail pickup
+     * driver only
+     */
+    public function getDetailPickup(Request $request)
+    {
+        $data = $request->only([
+            'pickupId',
+        ]);
+        try {
+            $result = $this->pickupService->getDetailPickup($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

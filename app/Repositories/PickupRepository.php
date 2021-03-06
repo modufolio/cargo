@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Address;
 use App\Models\Pickup;
 use App\Models\PickupPlan;
+use App\Models\Item;
 use App\Models\User;
 use Indonesia;
 use Carbon\Carbon;
@@ -14,11 +15,13 @@ class PickupRepository
 {
     protected $pickup;
     protected $pickupPlan;
+    protected $item;
 
-    public function __construct(Pickup $pickup, PickupPlan $pickupPlan)
+    public function __construct(Pickup $pickup, PickupPlan $pickupPlan, Item $item)
     {
         $this->pickup = $pickup;
         $this->pickupPlan = $pickupPlan;
+        $this->item = $item;
     }
 
     /**
@@ -49,6 +52,9 @@ class PickupRepository
         return $pickup->fresh();
     }
 
+    /**
+     * create pickup plan
+     */
     public function savePickupPlanRepo($data)
     {
         $pickup = new $this->pickup;
@@ -648,7 +654,7 @@ class PickupRepository
                     $p->where('id', $userId);
                 });
             });
-        })->with(['vehicle', 'pickups']);
+        })->with(['pickups:id,status,pickup_plan_id']);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -860,7 +866,9 @@ class PickupRepository
         $village = $data['village'];
         $sort = $data['sort'];
 
-        $pickup = $this->pickup->with(['user','sender'])->where('pickup_plan_id', $data['pickupPlanId']);
+        $pickup = $this->pickup->select('id', 'name', 'phone','sender_id')->with(['sender' => function ($q) {
+            $q->select('id','street');
+        }])->where('pickup_plan_id', $data['pickupPlanId']);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -938,5 +946,186 @@ class PickupRepository
         $result = $pickup->simplePaginate($perPage);
 
         return $result;
+    }
+
+     /**
+     * get outstanding proof of pickup
+     * @param array $data
+     */
+    public function getOutstandingPickupRepo($data = [])
+    {
+        $perPage = $data['perPage'];
+        $page = $data['page'];
+        $sort = $data['sort'];
+        $customer = $data['customer'];
+        $pickupOrderNo = $data['pickupOrderNo'];
+        $poCreationDate = $data['poCreationDate'];
+        $pickupPlanNo = $data['pickupPlanNo'];
+        $pickupStatus = $data['pickupStatus'];
+        $driverPickingStatus = $data['driverPickingStatus'];
+
+        $pickup = $this->pickup->where('status', 'request')->whereNotNull('pickup_plan_id');
+
+        if (empty($perPage)) {
+            $perPage = 10;
+        }
+
+        // if (!empty($sort['field'])) {
+        //     $order = $sort['order'];
+        //     if ($order == 'ascend') {
+        //         $order = 'asc';
+        //     } else if ($order == 'descend') {
+        //         $order = 'desc';
+        //     } else {
+        //         $order = 'desc';
+        //     }
+        //     switch ($sort['field']) {
+        //         case 'id':
+        //             $pickup = $pickup->sortable([
+        //                 'id' => $order
+        //             ]);
+        //             break;
+        //         case 'user.name':
+        //             $pickup = $pickup->sortable([
+        //                 'user.name' => $order
+        //             ]);
+        //             break;
+        //         case 'sender.city':
+        //             $pickup = $pickup->sortable([
+        //                 'sender.city' => $order
+        //             ]);
+        //             break;
+        //         case 'sender.district':
+        //             $pickup = $pickup->sortable([
+        //                 'sender.district' => $order
+        //             ]);
+        //             break;
+        //         case 'sender.village':
+        //             $pickup = $pickup->sortable([
+        //                 'sender.village' => $order
+        //             ]);
+        //             break;
+        //         case 'picktime':
+        //             $pickup = $pickup->sortable([
+        //                 'picktime' => $order
+        //             ]);
+        //             break;
+        //         default:
+        //             $pickup = $pickup->sortable([
+        //                 'id' => 'desc'
+        //             ]);
+        //             break;
+        //     }
+        // }
+
+        if (!empty($customer)) {
+            $pickup = $pickup->whereHas('createdBy', function ($o) use ($customer) {
+                    $o->where('name', 'ilike', '%'.$customer.'%');
+            });
+        }
+
+        if (!empty($pickupOrderNo)) {
+            $pickup = $pickup->where('id', $pickupOrderNo);
+        }
+
+        if (!empty($poCreationDate)) {
+            $pickup = $pickup->whereDate('created_at', date($poCreationDate));
+        }
+
+        if (!empty($pickupPlanNo)) {
+            $pickup = $pickup->where('pickup_plan_id', $pickupPlanNo);
+        }
+
+        if (!empty($pickupStatus)) {
+            $pickup = $pickup->where('status', $pickupStatus);
+        }
+
+        if (!empty($driverPickingStatus)) {
+            $pickup = $pickup->where('driver_pick', $driverPickingStatus);
+        }
+
+        $result = $pickup->paginate($perPage);
+
+        return $result;
+    }
+
+    /**
+     * create proof of pickup
+     * @param array $data
+     */
+    public function createPopRepo($data = [])
+    {
+        $pickup = $pickup->find($data['pickupId']);
+
+        if (!$pickup) {
+            throw new InvalidArgumentException('Maaf, ada pickup order tidak ditemukan');
+        }
+
+        $pickup->pop_date = Carbon::now('Asia/Jakarta')->toDateTimeString();
+        $pickup->status = 'draft';
+        $pickup->driver_pick = $data['driverPick'];
+        $pickup->save();
+        return $pickup;
+    }
+
+    /**
+     * get total volume and kilo of pickup inside pickup plan
+     *
+     * @param array $data
+     */
+    public function getTotalVolumeAndKiloPickupRepo($data = [])
+    {
+        $pickups = $this->pickup->select('id')->where('pickup_plan_id', $data['pickupPlanId'])->get();
+        $sumVol = 0;
+        $sumKilo = 0;
+        foreach ($pickups as $key => $value) {
+            $items = $this->item->where('pickup_id', $value['id'])->get();
+            foreach ($items as $k => $v) {
+                if ($v['unit_id'] == 3) {
+                    if(isset($v['unit_total'])) {
+                        $sumVol += $v['unit_total'];
+                    }
+                } else {
+                    if(isset($v['unit_total'])) {
+                        $sumKilo += $v['unit_total'];
+                    }
+                }
+            }
+        }
+        $data = [
+            'volume' => $sumVol,
+            'kilo' => $sumKilo
+        ];
+        return $data;
+    }
+
+    /**
+     * get detail pickup order for driver
+     * @param array $data
+     */
+    public function getDetailPickupRepo($data = [])
+    {
+        $pickup = $this->pickup->select('id','name','phone','picktime','sender_id','receiver_id')->where('id', $data['pickupId'])->with(
+            [
+                'sender' => function($q) {
+                    $q->select('id', 'province','city','district','village','postal_code','street');
+                },
+                'receiver' => function($q) {
+                    $q->select('id','province','city','district');
+                },
+                'items' => function($q) {
+                    $q->select('id','name','pickup_id','unit_total','unit_count','service_id');
+                },
+                'items.service' => function($q) {
+                    $q->select('id','name');
+                }
+            ])->first();
+
+        if (!$pickup) {
+            throw new InvalidArgumentException('Maaf, ada pickup order tidak ditemukan');
+        }
+
+        return $pickup;
+
     }
 }

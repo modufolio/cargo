@@ -17,7 +17,7 @@ class Item extends Model
      */
     public function pickup()
     {
-        return $this->belongsTo('App\Models\Pickup');
+        return $this->belongsTo(Pickup::class);
     }
 
     /**
@@ -25,7 +25,7 @@ class Item extends Model
      */
     public function unit()
     {
-        return $this->belongsTo('App\Models\Unit');
+        return $this->belongsTo(Unit::class);
     }
 
     /**
@@ -33,7 +33,7 @@ class Item extends Model
      */
     public function service()
     {
-        return $this->belongsTo('App\Models\Service');
+        return $this->belongsTo(Service::class);
     }
 
     public function getCreatedAtAttribute($value)
