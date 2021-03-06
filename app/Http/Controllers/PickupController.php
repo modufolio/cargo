@@ -195,25 +195,6 @@ class PickupController extends BaseController
     }
 
     /**
-     * create proof of pickup
-     * only admin
-     */
-    public function createPop(Request $request)
-    {
-        $data = $request->only([
-            'pickupId',
-            'driverPick'
-        ]);
-        try {
-            $result = $this->pickupService->createPopService($data);
-        } catch (Exception $e) {
-            DB::rollback();
-            return $this->sendError($e->getMessage());
-        }
-        return $this->sendResponse(null, $result);
-    }
-
-    /**
      * get total volume and kilo of pickup in pickup plan
      * driver only
      */

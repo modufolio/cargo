@@ -1050,25 +1050,6 @@ class PickupRepository
     }
 
     /**
-     * create proof of pickup
-     * @param array $data
-     */
-    public function createPopRepo($data = [])
-    {
-        $pickup = $pickup->find($data['pickupId']);
-
-        if (!$pickup) {
-            throw new InvalidArgumentException('Maaf, ada pickup order tidak ditemukan');
-        }
-
-        $pickup->pop_date = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $pickup->status = 'draft';
-        $pickup->driver_pick = $data['driverPick'];
-        $pickup->save();
-        return $pickup;
-    }
-
-    /**
      * get total volume and kilo of pickup inside pickup plan
      *
      * @param array $data
@@ -1127,5 +1108,20 @@ class PickupRepository
 
         return $pickup;
 
+    }
+
+    /**
+     * check pickup have pickup plan
+     * @param array $data
+     */
+    public function checkPickupHasPickupPlan($data = [])
+    {
+        $pickup = $this->pickup->find($data['pickupId']);
+        if (!$pickup) {
+            throw new InvalidArgumentException('Pickup tidak ditemukan');
+        }
+        if ($pickup['pickup_plan_id'] == null) {
+            throw new InvalidArgumentException('Pickup ini tidak memiliki pickup plan');
+        }
     }
 }
