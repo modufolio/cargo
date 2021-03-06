@@ -313,30 +313,6 @@ class PickupService {
     }
 
     /**
-     * create proof of pickup
-     * @param array $data
-     */
-    public function createPopService($data = [])
-    {
-        $validator = Validator::make($data, [
-            'pickupId' => 'bail|required',
-            'driverPick' => 'bail|required'
-        ]);
-
-        if ($validator->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
-
-        try {
-            $result = $this->pickupRepository->createPopRepo($data);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException($e->getMessage());
-        }
-        return $result;
-    }
-
-    /**
      * get total volume and kilo in pickup of pickup plan
      * @param array $data
      */
