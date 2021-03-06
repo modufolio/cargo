@@ -156,6 +156,7 @@ class PickupController extends BaseController
             'id',
             'district',
             'village',
+            'street',
             'pickupPlanId',
             'sort'
         ]);

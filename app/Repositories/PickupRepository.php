@@ -864,6 +864,7 @@ class PickupRepository
         $city = $data['city'];
         $district = $data['district'];
         $village = $data['village'];
+        $street = $data['street'];
         $sort = $data['sort'];
 
         $pickup = $this->pickup->select('id', 'name', 'phone','sender_id')->with(['sender' => function ($q) {
@@ -940,6 +941,12 @@ class PickupRepository
         if (!empty($village)) {
             $pickup = $pickup->whereHas('sender', function($q) use ($village) {
                 $q->where('village', 'ilike', '%'.$village.'%');
+            });
+        }
+
+        if (!empty($street)) {
+            $pickup = $pickup->whereHas('sender', function($q) use ($street) {
+                $q->where('street', 'ilike', '%'.$street.'%');
             });
         }
 
