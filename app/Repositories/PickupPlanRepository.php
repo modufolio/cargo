@@ -29,7 +29,7 @@ class PickupPlanRepository
     public function savePickupPlanRepo($pickupId, $vehicleId, $userId)
     {
         $pickupPlan = new $this->pickupPlan;
-        $pickupPlan->status = 'pending';
+        $pickupPlan->status = 'applied'; // applied, cancelled, draft
         $pickupPlan->vehicle_id = $vehicleId;
         $pickupPlan->created_by = $userId;
         $pickupPlan->save();
@@ -107,5 +107,21 @@ class PickupPlanRepository
             return $pickupPlan;
         }
         throw new InvalidArgumentException('Maaf, pickup order yang ada di pickup plan tidak bisa dihapus');
+    }
+
+    /**
+     * cancel pickup plan
+     *
+     * @param array $data
+     */
+    public function cancelPickupPlanRepo($data = [])
+    {
+        $pickupPlan = $this->pickupPlan->find($data['pickupPlanId']);
+        if (!$pickupPlan) {
+            throw new InvalidArgumentException('Maaf, pickup plan tidak ditemukan');
+        }
+        $pickupPlan->status = 'canceled';
+        $pickupPlan->save();
+        return $pickupPlan;
     }
 }

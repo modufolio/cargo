@@ -176,4 +176,43 @@ class PickupPlanService {
         DB::commit();
         return $pickupPlan;
     }
+
+    /**
+     * cancel pickup plan
+     *
+     * @param array $data
+     */
+    public function cancelPickupPlanService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'pickupPlanId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        // CANCEL PICKUP PLAN
+        try {
+            $pickupPlan = $this->pickupPlanRepository->cancelPickupPlanRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // UNASSIGN DRIVER TO CURRENT VEHICLE
+        try {
+            $this->vehicleRepository->unassignDriverRepo($pickupPlan);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        DB::commit();
+        return $pickupPlan;
+    }
 }

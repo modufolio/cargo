@@ -202,6 +202,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('save', [PickupPlanController::class, 'save']);
             Route::post('get-pickup', [PickupPlanController::class, 'getPaginatePickup']);
             Route::post('delete', [PickupPlanController::class, 'delete']);
+            Route::post('cancel', [PickupPlanController::class, 'cancel']);
             Route::post('list', [PickupPlanController::class, 'getList']);
             Route::post('delete-po', [PickupPlanController::class, 'deletePickupOrder']);
             Route::post('add-po', [PickupPlanController::class, 'addPickupOrder']);
@@ -219,6 +220,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('outstanding', [ProofOfPickupController::class, 'getOutstanding']);
             Route::post('submitted', [ProofOfPickupController::class, 'getSubmitted']);
             Route::get('get-pending-draft', [ProofOfPickupController::class, 'getPendingAndDraft']);
+            Route::post('detail-pickup', [ProofOfPickupController::class, 'getDetailPickup']);
         });
 
          // Fleet
