@@ -51,12 +51,12 @@ class PickupPlanService {
         }
 
         // CHECK EVERY DATE PICKUP PLAN
-        try {
-            $this->pickupRepository->checkPickupRequestDate($data['pickupId']);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException($e->getMessage());
-        }
+        // try {
+        //     $this->pickupRepository->checkPickupRequestDate($data['pickupId']);
+        // } catch (Exception $e) {
+        //     Log::info($e->getMessage());
+        //     throw new InvalidArgumentException($e->getMessage());
+        // }
 
         DB::beginTransaction();
 
