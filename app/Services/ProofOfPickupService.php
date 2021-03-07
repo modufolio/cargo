@@ -125,4 +125,18 @@ class ProofOfPickupService {
         }
         return $result;
     }
+
+    /**
+     * get pending and draft pickup
+     */
+    public function getPendingAndDraftService()
+    {
+        try {
+            $result = $this->popRepository->getPendingAndDraftRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }

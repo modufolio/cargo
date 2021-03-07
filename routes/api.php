@@ -218,6 +218,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('create', [ProofOfPickupController::class, 'createPOP']);
             Route::post('outstanding', [ProofOfPickupController::class, 'getOutstanding']);
             Route::post('submitted', [ProofOfPickupController::class, 'getSubmitted']);
+            Route::get('get-pending-draft', [ProofOfPickupController::class, 'getPendingAndDraft']);
         });
 
          // Fleet

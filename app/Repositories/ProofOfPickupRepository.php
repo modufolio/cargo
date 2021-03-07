@@ -302,4 +302,25 @@ class ProofOfPickupRepository
 
         return $result;
     }
+
+    /**
+     * get pending and draft pickup
+     * Counter dashboard ini menampilkan jumlah ada berapa pickup order yang masih pending
+     *      (belum di pickup tapi sudah dibuatkan pickup plan)
+     *      dan menampilkan jumlah pickup order yang statusnya
+     *      DRAFT (pickup order yang sudah di pickup
+     *      dan di update via apps driver oleh driver)
+     */
+    public function getPendingAndDraftRepo()
+    {
+        $pending = $this->pickup->whereNotNull('pickup_plan_id')->where('status', 'request')->count();
+        $draft = $this->pickup->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function($q) {
+            $q->where('driver_pick', true);
+        })->count();
+        $data = [
+            'pending' => $pending,
+            'draft' => $draft
+        ];
+        return $data;
+    }
 }

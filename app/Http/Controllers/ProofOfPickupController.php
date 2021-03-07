@@ -96,4 +96,19 @@ class ProofOfPickupController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get pending and draft pickup
+     * only admin
+     */
+    public function getPendingAndDraft()
+    {
+        try {
+            $result = $this->popService->getPendingAndDraftService();
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }
