@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 // SERVICE
 use App\Services\ProofOfPickupService;
+use App\Services\PickupService;
 
 // OTHER
 use Illuminate\Http\Request;
@@ -14,10 +15,12 @@ use DB;
 class ProofOfPickupController extends BaseController
 {
     protected $popService;
+    protected $pickupService;
 
-    public function __construct(ProofOfPickupService $popService)
+    public function __construct(ProofOfPickupService $popService, PickupService $pickupService)
     {
         $this->popService = $popService;
+        $this->pickupService = $pickupService;
     }
 
     /**
@@ -105,6 +108,24 @@ class ProofOfPickupController extends BaseController
     {
         try {
             $result = $this->popService->getPendingAndDraftService();
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get detail pickup
+     * only admin
+     */
+    public function getDetailPickup(Request $request)
+    {
+        $data = $request->only([
+            'pickupId',
+        ]);
+        try {
+            $result = $this->pickupService->getDetailPickupAdmin($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

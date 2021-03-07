@@ -648,7 +648,7 @@ class PickupRepository
         $vehicleType = $data['vehicleType'];
         $sort = $data['sort'];
 
-        $pickupPlan = $this->pickupPlan->whereHas('vehicle', function($q) use ($userId) {
+        $pickupPlan = $this->pickupPlan->where('status', 'applied')->whereHas('vehicle', function($q) use ($userId) {
             $q->whereHas('driver', function($o) use ($userId) {
                 $o->whereHas('user', function($p) use ($userId) {
                     $p->where('id', $userId);
@@ -1029,5 +1029,45 @@ class PickupRepository
         if ($pickup['pickup_plan_id'] == null) {
             throw new InvalidArgumentException('Pickup ini tidak memiliki pickup plan');
         }
+    }
+
+    /**
+     * get detail pickup order for web
+     * @param array $data
+     */
+    public function getDetailPickupAdminRepo($data = [])
+    {
+        $pickup = $this->pickup->select('id','name','phone','picktime','sender_id','receiver_id','pickup_plan_id')->where('id', $data['pickupId'])->with(
+            [
+                'sender' => function($q) {
+                    $q->select('id', 'province','city','district','village','postal_code','street');
+                },
+                'items' => function($q) {
+                    $q->select('id','name','pickup_id','unit_total','unit_count','service_id','unit_id');
+                },
+                'items.unit' => function($q) {
+                    $q->select('id','name');
+                },
+                'items.service' => function($q) {
+                    $q->select('id','name');
+                },
+                'pickupPlan' => function($q) {
+                    $q->select('id','vehicle_id');
+                },
+                'pickupPlan.vehicle' => function($q) {
+                    $q->select('id','driver_id');
+                },
+                'pickupPlan.vehicle.driver' => function($q) {
+                    $q->select('id','user_id');
+                },
+                'pickupPlan.vehicle.driver.user' => function($q) {
+                    $q->select('id','name');
+                }
+            ])->first();
+
+        if (!$pickup) {
+            throw new InvalidArgumentException('Maaf, ada pickup order tidak ditemukan');
+        }
+        return $pickup;
     }
 }

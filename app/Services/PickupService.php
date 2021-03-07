@@ -326,4 +326,27 @@ class PickupService {
         }
         return $result;
     }
+
+    /**
+     * get detail pickup for admin
+     * @param array $data
+     */
+    public function getDetailPickupAdmin($data = [])
+    {
+        $validator = Validator::make($data, [
+            'pickupId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->pickupRepository->getDetailPickupAdminRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }
