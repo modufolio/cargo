@@ -152,7 +152,7 @@ class ReceiverService {
             'city'          => 'bail|required|max:255',
             'district'      => 'bail|required|max:255',
             'village'       => 'bail|required|max:255',
-            'postal_code'   => 'bail|required|integer|max:99999',
+            'postal_code'   => 'bail|required',
             'street'        => 'bail|required|max:255',
             'notes'         => 'bail|max:255'
         ]);
