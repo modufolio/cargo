@@ -64,6 +64,22 @@ class UserSeeder extends Seeder
                 'role_id' => 9,
                 'phone' => '082199251122',
                 'username' => 'shisilsm27'
+            ],
+            [
+                'name' => 'testing lenna 5',
+                'email' => 'testinglenna5@gmail.com',
+                'password' => bcrypt('testinglenna5'),
+                'role_id' => 3,
+                'phone' => '0821123250122',
+                'username' => '	testinglenna5'
+            ],
+            [
+                'name' => 'testing lenna 4',
+                'email' => 'testinglenna4@gmail.com',
+                'password' => bcrypt('testinglenna4'),
+                'role_id' => 9,
+                'phone' => '0896122502122',
+                'username' => '	testinglenna4'
             ]
         ]);
         DB::commit();

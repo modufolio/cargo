@@ -29,6 +29,12 @@ class DriverSeeder extends Seeder
                 'user_id' => 4,
                 'status' => 'available',
                 'active' => true,
+            ],
+            [
+                'type' => Arr::random(['internal','external']),
+                'user_id' => 7,
+                'status' => 'available',
+                'active' => true,
             ]
         ]);
         DB::commit();
