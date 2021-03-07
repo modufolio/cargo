@@ -104,6 +104,6 @@ class Pickup extends Model
 
     public function proofOfPickup()
     {
-        return $this->hasOne(ProofOfPickup::class);
+        return $this->hasOne(ProofOfPickup::class, 'pickup_id');
     }
 }

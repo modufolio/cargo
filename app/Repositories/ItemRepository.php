@@ -103,4 +103,21 @@ class ItemRepository
 
         return $item;
     }
+
+    /**
+     * fetch Item by pickup
+     *
+     * @param array $data
+     * @return Item
+     */
+    public function fetchItemByPickupRepo($data = [])
+    {
+        $item = $this->item->where('pickup_id', $data['pickupId'])->get();
+
+        if (!$item) {
+            throw new InvalidArgumentException('Item tidak ditemukan');
+        }
+
+        return $item;
+    }
 }

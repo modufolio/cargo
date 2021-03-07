@@ -31,7 +31,8 @@ class ProofOfPickup extends Model
         'updated_at',
         'deleted_at',
         'created_by',
-        'deleted_by'
+        'deleted_by',
+        'pickup_id'
     ];
 
     public function createdBy()

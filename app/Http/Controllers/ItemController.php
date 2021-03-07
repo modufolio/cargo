@@ -39,4 +39,20 @@ class ItemController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get item of pickup
+     */
+    public function getByPickup(Request $request)
+    {
+        $data = $request->only([
+            'pickupId'
+        ]);
+        try {
+            $result = $this->itemService->fetchItemByPickupService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

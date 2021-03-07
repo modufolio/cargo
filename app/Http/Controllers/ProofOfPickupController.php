@@ -30,7 +30,8 @@ class ProofOfPickupController extends BaseController
             'status',
             'notes',
             'userId',
-            'driverPick'
+            'driverPick',
+            'popStatus'
         ]);
         try {
             $result = $this->popService->createPOPService($data);
@@ -58,6 +59,37 @@ class ProofOfPickupController extends BaseController
         ]);
         try {
             $result = $this->popService->getOutstandingService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get list pickup submitted
+     * only admin
+     */
+    public function getSubmitted(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'sort',
+            'general',
+            'customer',
+            'popNumber',
+            'popDate',
+            'poNumber',
+            'popStatus',
+            'poStatus',
+            'poCreatedDate',
+            'poPickupDate',
+            'pickupPlanNumber',
+            'driverPick',
+        ]);
+        try {
+            $result = $this->popService->getSubmittedService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

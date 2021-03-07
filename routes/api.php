@@ -217,11 +217,17 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::prefix('pop')->group(function() {
             Route::post('create', [ProofOfPickupController::class, 'createPOP']);
             Route::post('outstanding', [ProofOfPickupController::class, 'getOutstanding']);
+            Route::post('submitted', [ProofOfPickupController::class, 'getSubmitted']);
         });
 
          // Fleet
          Route::prefix('fleet')->group(function() {
             Route::post('list', [FleetController::class, 'list']);
+        });
+
+        // item
+        Route::prefix('item')->group(function() {
+            Route::post('fetch-by-pickup-id', [ItemController::class, 'getByPickup']);
         });
     });
 

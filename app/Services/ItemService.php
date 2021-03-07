@@ -49,4 +49,29 @@ class ItemService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * get item by pickup service
+     *
+     * @param array $data
+     * @return String
+     */
+    public function fetchItemByPickupService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'pickupId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->itemRepository->fetchItemByPickupRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }
