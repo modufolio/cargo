@@ -21,7 +21,7 @@ class CreatePickupsTable extends Migration
             $table->timestamp('picktime');
             $table->string('name');
             $table->string('phone');
-            $table->string('status')->default('order'); // ['order', 'cancel', 'picked']
+            $table->string('status')->default('request');
             // $table->text('address_sender');
             $table->unsignedBigInteger('sender_id');
             // $table->text('address_receiver');
