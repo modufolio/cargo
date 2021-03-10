@@ -315,7 +315,7 @@ class ProofOfPickupRepository
     {
         $pending = $this->pickup->whereNotNull('pickup_plan_id')->where('status', 'request')->count();
         $draft = $this->pickup->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function($q) {
-            $q->where('driver_pick', true);
+            $q->where('driver_pick', true)->where('status', 'draft');
         })->count();
         $data = [
             'pending' => $pending,
