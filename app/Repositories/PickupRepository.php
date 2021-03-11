@@ -1062,6 +1062,9 @@ class PickupRepository
                 },
                 'pickupPlan.vehicle.driver.user' => function($q) {
                     $q->select('id','name');
+                },
+                'proofOfPickup' => function($q) {
+                    $q->select('id', 'pickup_id', 'notes', 'status_pick');
                 }
             ])->first();
 

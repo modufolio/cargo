@@ -11,6 +11,7 @@ use App\Models\Pickup;
 
 class PickupPlan extends Model
 {
+    // Status : applied, canceled, request
     use HasFactory, SoftDeletes, Sortable;
 
     protected $hidden = [

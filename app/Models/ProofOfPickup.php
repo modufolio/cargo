@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProofOfPickup extends Model
 {
+    // Status : applied, canceled, draft, request (pending)
+    // Status pick: success, updated, failed, repickup
     use HasFactory, SoftDeletes, Sortable;
 
     public $timestamps = true;

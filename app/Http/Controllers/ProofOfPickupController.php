@@ -30,7 +30,7 @@ class ProofOfPickupController extends BaseController
     {
         $data = $request->only([
             'pickupId',
-            'status',
+            'statusPick',
             'notes',
             'userId',
             'driverPick',

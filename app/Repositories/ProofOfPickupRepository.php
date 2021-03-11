@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use DB;
 use InvalidArgumentException;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProofOfPickupRepository
 {
@@ -35,6 +36,7 @@ class ProofOfPickupRepository
             $proof->driver_pick = $data['driverPick'];
             $proof->notes = $data['notes'];
             $proof->created_by = $data['userId'];
+            $proof->status_pick = $data['statusPick'];
             if ($data['driverPick']) {
                 /**
                  * draft: pop sudah berhasil di submit dari driver app
@@ -74,7 +76,7 @@ class ProofOfPickupRepository
                 DB::rollback();
                 throw new InvalidArgumentException('Pickup tidak ditemukan');
             }
-            $pickup->status = $data['status']; // failed, updated, success
+            $pickup->status = 'applied'; // applied, canceled, request
             $pickup->save();
         } catch (Exception $e) {
             DB::rollback();
@@ -103,7 +105,13 @@ class ProofOfPickupRepository
         $requestPickupDate = $data['requestPickupDate'];
         $pickupPlanNo = $data['pickupPlanNo'];
 
-        $pickup = $this->pickup->where('status', 'request')->whereNotNull('pickup_plan_id');
+        $pickup = $this->pickup->where(function($e) {
+            $e->where('status', 'draft')->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function ($q) {
+                $q->where('driver_pick', false);
+            });
+        })->orWhere(function($e) {
+            $e->where('status', 'request')->whereNotNull('pickup_plan_id');
+        });
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -197,8 +205,8 @@ class ProofOfPickupRepository
         $driverPick = $data['driverPick'];
 
 
-        $pickup = $this->pickup->select('id','name','pickup_plan_id','picktime','created_at','status')->where('status', '!=', 'request')->with(['proofOfPickup' => function($q) {
-            $q->select('id','pickup_id','status','driver_pick','created_at');
+        $pickup = $this->pickup->select('id','name','pickup_plan_id','picktime','created_at','status')->where('status', 'applied')->with(['proofOfPickup' => function($q) {
+            $q->select('id','pickup_id','status','driver_pick','status_pick','created_at');
         }])->whereNotNull('pickup_plan_id');
 
         if (empty($perPage)) {
@@ -322,5 +330,19 @@ class ProofOfPickupRepository
             'draft' => $draft
         ];
         return $data;
+    }
+
+    /**
+     * update pop repo
+     */
+    public function updatePopRepo($data = [])
+    {
+        $pop = $this->pop->find($data['proof_of_pickup']['id']);
+        if (!$pop) {
+            throw new InvalidArgumentException('Proof of pickup tidak ditemukan');
+        }
+        $pop->status = $data['proof_of_pickup']['status'];
+        $pop->notes = $data['proof_of_pickup']['notes'];
+        $pop->save();
     }
 }

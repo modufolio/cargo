@@ -34,7 +34,7 @@ class ProofOfPickupService {
             'notes' => 'bail|present',
             'driverPick' => 'bail|boolean|required',
             'userId' => 'bail|required',
-            'status' => 'bail|required|string'
+            'statusPick' => 'bail|required|string'
         ]);
 
         if ($validator->fails()) {

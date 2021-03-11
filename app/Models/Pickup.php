@@ -11,6 +11,7 @@ use App\Models\Item;
 
 class Pickup extends Model
 {
+    // Status : applied, canceled, request
     use HasFactory, SoftDeletes, Sortable;
 
     public $timestamps = true;

@@ -8,6 +8,7 @@ use App\Repositories\BillRepository;
 use App\Repositories\PromoRepository;
 use App\Repositories\RouteRepository;
 use App\Repositories\AddressRepository;
+use App\Repositories\ProofOfPickupRepository;
 use Exception;
 use DB;
 use Log;
@@ -22,13 +23,15 @@ class PickupService {
     protected $promoRepository;
     protected $routeRepository;
     protected $addressRepository;
+    protected $proofOfPickupRepository;
 
     public function __construct(PickupRepository $pickupRepository,
         ItemRepository $itemRepository,
         BillRepository $billRepository,
         PromoRepository $promoRepository,
         RouteRepository $routeRepository,
-        AddressRepository $addressRepository
+        AddressRepository $addressRepository,
+        ProofOfPickupRepository $proofOfPickupRepository
     )
     {
         $this->pickupRepository = $pickupRepository;
@@ -37,6 +40,7 @@ class PickupService {
         $this->promoRepository = $promoRepository;
         $this->routeRepository = $routeRepository;
         $this->addressRepository = $addressRepository;
+        $this->popRepository = $proofOfPickupRepository;
     }
 
     /**
@@ -366,6 +370,13 @@ class PickupService {
 
         try {
             $pickup = $this->pickupRepository->updatePickupRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        try {
+            $pickup = $this->popRepository->updatePopRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException($e->getMessage());
