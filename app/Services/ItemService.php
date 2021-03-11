@@ -32,6 +32,7 @@ class ItemService {
             'total' => 'bail|required',
             'count' => 'bail|required',
             'serviceId' => 'bail|present',
+            'unitId' => 'bail|required',
         ]);
 
         if ($validator->fails()) {

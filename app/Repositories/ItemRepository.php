@@ -99,6 +99,7 @@ class ItemRepository
         $item->unit_count = $data['count'];
         $item->unit_total = $data['total'];
         $item->service_id = $data['serviceId'] ?? null;
+        $item->unit_id = $data['unitId'];
         $item->save();
 
         return $item;

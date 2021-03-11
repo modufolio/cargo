@@ -11,6 +11,10 @@ class Unit extends Model
     use HasFactory;
     public $timestamps = true;
     protected $guarded = [];
+    protected $hidden = [
+        'updated_at',
+        'created_at'
+    ];
 
     /**
      * Get the items with unit data.

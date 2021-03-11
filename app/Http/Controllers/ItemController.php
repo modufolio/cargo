@@ -30,7 +30,8 @@ class ItemController extends BaseController
             'name',
             'total',
             'count',
-            'serviceId'
+            'serviceId',
+            'unitId'
         ]);
         try {
             $result = $this->itemService->updateItemService($data);

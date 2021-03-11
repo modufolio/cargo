@@ -231,6 +231,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         // item
         Route::prefix('item')->group(function() {
             Route::post('fetch-by-pickup-id', [ItemController::class, 'getByPickup']);
+            Route::post('update', [ItemController::class, 'update']);
         });
     });
 
