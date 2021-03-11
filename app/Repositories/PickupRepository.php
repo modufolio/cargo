@@ -1070,4 +1070,20 @@ class PickupRepository
         }
         return $pickup;
     }
+
+    /**
+     * create pickup plan
+     * @param array $data
+     */
+    public function updatePickupRepo($data = [])
+    {
+        $pickup = $this->pickup->find($data['pickup']['id']);
+        if (!$pickup) {
+            throw new InvalidArgumentException('Gagal merubah status pickup');
+        }
+        $pickup->status           = $data['pickup']['status'];
+        $pickup->save();
+
+        return $pickup->fresh();
+    }
 }

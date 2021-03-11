@@ -132,4 +132,21 @@ class ProofOfPickupController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * update pickup
+     */
+    public function updatePickup(Request $request)
+    {
+        $data = $request->only([
+            'pickup',
+        ]);
+        try {
+            $result = $this->pickupService->updatePickupService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

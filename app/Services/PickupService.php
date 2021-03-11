@@ -349,4 +349,27 @@ class PickupService {
         }
         return $result;
     }
+
+    /**
+     * update pickup service by pop
+     * @param array $data
+     */
+    public function updatePickupService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'pickup' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $pickup = $this->pickupRepository->updatePickupRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $pickup;
+    }
 }
