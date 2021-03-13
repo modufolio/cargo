@@ -1,0 +1,44 @@
+name: Laravel
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  laravel-tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: shivammathur/setup-php@b7d1d9c9a92d8d8463ce36d7f60da34d461724f8
+      with:
+        php-version: '7.4'
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      # Runs a single command using the runners shell
+    - name: Deploy to papandayan.ival.online
+      if: github.ref == 'refs/heads/main'
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST_IVAL_ONLINE }}
+        username: ${{ secrets.SSH_USERNAME_IVAL_ONLINE }}
+        password: ${{ secrets.SSH_PASSWORD_IVAL_ONLINE }}
+        port: ${{ secrets.PORT_IVAL_ONLINE }}
+        script: |
+          cd papandayan.ival.online/cargo
+          git checkout main
+          git pull
+          exit
+
+    - name: Check papandayan.ival.online service url
+      if: github.ref == 'refs/heads/main'
+      uses: jtalk/url-health-check-action@v1.2
+      with:
+        url: https://papandayan.ival.online/public/
+        max-attempts: 3
+        retry-delay: 5s
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
