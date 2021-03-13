@@ -1,3 +1,5 @@
+[![Laravel](https://github.com/ivalrivall/cargo/actions/workflows/laravel.yml/badge.svg)](https://github.com/ivalrivall/cargo/actions/workflows/laravel.yml)
+
 ## Installation Fresh Project
 ```
 composer install
