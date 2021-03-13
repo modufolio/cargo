@@ -207,7 +207,13 @@ class PickupRepository
         $picktime = $data['picktime'];
         $sort = $data['sort'];
 
-        $pickup = $this->pickup->whereNull('pickup_plan_id')->with(['user','sender','receiver','debtor','fleet','promo']);
+        $pickup = $this->pickup->whereNull('pickup_plan_id')->with(['sender' => function($q) {
+            $q->select('id','city','district','village');
+        },'items' => function($q) {
+            $q->select('id','unit_total','unit_id','pickup_id');
+        }, 'items.unit' => function($q) {
+            $q->select('id', 'name');
+        }])->select('name','id','sender_id');
 
         if (empty($perPage)) {
             $perPage = 10;
