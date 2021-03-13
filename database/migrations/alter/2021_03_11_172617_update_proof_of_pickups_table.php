@@ -14,7 +14,7 @@ class UpdateProofOfPickupsTable extends Migration
     public function up()
     {
         Schema::table('proof_of_pickups', function (Blueprint $table) {
-            $table->timestamp('status_pick')->nullable();
+            $table->string('status_pick')->nullable();
         });
     }
 

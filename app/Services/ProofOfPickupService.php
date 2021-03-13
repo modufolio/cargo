@@ -139,4 +139,38 @@ class ProofOfPickupService {
         }
         return $result;
     }
+
+    /**
+     * update pop
+     * @param array $data
+     */
+    public function updatePOPService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'pickup' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+
+        // try {
+        //     $pickup = $this->pickupRepository->updatePickupRepo($data);
+        // } catch (Exception $e) {
+        //     Log::info($e->getMessage());
+        //     throw new InvalidArgumentException($e->getMessage());
+        // }
+
+        try {
+            $pickup = $this->popRepository->updatePopRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
+        return $pickup;
+    }
 }

@@ -337,12 +337,13 @@ class ProofOfPickupRepository
      */
     public function updatePopRepo($data = [])
     {
-        $pop = $this->pop->find($data['proof_of_pickup']['id']);
+        $pop = $this->pop->find($data['pickup']['proof_of_pickup']['id']);
         if (!$pop) {
             throw new InvalidArgumentException('Proof of pickup tidak ditemukan');
         }
-        $pop->status = $data['proof_of_pickup']['status'];
-        $pop->notes = $data['proof_of_pickup']['notes'];
+        $pop->status = $data['pickup']['proof_of_pickup']['status'];
+        $pop->status_pick = $data['pickup']['proof_of_pickup']['status_pick'];
+        $pop->notes = $data['pickup']['proof_of_pickup']['notes'];
         $pop->save();
     }
 }
