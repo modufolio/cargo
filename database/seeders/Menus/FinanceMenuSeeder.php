@@ -24,28 +24,13 @@ class FinanceMenuSeeder extends Seeder
         $submenu = [
             [
                 'menu_id' => $menu->id,
-                'name' => 'Rute',
+                'name' => 'Keuangan 1',
                 'slug' => 'finance-1',
             ],
             [
                 'menu_id' => $menu->id,
-                'name' => 'Cabang',
+                'name' => 'Keuangan 2',
                 'slug' => 'finance-2',
-            ],
-            [
-                'menu_id' => $menu->id,
-                'name' => 'Satuan',
-                'slug' => 'finance-3',
-            ],
-            [
-                'menu_id' => $menu->id,
-                'name' => 'Armada',
-                'slug' => 'finance-4',
-            ],
-            [
-                'menu_id' => $menu->id,
-                'name' => 'Promo',
-                'slug' => 'finance-5',
             ],
         ];
         Submenu::insert($submenu);

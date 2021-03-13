@@ -24,12 +24,12 @@ class ResiMenuSeeder extends Seeder
         $submenu = [
             [
                 'menu_id' => $menu->id,
-                'name' => 'Daftar Pengguna',
+                'name' => 'Resi 1',
                 'slug' => 'resi-1',
             ],
             [
                 'menu_id' => $menu->id,
-                'name' => 'Pengaturan Peran',
+                'name' => 'Resi 2',
                 'slug' => 'resi-2',
             ],
         ];
