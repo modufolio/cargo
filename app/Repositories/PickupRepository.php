@@ -213,7 +213,7 @@ class PickupRepository
             $q->select('id','unit_total','unit_id','pickup_id');
         }, 'items.unit' => function($q) {
             $q->select('id', 'name');
-        }])->select('name','id','sender_id');
+        }])->select('name','id','sender_id','picktime');
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -432,7 +432,9 @@ class PickupRepository
         $village = $data['village'];
         $sort = $data['sort'];
 
-        $pickup = $this->pickup->with(['user','sender'])->where('pickup_plan_id', $data['pickupPlanId']);
+        $pickup = $this->pickup->with(['user','sender','pickupPlan' => function($q) {
+            $q->select('id','created_at');
+        }])->where('pickup_plan_id', $data['pickupPlanId']);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -873,9 +875,14 @@ class PickupRepository
         $street = $data['street'];
         $sort = $data['sort'];
 
-        $pickup = $this->pickup->select('id', 'name', 'phone','sender_id')->with(['sender' => function ($q) {
-            $q->select('id','street');
-        }])->where('pickup_plan_id', $data['pickupPlanId']);
+        $pickup = $this->pickup->select('id', 'name', 'phone','sender_id')->with([
+            'sender' => function ($q) {
+                $q->select('id','street');
+            },
+            'proofOfPickup' => function ($q) {
+                $q->select('id','pickup_id','status','driver_pick','status_pick');
+            }
+        ])->where('pickup_plan_id', $data['pickupPlanId']);
 
         if (empty($perPage)) {
             $perPage = 10;
