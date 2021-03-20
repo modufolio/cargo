@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Models\Fleet;
 use App\Models\Route;
 use App\Models\Promo;
+use App\Models\Item;
 use App\Models\Pickup;
 
 // SERVICE
@@ -115,11 +116,18 @@ class TestController extends BaseController
      */
     public function store(Request $request)
     {
-        $arr = explode("@", $request->email, 2);
-        dd($arr[0]);
-        $data = Route::where([['origin',$request->origin],['destination', $request->destination]])->exists();
-
-        return response()->json($data);
+        $items = Item::all();
+        foreach ($items as $key => $value) {
+            if ($value['unit_id'] == 1 || $value['unit_id'] == 2) {
+                $weight = $value['unit_total'] * 0.001;
+                Item::where('id',$value['id'])->update(['weight' => $weight]);
+            }
+            if ($value['unit_id'] == 3) {
+                $volume = $value['unit_total'] * 1000;
+                Item::where('id',$value['id'])->update(['volume' => $volume]);
+            }
+        }
+        return response()->json($items);
     }
 
     /**
