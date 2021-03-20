@@ -18,13 +18,13 @@ class UnitSeeder extends Seeder
         DB::beginTransaction();
         DB::table('units')->truncate();
         DB::table('units')->insert([
-            [
-                'name'          => 'Satuan',
-                'slug'          => 'Buah',
-                'price'         => 1000,
-                'created_at'    => Carbon::now('Asia/Jakarta'),
-                'updated_at'    => Carbon::now('Asia/Jakarta'),
-            ],
+            // [
+            //     'name'          => 'Satuan',
+            //     'slug'          => 'Buah',
+            //     'price'         => 1000,
+            //     'created_at'    => Carbon::now('Asia/Jakarta'),
+            //     'updated_at'    => Carbon::now('Asia/Jakarta'),
+            // ],
             [
                 'name'          => 'Kilogram',
                 'slug'          => 'Kg',
@@ -34,7 +34,7 @@ class UnitSeeder extends Seeder
             ],
             [
                 'name'          => 'Volume',
-                'slug'          => 'L',
+                'slug'          => 'M3',
                 'price'         => 3000,
                 'created_at'    => Carbon::now('Asia/Jakarta'),
                 'updated_at'    => Carbon::now('Asia/Jakarta'),
