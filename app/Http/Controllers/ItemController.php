@@ -28,10 +28,12 @@ class ItemController extends BaseController
         $data = $request->only([
             'itemId',
             'name',
-            'total',
+            // 'total',
             'count',
             'serviceId',
-            'unitId'
+            // 'unitId',
+            'volume',
+            'weight'
         ]);
         try {
             $result = $this->itemService->updateItemService($data);

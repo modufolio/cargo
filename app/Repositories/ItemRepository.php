@@ -76,6 +76,13 @@ class ItemRepository
         $item = [];
         foreach ($items as $key => $value) {
             $item[] = $pickup->items()->create($value);
+            // $data = new $this->item;
+            // $data->service_id = $value['service_id'] ?? NULL;
+            // $data->name = $value['name'];
+            // $data->weight = $value['weight'];
+            // $data->volume = $value['volume'];
+            // $data->save();
+            // $item[] = $data;
         }
 
         return $item;
@@ -97,9 +104,11 @@ class ItemRepository
 
         $item->name = $data['name'];
         $item->unit_count = $data['count'];
-        $item->unit_total = $data['total'];
+        // $item->unit_total = $data['total'];
+        $item->weight = $data['weight'];
+        $item->volume = $data['volume'];
         $item->service_id = $data['serviceId'] ?? null;
-        $item->unit_id = $data['unitId'];
+        // $item->unit_id = $data['unitId'];
         $item->save();
 
         return $item;

@@ -20,13 +20,13 @@ class Item extends Model
         return $this->belongsTo(Pickup::class);
     }
 
-    /**
-     * Get the unit of item
-     */
-    public function unit()
-    {
-        return $this->belongsTo(Unit::class);
-    }
+    // /**
+    //  * Get the unit of item
+    //  */
+    // public function unit()
+    // {
+    //     return $this->belongsTo(Unit::class);
+    // }
 
     /**
      * Get the service of item

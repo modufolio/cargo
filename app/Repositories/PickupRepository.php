@@ -210,9 +210,7 @@ class PickupRepository
         $pickup = $this->pickup->whereNull('pickup_plan_id')->with(['sender' => function($q) {
             $q->select('id','city','district','village');
         },'items' => function($q) {
-            $q->select('id','unit_total','unit_id','pickup_id');
-        }, 'items.unit' => function($q) {
-            $q->select('id', 'name');
+            $q->select('id','weight','volume','pickup_id');
         }])->select('name','id','sender_id','picktime');
 
         if (empty($perPage)) {
@@ -1059,11 +1057,11 @@ class PickupRepository
                     $q->select('id', 'province','city','district','village','postal_code','street');
                 },
                 'items' => function($q) {
-                    $q->select('id','name','pickup_id','unit_total','unit_count','service_id','unit_id');
+                    $q->select('id','name','pickup_id','unit_count','service_id','weight','volume');
                 },
-                'items.unit' => function($q) {
-                    $q->select('id','name');
-                },
+                // 'items.unit' => function($q) {
+                //     $q->select('id','name');
+                // },
                 'items.service' => function($q) {
                     $q->select('id','name');
                 },

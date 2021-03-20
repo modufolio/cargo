@@ -29,10 +29,12 @@ class ItemService {
         $validator = Validator::make($data, [
             'itemId' => 'bail|required',
             'name' => 'bail|required',
-            'total' => 'bail|required',
+            // 'total' => 'bail|required',
             'count' => 'bail|required',
             'serviceId' => 'bail|present',
-            'unitId' => 'bail|required',
+            // 'unitId' => 'bail|required',
+            'weight' => 'bail|required',
+            'volume' => 'bail|required',
         ]);
 
         if ($validator->fails()) {
