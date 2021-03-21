@@ -113,7 +113,7 @@ class PromoRepository
         $promo->code = $data['code'];
         $promo->term = $data['term'];
         $promo->save();
-        return $promo->fresh();
+        return $promo;
     }
 
     /**
@@ -135,7 +135,7 @@ class PromoRepository
         $promo->code = $data['code'];
         $promo->term = $data['term'];
         $promo->save();
-        return $promo->fresh();
+        return $promo;
     }
 
     /**

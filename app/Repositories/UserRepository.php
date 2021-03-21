@@ -162,7 +162,7 @@ class UserRepository
         $user->phone        = $data['phone'] ?? null;
         $user->save();
 
-        return $user->fresh();
+        return $user;
     }
 
     /**
@@ -185,7 +185,7 @@ class UserRepository
 
         $user->save();
 
-        return $user->fresh();
+        return $user;
     }
 
     public function updateBranchRepo($data)
@@ -196,7 +196,7 @@ class UserRepository
         }
         $user->branch_id = $data['branchId'];
         $user->save();
-        return $user->fresh();
+        return $user;
     }
 
     /**

@@ -198,7 +198,7 @@ class DriverRepository
         $driver->active = $data['active'];
         $driver->type = $data['type'];
         $driver->save();
-        return $driver->fresh();
+        return $driver;
     }
 
     public function createDriverRepo($data = [], $userId)

@@ -76,7 +76,7 @@ class VehicleRepository
         $vehicle->driver_id = $driverId;
         $vehicle->status = 'on-duty';
         $vehicle->save();
-        return $vehicle->fresh();
+        return $vehicle;
     }
 
     /**
@@ -239,7 +239,6 @@ class VehicleRepository
         }
         $vehicle->status = 'available';
         $vehicle->save();
-        $vehicle = $vehicle->fresh();
 
         // update driver status
         $driver = $this->driver->find($vehicle->driver_id);

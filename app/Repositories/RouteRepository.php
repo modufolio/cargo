@@ -200,7 +200,7 @@ class RouteRepository
         $route->price_motorcycle = $data['priceMotorcycle'];
         $route->minimum_weight = $data['minWeight'];
         $route->save();
-        return $route->fresh();
+        return $route;
     }
 
     /**
@@ -234,7 +234,7 @@ class RouteRepository
         $route->price_motorcycle = $data['priceMotorcycle'];
         $route->minimum_weight = $data['minWeight'];
         $route->save();
-        return $route->fresh();
+        return $route;
     }
 
     /**

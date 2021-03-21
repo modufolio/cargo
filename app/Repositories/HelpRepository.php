@@ -28,7 +28,7 @@ class HelpRepository
         $user->content      = $data['password'];
         $user->save();
 
-        return $user->fresh();
+        return $user;
     }
 
     /**

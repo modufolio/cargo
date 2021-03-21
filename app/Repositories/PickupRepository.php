@@ -49,7 +49,7 @@ class PickupRepository
         $pickup->status             = 'request';
         $pickup->save();
 
-        return $pickup->fresh();
+        return $pickup;
     }
 
     /**
@@ -71,7 +71,7 @@ class PickupRepository
         $pickup->picktime           = $data['picktime'];
         $pickup->save();
 
-        return $pickup->fresh();
+        return $pickup;
     }
 
     /**
@@ -1101,6 +1101,6 @@ class PickupRepository
         $pickup->status           = $data['pickup']['status'];
         $pickup->save();
 
-        return $pickup->fresh();
+        return $pickup;
     }
 }

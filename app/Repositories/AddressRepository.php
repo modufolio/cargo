@@ -139,7 +139,7 @@ class AddressRepository
 
         $address->save();
 
-        return $address->fresh();
+        return $address;
     }
 
     public function updatePrimaryAddress($userId, $addressId, $isPrimary)

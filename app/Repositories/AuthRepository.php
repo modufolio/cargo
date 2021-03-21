@@ -84,7 +84,7 @@ class AuthRepository
         $verify->user_id = $userId;
         $verify->token = sha1(time());
         $verify->save();
-        return $verify->fresh();
+        return $verify;
     }
 
     /**
