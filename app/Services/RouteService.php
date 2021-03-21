@@ -150,14 +150,14 @@ class RouteService {
             'destinationIsland' => 'bail|required|max:50',
             'fleet' => 'bail|required',
             'price' => 'bail|required',
+            'priceCar' => 'bail|required',
+            'priceMotorcycle' => 'bail|required',
             'minWeight' => 'bail|required',
         ]);
 
         if ($validator->fails()) {
             throw new InvalidArgumentException($validator->errors()->first());
         }
-
-        // dd($data);
 
         DB::beginTransaction();
         try {

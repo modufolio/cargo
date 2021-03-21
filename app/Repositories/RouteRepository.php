@@ -196,6 +196,8 @@ class RouteRepository
         $route->destination_city = $data['destinationCity'];
         $route->destination_district = $data['destinationDistrict'];
         $route->price = $data['price'];
+        $route->price_car = $data['priceCar'];
+        $route->price_motorcycle = $data['priceMotorcycle'];
         $route->minimum_weight = $data['minWeight'];
         $route->save();
         return $route->fresh();
