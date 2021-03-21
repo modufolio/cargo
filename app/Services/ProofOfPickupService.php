@@ -164,7 +164,7 @@ class ProofOfPickupService {
         DB::beginTransaction();
 
         try {
-            $this->itemRepository->updatePickupItemsRepo($data['pickup']);
+            $items = $this->itemRepository->updatePickupItemsRepo($data['pickup']);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -179,6 +179,6 @@ class ProofOfPickupService {
             throw new InvalidArgumentException($e->getMessage());
         }
         DB::commit();
-        return $pickup;
+        return ['pickup' => $pickup, 'items' => $items];
     }
 }

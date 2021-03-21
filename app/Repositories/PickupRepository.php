@@ -1057,7 +1057,7 @@ class PickupRepository
                     $q->select('id', 'province','city','district','village','postal_code','street');
                 },
                 'items' => function($q) {
-                    $q->select('id','name','pickup_id','unit_count','service_id','weight','volume');
+                    $q->select('id','name','pickup_id','unit_count','service_id','weight','volume','type');
                 },
                 // 'items.unit' => function($q) {
                 //     $q->select('id','name');
