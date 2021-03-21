@@ -33,7 +33,8 @@ class ItemController extends BaseController
             'serviceId',
             // 'unitId',
             'volume',
-            'weight'
+            'weight',
+            'type'
         ]);
         try {
             $result = $this->itemService->updateItemService($data);

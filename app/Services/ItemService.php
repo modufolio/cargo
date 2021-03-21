@@ -35,6 +35,7 @@ class ItemService {
             // 'unitId' => 'bail|required',
             'weight' => 'bail|required',
             'volume' => 'bail|required',
+            'type' => 'bail|required',
         ]);
 
         if ($validator->fails()) {

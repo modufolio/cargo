@@ -107,6 +107,7 @@ class ItemRepository
         // $item->unit_total = $data['total'];
         $item->weight = $data['weight'];
         $item->volume = $data['volume'];
+        $item->type = $data['type'];
         $item->service_id = $data['serviceId'] ?? null;
         // $item->unit_id = $data['unitId'];
         $item->save();
@@ -147,6 +148,7 @@ class ItemRepository
             $item->name = $value['name'];
             $item->unit_count = $value['unit_count'];
             $item->weight = $value['weight'];
+            $item->type = $value['type'];
             $item->volume = $value['volume'];
             $item->service_id = $value['service_id'] ?? null;
             $item->save();
