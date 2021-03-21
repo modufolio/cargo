@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Repositories\ProofOfPickupRepository;
 use App\Repositories\PickupRepository;
+use App\Repositories\ItemRepository;
 use Exception;
 use DB;
 use Log;
@@ -14,11 +15,17 @@ class ProofOfPickupService {
 
     protected $proofOfPickupRepository;
     protected $pickupRepository;
+    protected $itemRepository;
 
-    public function __construct(ProofOfPickupRepository $proofOfPickupRepository, PickupRepository $pickupRepository)
+    public function __construct(
+        ProofOfPickupRepository $proofOfPickupRepository,
+        PickupRepository $pickupRepository,
+        ItemRepository $itemRepository
+    )
     {
         $this->popRepository = $proofOfPickupRepository;
         $this->pickupRepository = $pickupRepository;
+        $this->itemRepository = $itemRepository;
     }
 
     /**
@@ -156,15 +163,16 @@ class ProofOfPickupService {
 
         DB::beginTransaction();
 
-        // try {
-        //     $pickup = $this->pickupRepository->updatePickupRepo($data);
-        // } catch (Exception $e) {
-        //     Log::info($e->getMessage());
-        //     throw new InvalidArgumentException($e->getMessage());
-        // }
+        try {
+            $this->itemRepository->updatePickupItemsRepo($data['pickup']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
 
         try {
-            $pickup = $this->popRepository->updatePopRepo($data);
+            $pickup = $this->popRepository->updatePopRepo($data['pickup']);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());

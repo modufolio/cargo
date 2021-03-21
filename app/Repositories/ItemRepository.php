@@ -130,4 +130,28 @@ class ItemRepository
 
         return $item;
     }
+
+    /**
+     * Update Pickup Items
+     *
+     * @param array $data
+     * @return Item
+     */
+    public function updatePickupItemsRepo($data = [])
+    {
+        foreach ($data['items'] as $key => $value) {
+            $item = $this->item->find($value['id']);
+            if (!$item) {
+                throw new InvalidArgumentException('Item tidak ditemukan');
+            }
+            $item->name = $value['name'];
+            $item->unit_count = $value['unit_count'];
+            $item->weight = $value['weight'];
+            $item->volume = $value['volume'];
+            $item->service_id = $value['service_id'] ?? null;
+            $item->save();
+            $result[] = $item;
+        }
+        return $result;
+    }
 }
