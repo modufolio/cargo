@@ -191,6 +191,8 @@ class RouteService {
             'destinationIsland' => 'bail|required|max:50',
             'fleet' => 'bail|required',
             'price' => 'bail|required',
+            'priceCar' => 'bail|required',
+            'priceMotorcycle' => 'bail|required',
             'minWeight' => 'bail|required',
         ]);
 

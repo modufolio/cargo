@@ -113,6 +113,8 @@ class RouteController extends BaseController
             'destinationCity',
             'destinationDistrict',
             'price',
+            'priceCar',
+            'priceMotorcycle',
             'minWeight',
         ]);
         DB::beginTransaction();
