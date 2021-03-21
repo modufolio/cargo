@@ -56,41 +56,6 @@ class BillRepository
     }
 
     /**
-     * Calculate price
-     *
-     * @param $unitTotal
-     * @return mixed
-     */
-    // public function calculatePrice($items, $route, $promo)
-    // {
-    //     $result = $data = [];
-    //     foreach ($items as $key => $value) {
-    //         $unit           = $this->unit->where('id', $value['unit_id'])->select('name','price')->first();
-    //         $service        = $this->service->where('id', $value['service_id'])->select('name','price')->first();
-    //         $servicePrice   = $service['price'] ?? 0;
-    //         if ($value['unit_total'] >= intval($route['minimum_weight'])) {
-    //             $data['success']    = true;
-    //             $data['price']      = ($value['unit_total'] * intval($unit['price'])) + $servicePrice;
-    //         } else  {
-    //             $data['success']    = false;
-    //             $data['price']      = 0;
-    //         }
-    //         $data['name']       = $value['name'];
-    //         $data['unit']       = $unit;
-    //         $data['unit_total'] = $value['unit_total'];
-    //         $data['service']    = $service ?? null;
-    //         $result[] = $data;
-    //     }
-    //     $total = array_sum(array_column($result, 'price'));
-    //     $finalTotal = $this->addingPromoAndRoutePrice($total, $promo, intval($route['price']));
-    //     $result = (object)[
-    //         'per_item'      => $calculation,
-    //         'total_price'   => $finalTotal
-    //     ];
-    //     return $result;
-    // }
-
-    /**
      * @param array $items
      * @param array $route
      * @param array $promo
@@ -106,10 +71,12 @@ class BillRepository
                 // $unit               = $this->unit->where('id', $value['unit_id'])->select('name','price')->first();
                 $service            = $this->service->where('id', $value['service_id'])->select('name','price')->first();
                 $servicePrice       = $service['price'] ?? 0;
-                $data['price']      = (intval($totalWeight) * intval($route['price'])) + $servicePrice;
+                $price              = $this->getPricePerItem($value['type'], $totalWeight, $route, $servicePrice);
+                $data['price']      = $price;
                 $data['name']       = $value['name'];
                 // $data['unit']       = $unit;
                 $data['weight']     = $value['weight'];
+                $data['type']       = $value['type'];
                 $data['volume']     = $value['volume'];
                 $data['service']    = $service ?? null;
                 $itemData[] = $data;
@@ -148,6 +115,20 @@ class BillRepository
             }
         }
         return $total;
+    }
+
+    public function getPricePerItem($type, $totalWeight, $route, $servicePrice)
+    {
+        if ($type == 'barang') {
+            $price = (intval($totalWeight) * intval($route['price'])) + $servicePrice;
+        }
+        if ($type == 'mobil') {
+            $price = (intval($totalWeight) * intval($route['price_car'])) + $servicePrice;
+        }
+        if ($type == 'motor') {
+            $price = (intval($totalWeight) * intval($route['price_motorcycle'])) + $servicePrice;
+        }
+        return $price;
     }
 
     /**
