@@ -28,7 +28,7 @@ class UpdateTableRoutes extends Migration
     {
         Schema::table('routes', function (Blueprint $table) {
             $table->dropColumn('price_car');
-            $table->float('price_motorcycle')->default(0);
+            $table->dropColumn('price_motorcycle');
         });
     }
 }
