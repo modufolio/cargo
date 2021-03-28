@@ -420,4 +420,36 @@ class UserService {
         }
         return $user;
     }
+
+    /**
+     * save user driver data
+     * @param array $data
+     * @return String
+     */
+    public function saveDriver($data)
+    {
+        $validator = Validator::make($data, [
+            'name' => 'bail|required|max:255',
+            'email' => 'bail|required|max:255|email|unique:users',
+            'password' => 'bail|required|max:255|confirmed',
+            'role_id' => 'bail|required|numeric',
+            'username' => 'bail|required|max:255|unique:users,username',
+            'phone' => 'bail|required|max:999999999999999|numeric|unique:users,phone',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $result = $this->userRepository->save($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal menyimpan data pengguna');
+        }
+        DB::commit();
+        return $result;
+    }
 }

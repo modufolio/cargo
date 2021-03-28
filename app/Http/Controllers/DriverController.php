@@ -142,7 +142,7 @@ class DriverController extends BaseController
         DB::beginTransaction();
         // save user
         try {
-            $user = $this->userService->save($userData);
+            $user = $this->userService->saveDriver($userData);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());
