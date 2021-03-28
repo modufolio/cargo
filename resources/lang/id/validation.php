@@ -96,7 +96,7 @@ return [
     'password'             => 'Kata sandi salah.',
     'present'              => ':Attribute wajib ada.',
     'regex'                => 'Format :attribute tidak valid.',
-    'required'             => ':Attribute wajib diisi.',
+    'required'             => 'Harap isi :Attribute terlebih dahulu.',
     'required_if'          => ':Attribute wajib diisi bila :other adalah :value.',
     'required_unless'      => ':Attribute wajib diisi kecuali :other memiliki nilai :values.',
     'required_with'        => ':Attribute wajib diisi bila terdapat :values.',
