@@ -147,5 +147,26 @@ return [
     */
 
     'attributes' => [
+        'province' => 'Provinsi',
+        'city' => 'Kota',
+        'district' => 'Kecamatan',
+        'village' => 'Kelurahan',
+        'name' => 'Nama',
+        'password' => 'Kata sandi',
+        'postal_code' => 'Kode pos',
+        'street' => 'Alamat',
+        'weight' => 'Berat',
+        'origin' => 'Asal',
+        'destinationCity' => 'Kota tujuan',
+        'destinationDistrict' => 'Kecamatan tujuan',
+        'destinationIsland' => 'Pulau tujuan',
+        'fleet' => 'Armada',
+        'price' => 'Biaya',
+        'priceCar' => 'Biaya mobil',
+        'priceMotorcycle' => 'Biaya motor',
+        'minWeight' => 'Berat minimal',
+        'licensePlate' => 'Plat nomor',
+        'maxVolume' => 'Volume maksimal',
+        'maxWeight' => 'Berat maksimal'
     ],
 ];
