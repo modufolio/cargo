@@ -43,6 +43,7 @@ class PickupPlanService {
             'pickupId' => 'bail|required|array',
             'vehicleId' => 'bail|required|integer',
             'driverId' => 'bail|required|integer',
+            'branchId' => 'bail|required',
             'userId' => 'bail|required|integer',
         ]);
 
@@ -66,16 +67,30 @@ class PickupPlanService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
 
+        // UPDATE BRANCH ID PADA PICKUP
+        try {
+            $pickup = $this->pickupRepository->updateBranchRepo($data['pickupId'], $data['branchId']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mengupdate branch pada pickup order');
+        }
+
+        // SAVE PICKUP PLAN
         try {
             $result = $this->pickupPlanRepository->savePickupPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Gagal menyimpan pickup plan');
         }
+
         DB::commit();
         return $result;
     }

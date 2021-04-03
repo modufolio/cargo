@@ -31,4 +31,9 @@ class Branch extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function pickups()
+    {
+        return $this->hasMany(Pickup::class);
+    }
 }

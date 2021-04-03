@@ -35,6 +35,7 @@ class PickupPlanController extends BaseController
             'pickupId',
             'vehicleId',
             'driverId',
+            'branchId',
             'userId'
         ]);
         DB::beginTransaction();

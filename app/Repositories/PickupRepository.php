@@ -9,6 +9,7 @@ use App\Models\Item;
 use App\Models\User;
 use Indonesia;
 use Carbon\Carbon;
+use DB;
 use InvalidArgumentException;
 
 class PickupRepository
@@ -1102,5 +1103,17 @@ class PickupRepository
         $pickup->save();
 
         return $pickup;
+    }
+
+    /**
+     * update branch in pickup order
+     * @param array $pickupId
+     * @param int $branchid
+     */
+    public function updateBranchRepo($pickupId, $branchId)
+    {
+        DB::beginTransaction();
+        $this->pickup->whereIn('id', $pickupId)->update(['branch_id' => $branchId]);
+        DB::commit();
     }
 }

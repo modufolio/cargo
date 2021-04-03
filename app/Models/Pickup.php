@@ -107,4 +107,9 @@ class Pickup extends Model
     {
         return $this->hasOne(ProofOfPickup::class, 'pickup_id');
     }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 }
