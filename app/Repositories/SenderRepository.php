@@ -132,9 +132,22 @@ class SenderRepository
         return $sender;
     }
 
+    /**
+     * update primary address
+     */
     public function updatePrimaryAddress($userId, $sender, $isPrimary)
     {
         $sender = $this->sender->where('user_id', $userId)->where('id', '!==', $sender)->update(['is_primary' => $isPrimary]);
         return $sender->fresh();
+    }
+
+    /**
+     * get sender primary
+     * @param $userId
+     */
+    public function getPrimaryRepo($userId)
+    {
+        $sender = $this->sender->where('user_id', $userId)->where('is_primary', true)->first();
+        return $sender;
     }
 }

@@ -145,4 +145,18 @@ class SenderController extends BaseController
 
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get primary sender address
+     */
+    public function getPrimary(Request $request)
+    {
+        try {
+            $result = $this->senderService->getPrimaryService($request->userId);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
 }

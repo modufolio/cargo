@@ -47,10 +47,17 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
     });
 
     // Sender
-    Route::resource('sender', SenderController::class);
+    Route::post('sender', [SenderController::class, 'store']);
+    Route::get('sender', [SenderController::class, 'index']);
+    Route::put('sender/{id}', [SenderController::class, 'update']);
+    Route::delete('sender/{id}', [SenderController::class, 'destroy']);
+    Route::get('sender/primary', [SenderController::class, 'getPrimary']);
 
     // Receiver
-    Route::resource('receiver', ReceiverController::class);
+    Route::post('receiver', [ReceiverController::class, 'store']);
+    Route::get('receiver', [ReceiverController::class, 'index']);
+    Route::put('receiver/{id}', [ReceiverController::class, 'update']);
+    Route::delete('receiver/{id}', [ReceiverController::class, 'destroy']);
 
     // Unit
     Route::resource('unit', UnitController::class);
@@ -160,6 +167,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('delete', [RouteController::class, 'delete']);
             Route::post('edit', [RouteController::class, 'edit']);
             Route::get('island', [RouteController::class, 'listIsland']);
+            Route::post('import', [RouteController::class, 'importRoute']);
         });
 
         // Promo

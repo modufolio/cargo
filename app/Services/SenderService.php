@@ -170,4 +170,21 @@ class SenderService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * get primary service
+     */
+    public function getPrimaryService($userId)
+    {
+        DB::beginTransaction();
+        try {
+            $result = $this->senderRepository->getPrimaryRepo($userId);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat alamat pengirim utama');
+        }
+        DB::commit();
+        return $result;
+    }
 }
