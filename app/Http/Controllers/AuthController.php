@@ -296,14 +296,14 @@ class AuthController extends BaseController
             // request object by the auth component after a successful
             // authentication check/retrival
             $user = $request->user();
-            $user = User::with('role')->where('id', $user->id)->first();
+            $user = User::with(['role','branch'])->where('id', $user->id)->first();
             return response()->json($user);
         }
 
         // alternative method
         if (($user = Auth::user()) !== null) {
             // Here you have your authenticated user model
-            $user = User::with('role')->where('id', $user->id)->first();
+            $user = User::with(['role','branch'])->where('id', $user->id)->first();
             return response()->json($user);
         }
 
