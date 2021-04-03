@@ -177,6 +177,7 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('create', [VehicleController::class, 'create']);
             Route::post('delete', [VehicleController::class, 'delete']);
             Route::post('paginate', [VehicleController::class, 'paginate']);
+            Route::get('get-ten-vehicle', [VehicleController::class, 'getTenVehicle']);
         });
 
         // Branch

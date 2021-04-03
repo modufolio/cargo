@@ -139,4 +139,21 @@ class VehicleController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get 10 vehicle by name.
+     *
+     * @param Request $request
+     * @return Vehicle
+     */
+    public function getTenVehicle(Request $request)
+    {
+        try {
+            $result = $this->vehicleService->getTenVehicleService();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
 }

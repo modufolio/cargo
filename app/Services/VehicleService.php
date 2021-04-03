@@ -155,4 +155,20 @@ class VehicleService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * Get ten vehicle
+     *
+     * @return String
+     */
+    public function getTenVehicleService()
+    {
+        try {
+            $result = $this->vehicleRepository->getTenVehicleRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat data kendaraan');
+        }
+        return $result;
+    }
 }
