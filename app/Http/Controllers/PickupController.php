@@ -204,4 +204,45 @@ class PickupController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * create pickup admin.
+     */
+    public function createPickupAdmin(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+            'items',
+            'form',
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->pickupService->createPickupAdminService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * delete pickup
+     */
+    public function deletePickup(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+            'pickupId',
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->pickupService->deletePickupService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
 }

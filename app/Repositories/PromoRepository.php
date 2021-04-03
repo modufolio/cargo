@@ -48,7 +48,7 @@ class PromoRepository
      */
     public function getById($id = null)
     {
-        if ($id == null) {
+        if ($id == null || $id == '') {
             throw new InvalidArgumentException('Promo tidak ditemukan');
         }
         $promo = $this->promo->find($id);

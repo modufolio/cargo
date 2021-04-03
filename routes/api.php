@@ -212,6 +212,8 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
         Route::prefix('pickup')->group(function() {
             Route::post('paginate', [PickupController::class, 'paginate']);
             Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlan']);
+            Route::post('create-pickup-admin', [PickupController::class, 'createPickupAdmin']);
+            Route::post('delete', [PickupController::class, 'deletePickup']);
         });
 
         // Proof of pickup

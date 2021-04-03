@@ -185,7 +185,7 @@ class PickupRepository
             $pickup = $pickup->where('picktime', 'ilike', '%'.$picktime.'%');
         }
 
-        $result = $pickup->paginate($perPage);
+        $result = $pickup->orderBy('created_at', 'DESC')->paginate($perPage);
 
         return $result;
     }

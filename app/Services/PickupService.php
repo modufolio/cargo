@@ -9,6 +9,9 @@ use App\Repositories\PromoRepository;
 use App\Repositories\RouteRepository;
 use App\Repositories\AddressRepository;
 use App\Repositories\ProofOfPickupRepository;
+use App\Repositories\DebtorRepository;
+use App\Repositories\ReceiverRepository;
+use App\Repositories\SenderRepository;
 use Exception;
 use DB;
 use Log;
@@ -23,15 +26,22 @@ class PickupService {
     protected $promoRepository;
     protected $routeRepository;
     protected $addressRepository;
+    protected $senderRepository;
+    protected $receiverRepository;
+    protected $debtorRepository;
     protected $proofOfPickupRepository;
 
-    public function __construct(PickupRepository $pickupRepository,
+    public function __construct(
+        PickupRepository $pickupRepository,
         ItemRepository $itemRepository,
         BillRepository $billRepository,
         PromoRepository $promoRepository,
         RouteRepository $routeRepository,
         AddressRepository $addressRepository,
-        ProofOfPickupRepository $proofOfPickupRepository
+        ProofOfPickupRepository $proofOfPickupRepository,
+        SenderRepository $senderRepository,
+        ReceiverRepository $receiverRepository,
+        DebtorRepository $debtorRepository
     )
     {
         $this->pickupRepository = $pickupRepository;
@@ -41,6 +51,9 @@ class PickupService {
         $this->routeRepository = $routeRepository;
         $this->addressRepository = $addressRepository;
         $this->popRepository = $proofOfPickupRepository;
+        $this->senderRepository = $senderRepository;
+        $this->receiverRepository = $receiverRepository;
+        $this->debtorRepository = $debtorRepository;
     }
 
     /**
@@ -84,21 +97,24 @@ class PickupService {
 
         // PROMO
         if ($data['promoId'] !== null) {
-            try {
-                $promo = $this->promoRepository->getById($data['promoId']);
-            } catch (Exception $e) {
-                DB::rollback();
-                Log::info($e->getMessage());
-                throw new InvalidArgumentException($e->getMessage());
-            }
-
-            if ($promo !== false) {
-                if ($promo['user_id'] !== $data['userId']) {
+            if ($data['promoId'] !== '') {
+                try {
+                    $promo = $this->promoRepository->getById($data['promoId']);
+                } catch (Exception $e) {
                     DB::rollback();
-                    throw new InvalidArgumentException('Promo tidak dapat digunakan');
+                    Log::info($e->getMessage());
+                    throw new InvalidArgumentException($e->getMessage());
+                }
+
+                if ($promo !== false) {
+                    if ($promo['user_id'] !== $data['userId']) {
+                        DB::rollback();
+                        throw new InvalidArgumentException('Promo tidak dapat digunakan');
+                    }
                 }
             }
-        } else {
+        }
+        if ($data['promoId'] == null || $data['promoId'] == '') {
             $promo = null;
         }
         // END PROMO
@@ -351,6 +367,155 @@ class PickupService {
             Log::info($e->getMessage());
             throw new InvalidArgumentException($e->getMessage());
         }
+        return $result;
+    }
+
+    /**
+     * create pickup service by admin
+     */
+    public function createPickupAdminService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'items' => 'bail|required',
+            'userId' => 'bail|required',
+            'form' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+
+        $data['form']['sender']['is_primary'] = $data['form']['receiver']['is_primary'] = $data['form']['debtor']['is_primary'] = false;
+        $data['form']['sender']['temporary'] = $data['form']['receiver']['temporary'] = $data['form']['debtor']['temporary'] = true;
+        $data['form']['sender']['title'] = $data['form']['receiver']['title'] = $data['form']['debtor']['title'] = $data['form']['name'];
+        $data['form']['sender']['userId'] = $data['form']['receiver']['userId'] = $data['form']['debtor']['userId'] = $data['userId'];
+        $data['form']['userId'] = $data['userId'];
+
+        // save sender
+        try {
+            $sender = $this->senderRepository->save($data['form']['sender']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // save debtor
+        try {
+            $debtor = $this->debtorRepository->save($data['form']['debtor']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // save receiver
+        try {
+            $receiver = $this->receiverRepository->save($data['form']['receiver']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        // PROMO
+        if ($data['form']['promoId'] !== null) {
+            if ($data['form']['promoId'] !== '') {
+                try {
+                    $promo = $this->promoRepository->getById($data['form']['promoId']);
+                } catch (Exception $e) {
+                    DB::rollback();
+                    Log::info($e->getMessage());
+                    Log::error($e);
+                    throw new InvalidArgumentException($e->getMessage());
+                }
+
+                if ($promo !== false) {
+                    if ($promo['user_id'] !== $data['userId']) {
+                        DB::rollback();
+                        throw new InvalidArgumentException('Promo tidak dapat digunakan');
+                    }
+                }
+            }
+        }
+        if ($data['form']['promoId'] == null || $data['form']['promoId'] == '') {
+            $promo = null;
+        }
+        // END PROMO
+
+        // GET ROUTE
+        try {
+            $route = $this->routeRepository->getRouteRepo($data['form']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Rute pengiriman tidak ditemukan');
+        }
+
+        if (!$route) {
+            DB::rollback();
+            throw new InvalidArgumentException('Mohon maaf, untuk saat ini kota tujuan yang Anda mau belum masuk kedalam jangkauan kami');
+        }
+        // END GET ROUTE
+
+        // SAVE PICKUP
+        $data['form']['senderId'] = $sender['id'];
+        $data['form']['receiverId'] = $receiver['id'];
+        $data['form']['debtorId'] = $debtor['id'];
+        try {
+            $pickup = $this->pickupRepository->createPickupRepo($data['form'], $promo);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal menyimpan data pickup');
+        }
+        // END SAVE PICKUP
+
+        // SAVE ITEM
+        $items = $data['items'];
+        foreach ($items as $key => $answer) {
+            unset($items[$key]['service']);
+        }
+        try {
+            $items = $this->itemRepository->save($pickup, $items);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal menyimpan item / barang');
+        }
+        // END SAVE ITEM
+
+        // CALCULATE PRICE
+        try {
+            $price = $this->billRepository->calculatePrice($items, $route, $promo);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal memperkirakan biaya pengiriman');
+        }
+
+        if (!$price->success) {
+            DB::rollback();
+            throw new InvalidArgumentException($price->message);
+        }
+        // END CALCULATE PRICE
+
+        DB::commit();
+        $result = (object)[
+            'items' => $items,
+            'route' => $route,
+            'pickup' => $pickup,
+            'promo' => $promo,
+            'price' => $price
+        ];
         return $result;
     }
 }
