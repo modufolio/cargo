@@ -21,7 +21,6 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \App\Http\Middleware\Cors::class,
         \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         \App\Http\Middleware\SecureHeaders::class
     ];
@@ -68,5 +67,7 @@ class Kernel extends HttpKernel
         'auth.custom' => \App\Http\Middleware\CustomAuth::class,
         'admin.panel' => \App\Http\Middleware\AdminPanel::class,
         'driver.panel' => \App\Http\Middleware\DriverPanel::class,
+        'cors.custom' => \App\Http\Middleware\Cors::class,
+        'import.cors' => \App\Http\Middleware\ImportCors::class
     ];
 }

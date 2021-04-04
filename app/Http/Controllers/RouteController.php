@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
 use DB;
 use Exception;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RouteExport;
+use App\Models\Route;
 
 // SERVICE
 use App\Services\RouteService;
@@ -160,5 +163,30 @@ class RouteController extends BaseController
         }
         DB::commit();
         return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * import route
+     */
+    public function importRoute(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $result = $this->routeService->importRouteService($request);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * export route
+     */
+    public function exportRoute(Request $request)
+    {
+        return new RouteExport();
+        return Excel::download(new RouteExport, 'route.xlsx');
     }
 }

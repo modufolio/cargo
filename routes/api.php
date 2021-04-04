@@ -27,7 +27,7 @@ use App\Http\Controllers\ProofOfPickupController;
 use App\Http\Controllers\ItemController;
 
 // All Authenticated User
-Route::group(['middleware' => ['auth:api','auth.custom']], function () {
+Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('check-user', [AuthController::class, 'checkLogin']);
 
@@ -167,7 +167,6 @@ Route::group(['middleware' => ['auth:api','auth.custom']], function () {
             Route::post('delete', [RouteController::class, 'delete']);
             Route::post('edit', [RouteController::class, 'edit']);
             Route::get('island', [RouteController::class, 'listIsland']);
-            Route::post('import', [RouteController::class, 'importRoute']);
         });
 
         // Promo
@@ -265,7 +264,12 @@ Route::middleware('guest')->group(function () {
         Route::post('forgot-password', [UserController::class, 'forgotPassword']);
     });
 
-
+    Route::middleware(['import.cors'])->group(function () {
+        Route::prefix('route')->group(function() {
+            Route::get('export', [RouteController::class, 'exportRoute']);
+            Route::post('import', [RouteController::class, 'importRoute']);
+        });
+    });
 
     // Test
     Route::resource('test', TestController::class);

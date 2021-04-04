@@ -238,4 +238,29 @@ class RouteService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * import route data
+     */
+    public function importRouteService($request)
+    {
+        $validator = Validator::make($request->all(), [
+            'route' => 'required|file|max:5000|mimes:xlsx',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->routeRepository->importRouteRepo($request);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        DB::commit();
+        return $result;
+    }
 }

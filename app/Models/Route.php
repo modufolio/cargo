@@ -8,7 +8,7 @@ use Kyslik\ColumnSortable\Sortable;
 class Route extends Model
 {
     use HasFactory, Sortable;
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts = [
         'price' => 'float',
         'minimum_weight' => 'float'

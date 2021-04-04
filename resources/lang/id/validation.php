@@ -167,6 +167,7 @@ return [
         'minWeight' => 'Berat minimal',
         'licensePlate' => 'Plat nomor',
         'maxVolume' => 'Volume maksimal',
-        'maxWeight' => 'Berat maksimal'
+        'maxWeight' => 'Berat maksimal',
+        'route' => 'Rute'
     ],
 ];

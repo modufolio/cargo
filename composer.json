@@ -22,8 +22,10 @@
         "laravel/telescope": "^4.3",
         "laravel/tinker": "^2.5",
         "laravolt/indonesia": "^0.27.0",
+        "maatwebsite/excel": "^3.1",
         "peterpetrus/passport-token": "^0.0.9",
-        "snowfire/beautymail": "^1.1"
+        "snowfire/beautymail": "^1.1",
+        "spatie/laravel-directory-cleanup": "^1.8"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

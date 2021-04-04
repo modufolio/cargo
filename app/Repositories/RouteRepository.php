@@ -8,6 +8,11 @@ use App\Models\Route;
 // OTHER
 use InvalidArgumentException;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\RouteImport;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class RouteRepository
 {
@@ -250,5 +255,28 @@ class RouteRepository
         }
         $route->delete();
         return $route;
+    }
+
+    /**
+     * import data rute
+     * @param Request $request
+     */
+    public function importRouteRepo($request)
+    {
+        try {
+            $route = $request->file('route');
+            Excel::import(new RouteImport, $route);
+        } catch (ValidationException $e) {
+            $failures = $e->failures();
+            foreach ($failures as $failure) {
+                $row = 'pada baris '.$failure->row(); // row that went wrong
+                // $attr = 'error pada attribut '.$failure->attribute(); // either heading key (if using heading row concern) or column index
+                $msg = $failure->errors()[0]; // Actual error messages from Laravel validator
+                // $val = 'nilai yang salah adalah '.$failure->values(); // The values of the row that has failed.
+                $errorMsg = $msg.", ".$row;
+                throw new InvalidArgumentException($errorMsg);
+                break;
+            }
+        }
     }
 }

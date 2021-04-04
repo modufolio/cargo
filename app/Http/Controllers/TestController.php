@@ -53,6 +53,30 @@ class TestController extends BaseController
      */
     public function index()
     {
+        $existRoute = Route::where([
+            ['origin','=','KOTA SURABAYA'],
+            ['destination_island','=','SUMATERA'],
+            ['destination_city','=','KOTA MEDAN'],
+            ['destination_district','=','MEDAN ']
+        ])->first();
+        if ($existRoute) {
+            return 'exist';
+        } else {
+            return 'not exist';
+        }
+        return $existRoute;
+        $result = Indonesia::search('jakarta')->allCities();
+        return $result;
+        $armada = collect(Fleet::all());
+        $armada = $armada->where('slug','udara')->first()->only('id');
+        return $armada;
+        $route = Route::with('fleet')->get()->take(5)->makeHidden(['id','fleet_id']);
+        $route = $route->map(function($q) {
+            $fleet = $q->fleet->slug;
+            $q->fleet_slug = $fleet;
+            return $q;
+        });
+        return $route;
         $pickup = Pickup::select('picktime')->whereIn('id', [1,2,3,4])->get()->pluck('picktime');
         $pickup = collect($pickup)->toArray();
         $data = [];
