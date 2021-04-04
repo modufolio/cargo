@@ -248,6 +248,13 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
 
 });
 
+Route::middleware(['auth:api','auth.custom','admin.panel','import.cors'])->group(function () {
+    Route::prefix('route')->group(function() {
+        Route::get('export', [RouteController::class, 'exportRoute']);
+        Route::post('import', [RouteController::class, 'importRoute']);
+    });
+});
+
 // Guest / All User
 Route::middleware('guest')->group(function () {
     // Auth
@@ -262,13 +269,6 @@ Route::middleware('guest')->group(function () {
     Route::post('refresh-token', [AuthController::class, 'refreshToken'])->name('refreshToken');
     Route::prefix('user')->group(function() {
         Route::post('forgot-password', [UserController::class, 'forgotPassword']);
-    });
-
-    Route::middleware(['import.cors'])->group(function () {
-        Route::prefix('route')->group(function() {
-            Route::get('export', [RouteController::class, 'exportRoute']);
-            Route::post('import', [RouteController::class, 'importRoute']);
-        });
     });
 
     // Test
