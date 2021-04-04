@@ -1012,13 +1012,8 @@ class PickupRepository
                 'receiver' => function($q) {
                     $q->select('id','province','city','district');
                 },
-                'items' => function($q) {
-                    $q->select('id','name','pickup_id','unit_total','unit_count','service_id','unit_id');
-                },
+                'items',
                 'items.service' => function($q) {
-                    $q->select('id','name');
-                },
-                'items.unit' => function($q) {
                     $q->select('id','name');
                 }
             ])->first();
