@@ -41,4 +41,4 @@ jobs:
         max-attempts: 3
         retry-delay: 5s
     - name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress
