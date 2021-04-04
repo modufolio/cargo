@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Sender;
 use App\Models\User;
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 class SenderRepository
 {
@@ -111,7 +112,11 @@ class SenderRepository
             $this->updatePrimaryAddress($data['userId'], $id, false);
         }
 
-        $sender = $this->sender->findOrFail($id);
+        $sender = $this->sender->find($id);
+
+        if (!$sender) {
+            throw new InvalidArgumentException('Alamat pengirim tidak ditemukan');
+        }
 
         if ($sender['user_id'] !== $data['userId']) {
             return false;
@@ -137,8 +142,7 @@ class SenderRepository
      */
     public function updatePrimaryAddress($userId, $sender, $isPrimary)
     {
-        $sender = $this->sender->where('user_id', $userId)->where('id', '!==', $sender)->update(['is_primary' => $isPrimary]);
-        return $sender->fresh();
+        $this->sender->where('user_id', $userId)->update(['is_primary' => $isPrimary]);
     }
 
     /**

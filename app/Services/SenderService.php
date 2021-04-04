@@ -120,6 +120,7 @@ class SenderService {
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Gagal mengubah alamat');
         }
 
