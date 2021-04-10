@@ -252,6 +252,8 @@ class RouteService {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
+        DB::beginTransaction();
+
         try {
             $result = $this->routeRepository->importRouteRepo($request);
         } catch (Exception $e) {
