@@ -111,7 +111,6 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
     // Tracking
     Route::prefix('tracking')->group(function() {
         Route::post('upload-picture', [TrackingController::class, 'uploadPicture']);
-        Route::post('get', [TrackingController::class, 'index']);
         Route::post('save', [TrackingController::class, 'store']);
     });
 
@@ -294,4 +293,9 @@ Route::middleware('guest')->group(function () {
 
     // Test
     Route::resource('test', TestController::class);
+
+    // Tracking
+    Route::prefix('tracking')->group(function() {
+        Route::post('get', [TrackingController::class, 'index']);
+    });
 });

@@ -26,6 +26,9 @@ class TrackingRepository
     public function getTrackingByPickupRepo($data)
     {
         $data = $this->tracking->where('pickup_id', $data['pickupId'])->get();
+        if (count($data) <= 0) {
+            return 'Data tracking belum tersedia';
+        }
         return $data;
     }
 
