@@ -81,6 +81,7 @@ class VehicleService {
             'maxWeight' => 'bail|required|max:99999',
             'status' => 'bail|required|max:50',
             'active' => 'bail|required|boolean',
+            'affiliate' => 'bail|required',
         ]);
 
         if ($validator->fails()) {
@@ -111,6 +112,7 @@ class VehicleService {
             'maxVolume' => 'bail|required|max:99999|numeric',
             'maxWeight' => 'bail|required|max:99999|numeric',
             'status' => 'bail|required|max:50',
+            'affiliate' => 'bail|required|max:50',
         ]);
 
         if ($validator->fails()) {
