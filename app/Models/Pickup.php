@@ -112,4 +112,9 @@ class Pickup extends Model
     {
         return $this->belongsTo(Branch::class);
     }
+
+    public function shipmentPlan()
+    {
+        return $this->belongsTo(ShipmentPlan::class, 'shipment_plan_id');
+    }
 }

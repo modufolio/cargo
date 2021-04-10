@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Repositories\PickupPlanRepository;
+use App\Repositories\ShipmentPlanRepository;
 use App\Repositories\PickupRepository;
 use App\Repositories\DriverRepository;
 use App\Repositories\VehicleRepository;
@@ -13,37 +13,36 @@ use InvalidArgumentException;
 
 class ShipmentPlanService {
 
-    protected $pickupPlanRepository;
+    protected $shipmentPlanRepository;
     protected $pickupRepository;
     protected $driverRepository;
     protected $vehicleRepository;
 
     public function __construct(
-        PickupPlanRepository $pickupPlanRepository,
+        ShipmentPlanRepository $shipmentPlanRepository,
         DriverRepository $driverRepository,
         VehicleRepository $vehicleRepository,
         PickupRepository $pickupRepository
     )
     {
-        $this->pickupPlanRepository = $pickupPlanRepository;
+        $this->shipmentPlanRepository = $shipmentPlanRepository;
         $this->driverRepository = $driverRepository;
         $this->vehicleRepository = $vehicleRepository;
         $this->pickupRepository = $pickupRepository;
     }
 
     /**
-     * save pickup plan
+     * save shipment plan
      *
      * @param array $data
      * @return String
      */
-    public function savePickupPlanService($data)
+    public function saveShipmentPlanService($data)
     {
         $validator = Validator::make($data, [
             'pickupId' => 'bail|required|array',
             'vehicleId' => 'bail|required|integer',
             'driverId' => 'bail|required|integer',
-            'branchId' => 'bail|required',
             'userId' => 'bail|required|integer',
         ]);
 
@@ -51,7 +50,7 @@ class ShipmentPlanService {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
-        // CHECK EVERY DATE PICKUP PLAN
+        // CHECK EVERY DATE SHIPMENT PLAN
         // try {
         //     $this->pickupRepository->checkPickupRequestDate($data['pickupId']);
         // } catch (Exception $e) {
@@ -71,24 +70,14 @@ class ShipmentPlanService {
             throw new InvalidArgumentException($e->getMessage());
         }
 
-        // UPDATE BRANCH ID PADA PICKUP
+        // SAVE SHIPMENT PLAN
         try {
-            $pickup = $this->pickupRepository->updateBranchRepo($data['pickupId'], $data['branchId']);
+            $result = $this->shipmentPlanRepository->saveShipmentPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
             Log::error($e);
-            throw new InvalidArgumentException('Gagal mengupdate branch pada pickup order');
-        }
-
-        // SAVE PICKUP PLAN
-        try {
-            $result = $this->pickupPlanRepository->savePickupPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Gagal menyimpan pickup plan');
+            throw new InvalidArgumentException('Gagal menyimpan shipment plan');
         }
 
         DB::commit();

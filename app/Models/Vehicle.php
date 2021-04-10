@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kyslik\ColumnSortable\Sortable;
+use Carbon\Carbon;
 
 class Vehicle extends Model
 {
@@ -36,5 +37,22 @@ class Vehicle extends Model
     public function pickupPlans()
     {
         return $this->hasMany(PickupPlan::class);
+    }
+
+    public function shipmentPlans()
+    {
+        return $this->hasMany(ShipmentPlan::class);
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        $data = Carbon::parse($value)->format('Y-m-d h:m:s');
+        return $data;
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        $data = Carbon::parse($value)->format('Y-m-d h:m:s');
+        return $data;
     }
 }

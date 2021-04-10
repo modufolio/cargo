@@ -25,6 +25,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\PickupPlanController;
 use App\Http\Controllers\ProofOfPickupController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ShipmentPlanController;
 
 // All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], function () {
@@ -243,6 +244,17 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
         Route::prefix('item')->group(function() {
             Route::post('fetch-by-pickup-id', [ItemController::class, 'getByPickup']);
             Route::post('update', [ItemController::class, 'update']);
+        });
+
+        // Shipment Plan
+        Route::prefix('shipment-plan')->group(function() {
+            Route::post('save', [ShipmentPlanController::class, 'save']);
+            Route::post('get-pickup', [ShipmentPlanController::class, 'getPaginatePickup']);
+            Route::post('delete', [PickupPlanController::class, 'delete']);
+            Route::post('cancel', [PickupPlanController::class, 'cancel']);
+            Route::post('list', [ShipmentPlanController::class, 'getList']);
+            Route::post('delete-po', [PickupPlanController::class, 'deletePickupOrder']);
+            Route::post('add-po', [PickupPlanController::class, 'addPickupOrder']);
         });
     });
 

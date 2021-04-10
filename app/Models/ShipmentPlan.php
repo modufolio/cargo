@@ -4,36 +4,30 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kyslik\ColumnSortable\Sortable;
-use App\Models\Pickup;
+use Carbon\Carbon;
 
-class PickupPlan extends Model
+class ShipmentPlan extends Model
 {
     use HasFactory, SoftDeletes, Sortable;
 
     protected $hidden = [
         'deleted_at',
         'updated_at',
-        'deleted_by',
-        'vehicle_id',
+        'deleted_by'
     ];
 
     protected $guarded = [];
 
     public $sortable = [
         'pickups',
-        'vehicle',
         'status',
-        'user',
-        'sender',
         'id',
         'created_by',
-        'deleted_by'
+        'deleted_by',
+        'updated_by'
     ];
-
-    protected $appends = ['total_pickup_order'];
 
     public function getCreatedAtAttribute($value)
     {
@@ -49,28 +43,11 @@ class PickupPlan extends Model
 
     public function pickups()
     {
-        return $this->hasMany(Pickup::class, 'pickup_plan_id');
+        return $this->hasMany(Pickup::class, 'shipment_plan_id');
     }
 
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);
-    }
-
-    public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function deletedBy()
-    {
-        return $this->belongsTo(User::class, 'deleted_by');
-    }
-
-    public function getTotalPickupOrderAttribute()
-    {
-        $pickups = Pickup::where('pickup_plan_id', $this->id)->get();
-        $count = count($pickups);
-        return $count;
     }
 }

@@ -519,4 +519,34 @@ class PickupService {
         ];
         return $result;
     }
+
+    /**
+     * Get all pickup paginate where ready to shipment
+     * @param array $data
+     */
+    public function getReadyToShipmentService($data = [])
+    {
+        try {
+            $pickup = $this->pickupRepository->getReadyToShipmentRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapatkan data pickup');
+        }
+        return $pickup;
+    }
+
+    /**
+     * get list shipment plan paginate
+     * @param array $data
+     */
+    public function getListShipmentPlanService($data = [])
+    {
+        try {
+            $pickup = $this->pickupRepository->getListShipmentPlanRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $pickup;
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Address;
 use App\Models\Pickup;
 use App\Models\PickupPlan;
+use App\Models\ShipmentPlan;
 use App\Models\Item;
 use App\Models\User;
 use Indonesia;
@@ -16,13 +17,15 @@ class PickupRepository
 {
     protected $pickup;
     protected $pickupPlan;
+    protected $shipmentPlan;
     protected $item;
 
-    public function __construct(Pickup $pickup, PickupPlan $pickupPlan, Item $item)
+    public function __construct(Pickup $pickup, PickupPlan $pickupPlan, Item $item, ShipmentPlan $shipmentPlan)
     {
         $this->pickup = $pickup;
         $this->pickupPlan = $pickupPlan;
         $this->item = $item;
+        $this->shipmentPlan = $shipmentPlan;
     }
 
     /**
@@ -1110,5 +1113,229 @@ class PickupRepository
         DB::beginTransaction();
         $this->pickup->whereIn('id', $pickupId)->update(['branch_id' => $branchId]);
         DB::commit();
+    }
+
+    /**
+     * get ready to shipment pagination
+     *
+     * @param array $data
+     */
+    public function getReadyToShipmentRepo($data = [])
+    {
+        $perPage = $data['perPage'];
+        $page = $data['page'];
+        $id = $data['id'];
+        $name = $data['name'];
+        $city = $data['city'];
+        $district = $data['district'];
+        $village = $data['village'];
+        $picktime = $data['picktime'];
+        $sort = $data['sort'];
+
+        $pickup = $this->pickup->whereNotNull('pickup_plan_id')->whereNull('shipment_plan_id')->with(['sender' => function($q) {
+            $q->select('id','city','district','village');
+        },'items' => function($q) {
+            $q->select('id','weight','volume','pickup_id');
+        }])->select('name','id','sender_id','picktime');
+
+        if (empty($perPage)) {
+            $perPage = 10;
+        }
+
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'id':
+                    $pickup = $pickup->sortable([
+                        'id' => $order
+                    ]);
+                    break;
+                case 'user.name':
+                    $pickup = $pickup->sortable([
+                        'user.name' => $order
+                    ]);
+                    break;
+                case 'sender.city':
+                    $pickup = $pickup->sortable([
+                        'sender.city' => $order
+                    ]);
+                    break;
+                case 'sender.district':
+                    $pickup = $pickup->sortable([
+                        'sender.district' => $order
+                    ]);
+                    break;
+                case 'sender.village':
+                    $pickup = $pickup->sortable([
+                        'sender.village' => $order
+                    ]);
+                    break;
+                case 'picktime':
+                    $pickup = $pickup->sortable([
+                        'picktime' => $order
+                    ]);
+                    break;
+                default:
+                    $pickup = $pickup->sortable([
+                        'id' => 'desc'
+                    ]);
+                    break;
+            }
+        }
+
+        if (!empty($id)) {
+            $pickup = $pickup->where('id', 'ilike', '%'.$id.'%');
+        }
+
+        if (!empty($name)) {
+            $pickup = $pickup->where('name', 'ilike', '%'.$name.'%');
+        }
+
+        if (!empty($city)) {
+            $pickup = $pickup->whereHas('sender', function($q) use ($city) {
+                $q->where('city', 'ilike', '%'.$city.'%');
+            });
+        }
+
+        if (!empty($district)) {
+            $pickup = $pickup->whereHas('sender', function($q) use ($district) {
+                $q->where('district', 'ilike', '%'.$district.'%');
+            });
+        }
+
+        if (!empty($village)) {
+            $pickup = $pickup->whereHas('sender', function($q) use ($village) {
+                $q->where('village', 'ilike', '%'.$village.'%');
+            });
+        }
+
+        if (!empty($picktime)) {
+            $pickup = $pickup->where('picktime', 'ilike', '%'.$picktime.'%');
+        }
+
+        $result = $pickup->orderBy('created_at', 'DESC')->paginate($perPage);
+
+        return $result;
+    }
+
+    /**
+     * get list shipment plan
+     *
+     * @param array $data
+     */
+    public function getListShipmentPlanRepo($data = [])
+    {
+        $perPage = $data['perPage'];
+        $page = $data['page'];
+        $id = $data['id'];
+        $startDate = $data['startDate'];
+        $endDate = $data['endDate'];
+        $status = $data['status'];
+        $driver = $data['driver'];
+        $licenseNumber = $data['licenseNumber'];
+        $vehicleType = $data['vehicleType'];
+        $sort = $data['sort'];
+
+        $shipmentPlan = $this->shipmentPlan->with(['vehicle.driver.user', 'pickups']);
+
+        if (empty($perPage)) {
+            $perPage = 10;
+        }
+
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            // switch ($sort['field']) {
+            //     case 'id':
+            //         $shipmentPlan = $shipmentPlan->sortable([
+            //             'id' => $order
+            //         ]);
+            //         break;
+            //     case 'user.name':
+            //         $shipmentPlan = $shipmentPlan->sortable([
+            //             'user.name' => $order
+            //         ]);
+            //         break;
+            //     case 'sender.city':
+            //         $shipmentPlan = $shipmentPlan->sortable([
+            //             'sender.city' => $order
+            //         ]);
+            //         break;
+            //     case 'sender.district':
+            //         $shipmentPlan = $shipmentPlan->sortable([
+            //             'sender.district' => $order
+            //         ]);
+            //         break;
+            //     case 'sender.village':
+            //         $shipmentPlan = $shipmentPlan->sortable([
+            //             'sender.village' => $order
+            //         ]);
+            //         break;
+            //     case 'picktime':
+            //         $shipmentPlan = $shipmentPlan->sortable([
+            //             'picktime' => $order
+            //         ]);
+            //         break;
+            //     default:
+            //         $shipmentPlan = $shipmentPlan->sortable([
+            //             'id' => 'desc'
+            //         ]);
+            //         break;
+            // }
+        }
+
+        if (!empty($id)) {
+            $shipmentPlan = $shipmentPlan->where('id', 'ilike', '%'.$id.'%');
+        }
+
+        if (!empty($startDate) && !empty($endDate)) {
+            $shipmentPlan = $shipmentPlan->whereHas('pickups', function ($q) use ($startDate, $endDate){
+                $q->whereDate('picktime', '>=', date($startDate))
+                    ->whereDate('picktime', '<=', date($endDate));
+            });
+        }
+
+        if (!empty($status)) {
+            $shipmentPlan = $shipmentPlan->where('status', 'ilike', '%'.$status.'%');
+        }
+
+        if (!empty($driver)) {
+            $shipmentPlan = $shipmentPlan->whereHas('vehicle', function($v) use ($driver) {
+                $v->whereHas('driver', function($d) use ($driver) {
+                    $d->whereHas('user', function($u) use ($driver) {
+                        $u->where('name', 'ilike', '%'.$driver.'%');
+                    });
+                });
+            });
+        }
+
+        if (!empty($licenseNumber)) {
+            $shipmentPlan = $shipmentPlan->whereHas('vehicle', function($q) use ($licenseNumber) {
+                $q->where('license_plate', 'ilike', '%'.$licenseNumber.'%');
+            });
+        }
+
+        if (!empty($vehicleType)) {
+            $shipmentPlan = $shipmentPlan->whereHas('vehicle', function($q) use ($vehicleType) {
+                $q->where('type', 'ilike', '%'.$vehicleType.'%');
+            });
+        }
+
+        $result = $shipmentPlan->orderBy('created_at', 'DESC')->paginate($perPage);
+
+        return $result;
     }
 }
