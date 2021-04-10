@@ -168,6 +168,7 @@ return [
         'licensePlate' => 'Plat nomor',
         'maxVolume' => 'Volume maksimal',
         'maxWeight' => 'Berat maksimal',
-        'route' => 'Rute'
+        'route' => 'Rute',
+        'notes' => 'Catatan'
     ],
 ];

@@ -5,6 +5,7 @@ use App\Repositories\ShipmentPlanRepository;
 use App\Repositories\PickupRepository;
 use App\Repositories\DriverRepository;
 use App\Repositories\VehicleRepository;
+use App\Repositories\TrackingRepository;
 use Exception;
 use DB;
 use Log;
@@ -17,18 +18,21 @@ class ShipmentPlanService {
     protected $pickupRepository;
     protected $driverRepository;
     protected $vehicleRepository;
+    protected $trackingRepository;
 
     public function __construct(
         ShipmentPlanRepository $shipmentPlanRepository,
         DriverRepository $driverRepository,
         VehicleRepository $vehicleRepository,
-        PickupRepository $pickupRepository
+        PickupRepository $pickupRepository,
+        TrackingRepository $trackingRepository
     )
     {
         $this->shipmentPlanRepository = $shipmentPlanRepository;
         $this->driverRepository = $driverRepository;
         $this->vehicleRepository = $vehicleRepository;
         $this->pickupRepository = $pickupRepository;
+        $this->trackingRepository = $trackingRepository;
     }
 
     /**
@@ -78,6 +82,23 @@ class ShipmentPlanService {
             Log::info($e->getMessage());
             Log::error($e);
             throw new InvalidArgumentException('Gagal menyimpan shipment plan');
+        }
+
+        // CREATE TRACKING
+        $tracking = [
+            'pickupId' => $data['pickupId'],
+            'docs' => 'shipment-plan',
+            'status' => 'applied',
+            'notes' => 'barang siap berangkat menuju kota tujuan',
+            'picture' => null,
+        ];
+        try {
+            $this->trackingRepository->recordTrackingByPickupRepo($tracking);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal menyimpan data tracking');
         }
 
         DB::commit();

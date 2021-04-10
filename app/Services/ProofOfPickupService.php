@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Repositories\ProofOfPickupRepository;
 use App\Repositories\PickupRepository;
 use App\Repositories\ItemRepository;
+use App\Repositories\TrackingRepository;
 use Exception;
 use DB;
 use Log;
@@ -16,16 +17,19 @@ class ProofOfPickupService {
     protected $proofOfPickupRepository;
     protected $pickupRepository;
     protected $itemRepository;
+    protected $trackingRepository;
 
     public function __construct(
         ProofOfPickupRepository $proofOfPickupRepository,
         PickupRepository $pickupRepository,
-        ItemRepository $itemRepository
+        ItemRepository $itemRepository,
+        TrackingRepository $trackingRepository
     )
     {
         $this->popRepository = $proofOfPickupRepository;
         $this->pickupRepository = $pickupRepository;
         $this->itemRepository = $itemRepository;
+        $this->trackingRepository = $trackingRepository;
     }
 
     /**
@@ -52,6 +56,7 @@ class ProofOfPickupService {
             $this->pickupRepository->checkPickupHasPickupPlan($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
 
@@ -61,8 +66,32 @@ class ProofOfPickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Gagal membuat proof of pickup');
         }
+
+        // CREATE TRACKING
+        if ($data['driverPick']) {
+            $status = 'draft';
+        } else {
+            $status = $data['popStatus'];
+        }
+        $tracking = [
+            'pickupId' => $data['pickupId'],
+            'docs' => 'proof-of-pickup',
+            'status' => $status,
+            'notes' => 'barang diterima digudang',
+            'picture' => null,
+        ];
+        try {
+            $this->trackingRepository->recordTrackingByPickupRepo($tracking);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal menyimpan data tracking');
+        }
+
         DB::commit();
         return $result;
     }

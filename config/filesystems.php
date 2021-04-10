@@ -79,6 +79,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'storage_tracking' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/upload/tracking'),
+            'url' => env('APP_URL').'/storage/upload/tracking',
+            'visibility' => 'public',
+        ],
+
     ],
 
     /*

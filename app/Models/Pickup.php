@@ -117,4 +117,9 @@ class Pickup extends Model
     {
         return $this->belongsTo(ShipmentPlan::class, 'shipment_plan_id');
     }
+
+    public function trackings()
+    {
+        return $this->hasMany(Tracking::class);
+    }
 }

@@ -12,6 +12,7 @@ use App\Repositories\ProofOfPickupRepository;
 use App\Repositories\DebtorRepository;
 use App\Repositories\ReceiverRepository;
 use App\Repositories\SenderRepository;
+use App\Repositories\TrackingRepository;
 use Exception;
 use DB;
 use Log;
@@ -30,6 +31,7 @@ class PickupService {
     protected $receiverRepository;
     protected $debtorRepository;
     protected $proofOfPickupRepository;
+    protected $trackingRepository;
 
     public function __construct(
         PickupRepository $pickupRepository,
@@ -41,7 +43,8 @@ class PickupService {
         ProofOfPickupRepository $proofOfPickupRepository,
         SenderRepository $senderRepository,
         ReceiverRepository $receiverRepository,
-        DebtorRepository $debtorRepository
+        DebtorRepository $debtorRepository,
+        TrackingRepository $trackingRepository
     )
     {
         $this->pickupRepository = $pickupRepository;
@@ -54,6 +57,7 @@ class PickupService {
         $this->senderRepository = $senderRepository;
         $this->receiverRepository = $receiverRepository;
         $this->debtorRepository = $debtorRepository;
+        $this->trackingRepository = $trackingRepository;
     }
 
     /**
@@ -92,6 +96,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
 
@@ -103,6 +108,7 @@ class PickupService {
                 } catch (Exception $e) {
                     DB::rollback();
                     Log::info($e->getMessage());
+                    Log::error($e);
                     throw new InvalidArgumentException($e->getMessage());
                 }
 
@@ -125,6 +131,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Rute pengiriman tidak ditemukan');
         }
 
@@ -140,6 +147,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Gagal menyimpan data pickup');
         }
         // END SAVE PICKUP
@@ -150,6 +158,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Gagal menyimpan item / barang');
         }
         // END SAVE ITEM
@@ -160,6 +169,7 @@ class PickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Gagal memperkirakan biaya pengiriman');
         }
 
@@ -168,6 +178,24 @@ class PickupService {
             throw new InvalidArgumentException($price->message);
         }
         // END CALCULATE PRICE
+
+        // CREATE TRACKING
+        $tracking = [
+            'pickupId' => $pickup['id'],
+            'docs' => 'pickup',
+            'status' => 'request',
+            'notes' => 'pengajuan pickup order telah diterima',
+            'picture' => null,
+        ];
+        try {
+            $this->trackingRepository->recordTrackingByPickupRepo($tracking);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal menyimpan data tracking');
+        }
+        // END CREATE TRACKING
 
         DB::commit();
         $result = (object)[

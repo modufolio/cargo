@@ -26,6 +26,7 @@ use App\Http\Controllers\PickupPlanController;
 use App\Http\Controllers\ProofOfPickupController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ShipmentPlanController;
+use App\Http\Controllers\TrackingController;
 
 // All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], function () {
@@ -105,6 +106,13 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
         Route::post('update-profile', [UserController::class, 'updateProfile']);
         Route::post('upload-avatar', [UserController::class, 'uploadAvatar']);
         Route::post('remove-avatar', [UserController::class, 'removeAvatar']);
+    });
+
+    // Tracking
+    Route::prefix('tracking')->group(function() {
+        Route::post('upload-picture', [TrackingController::class, 'uploadPicture']);
+        Route::post('get', [TrackingController::class, 'index']);
+        Route::post('save', [TrackingController::class, 'store']);
     });
 
     // Driver Only
