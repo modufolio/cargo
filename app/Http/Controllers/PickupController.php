@@ -245,4 +245,30 @@ class PickupController extends BaseController
         DB::commit();
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get pickup order by shipment plan
+     * admin only
+     */
+    public function getByShipmentPlan(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'name',
+            'city',
+            'id',
+            'district',
+            'village',
+            'shipmentPlanId',
+            'sort'
+        ]);
+        try {
+            $result = $this->pickupService->getPickupByShipmentPlanService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

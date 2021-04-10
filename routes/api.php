@@ -221,6 +221,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
         Route::prefix('pickup')->group(function() {
             Route::post('paginate', [PickupController::class, 'paginate']);
             Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlan']);
+            Route::post('get-by-shipment-plan', [PickupController::class, 'getByShipmentPlan']);
             Route::post('create-pickup-admin', [PickupController::class, 'createPickupAdmin']);
             Route::post('delete', [PickupController::class, 'deletePickup']);
         });
@@ -251,10 +252,10 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('save', [ShipmentPlanController::class, 'save']);
             Route::post('get-pickup', [ShipmentPlanController::class, 'getPaginatePickup']);
             Route::post('delete', [PickupPlanController::class, 'delete']);
-            Route::post('cancel', [PickupPlanController::class, 'cancel']);
+            Route::post('cancel', [ShipmentPlanController::class, 'cancel']);
             Route::post('list', [ShipmentPlanController::class, 'getList']);
-            Route::post('delete-po', [PickupPlanController::class, 'deletePickupOrder']);
-            Route::post('add-po', [PickupPlanController::class, 'addPickupOrder']);
+            Route::post('delete-po', [ShipmentPlanController::class, 'deletePickupOrder']);
+            Route::post('add-po', [ShipmentPlanController::class, 'addPickupOrder']);
         });
     });
 

@@ -549,4 +549,19 @@ class PickupService {
         }
         return $pickup;
     }
+
+    /**
+     * get list pickup inside shipment plan
+     * @param array $data
+     */
+    public function getPickupByShipmentPlanService($data = [])
+    {
+        try {
+            $pickup = $this->pickupRepository->getPickupByShipmentPlanRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $pickup;
+    }
 }

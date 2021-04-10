@@ -93,7 +93,7 @@ class ShipmentPlanService {
     {
         $validator = Validator::make($data, [
             'pickupId' => 'bail|required',
-            'pickupPlanId' => 'bail|required',
+            'shipmentPlanId' => 'bail|required',
         ]);
 
         if ($validator->fails()) {
@@ -102,7 +102,7 @@ class ShipmentPlanService {
 
         DB::beginTransaction();
         try {
-            $result = $this->pickupPlanRepository->deletePoRepo($data);
+            $result = $this->shipmentPlanRepository->deletePoRepo($data);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -122,7 +122,7 @@ class ShipmentPlanService {
     {
         $validator = Validator::make($data, [
             'pickupId' => 'bail|required|array',
-            'pickupPlanId' => 'bail|required',
+            'shipmentPlanId' => 'bail|required',
         ]);
 
         if ($validator->fails()) {
@@ -131,7 +131,7 @@ class ShipmentPlanService {
 
         DB::beginTransaction();
         try {
-            $result = $this->pickupPlanRepository->addPoRepo($data);
+            $result = $this->shipmentPlanRepository->addPoRepo($data);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -218,5 +218,44 @@ class ShipmentPlanService {
 
         DB::commit();
         return $pickupPlan;
+    }
+
+    /**
+     * cancel shipment plan
+     *
+     * @param array $data
+     */
+    public function cancelShipmentPlanService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'shipmentPlanId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        // CANCEL SHIPMENT PLAN
+        try {
+            $shipmentPlan = $this->shipmentPlanRepository->cancelShipmentPlanRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // UNASSIGN DRIVER TO CURRENT VEHICLE
+        try {
+            $this->vehicleRepository->unassignDriverRepo($shipmentPlan);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        DB::commit();
+        return $shipmentPlan;
     }
 }

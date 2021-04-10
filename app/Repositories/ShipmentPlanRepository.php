@@ -45,20 +45,20 @@ class ShipmentPlanRepository
     }
 
     /**
-     * delete pickup order on pickup plan
+     * delete pickup order on shipment plan
      *
      * @param array $data
      */
     public function deletePoRepo($data)
     {
-        $pickupPlan = $this->shipmentPlan->find($data['pickupPlanId'])->pickups;
-        if (count($pickupPlan) <= 1) {
+        $shipmentPlan = $this->shipmentPlan->find($data['shipmentPlanId'])->pickups;
+        if (count($shipmentPlan) <= 1) {
             throw new InvalidArgumentException('Maaf anda tidak bisa menghapus pickup order ini');
         }
-        $pickupPlan = $pickupPlan->where('id', $data['pickupId'])->values();
-        if (count($pickupPlan) == 1) {
-            $pickup = $this->pickup->where('id', $data['pickupId'])->where('pickup_plan_id', $data['pickupPlanId'])->update([
-                'pickup_plan_id' => null
+        $shipmentPlan = $shipmentPlan->where('id', $data['pickupId'])->values();
+        if (count($shipmentPlan) == 1) {
+            $pickup = $this->pickup->where('id', $data['pickupId'])->where('shipment_plan_id', $data['shipmentPlanId'])->update([
+                'shipment_plan_id' => null
             ]);
             return $pickup;
         }
@@ -66,23 +66,23 @@ class ShipmentPlanRepository
     }
 
     /**
-     * add pickup order on pickup plan
+     * add pickup order on shipment plan
      *
      * @param array $data
      */
     public function addPoRepo($data)
     {
-        $pickupPlan = $this->shipmentPlan->find($data['pickupPlanId']);
-        if (!$pickupPlan) {
-            throw new InvalidArgumentException('Maaf pickup plan tidak ditemukan');
+        $shipmentPlan = $this->shipmentPlan->find($data['shipmentPlanId']);
+        if (!$shipmentPlan) {
+            throw new InvalidArgumentException('Maaf shipment plan tidak ditemukan');
         }
         $result = [];
         foreach ($data['pickupId'] as $key => $value) {
             $pickup = $this->pickup->find($value);
-            $pickup->pickupPlan()->associate($pickupPlan);
+            $pickup->shipmentPlan()->associate($shipmentPlan);
             $pickup->save();
             $result[] = $pickup;
-            // $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
+            // $this->pickup->where('id', $value)->update(['pickup_plan_id' => $shipmentPlan->id]);
         }
         return $result;
     }
@@ -111,18 +111,18 @@ class ShipmentPlanRepository
     }
 
     /**
-     * cancel pickup plan
+     * cancel shipment plan
      *
      * @param array $data
      */
-    public function cancelPickupPlanRepo($data = [])
+    public function cancelShipmentPlanRepo($data = [])
     {
-        $pickupPlan = $this->shipmentPlan->find($data['pickupPlanId']);
-        if (!$pickupPlan) {
-            throw new InvalidArgumentException('Maaf, pickup plan tidak ditemukan');
+        $shipmentPlan = $this->shipmentPlan->find($data['shipmentPlanId']);
+        if (!$shipmentPlan) {
+            throw new InvalidArgumentException('Maaf, shipment plan tidak ditemukan');
         }
-        $pickupPlan->status = 'canceled';
-        $pickupPlan->save();
-        return $pickupPlan;
+        $shipmentPlan->status = 'canceled';
+        $shipmentPlan->save();
+        return $shipmentPlan;
     }
 }

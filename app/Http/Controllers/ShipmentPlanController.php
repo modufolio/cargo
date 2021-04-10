@@ -133,7 +133,7 @@ class ShipmentPlanController extends BaseController
     {
         $data = $request->only([
             'pickupId',
-            'pickupPlanId'
+            'shipmentPlanId'
         ]);
         try {
             $result = $this->shipmentPlanService->deletePoService($data);
@@ -145,14 +145,14 @@ class ShipmentPlanController extends BaseController
     }
 
     /**
-     * create pickup order inside pickup plan
+     * create pickup order inside shipment plan
      * only admin
      */
     public function addPickupOrder(Request $request)
     {
         $data = $request->only([
             'pickupId',
-            'pickupPlanId'
+            'shipmentPlanId'
         ]);
         try {
             $result = $this->shipmentPlanService->addPoService($data);
@@ -218,7 +218,7 @@ class ShipmentPlanController extends BaseController
     }
 
     /**
-     * Cancel pickup plan.
+     * Cancel shipment plan.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -227,7 +227,7 @@ class ShipmentPlanController extends BaseController
     {
         $data = $request->only([
             'userId',
-            'pickupPlanId',
+            'shipmentPlanId',
         ]);
         DB::beginTransaction();
         try {
