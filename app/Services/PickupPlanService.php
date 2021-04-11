@@ -96,20 +96,22 @@ class PickupPlanService {
         }
 
         // CREATE TRACKING
-        $tracking = [
-            'pickupId' => $data['pickupId'],
-            'docs' => 'pickup-plan',
-            'status' => 'applied',
-            'notes' => 'petugas pickup akan menuju lokasi penjemputan',
-            'picture' => null,
-        ];
-        try {
-            $this->trackingRepository->recordTrackingByPickupRepo($tracking);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Gagal menyimpan data tracking');
+        foreach ($data['pickupId'] as $key => $value) {
+            $tracking = [
+                'pickupId' => $value,
+                'docs' => 'pickup-plan',
+                'status' => 'applied',
+                'notes' => 'petugas pickup akan menuju lokasi penjemputan',
+                'picture' => null,
+            ];
+            try {
+                $this->trackingRepository->recordTrackingByPickupRepo($tracking);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal menyimpan data tracking');
+            }
         }
 
         DB::commit();
