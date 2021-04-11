@@ -74,15 +74,27 @@ class ProofOfPickupService {
         if ($data['driverPick']) {
             $status = 'draft';
             $picture = $data['picture'];
+            if ($data['statusPick'] == 'success') {
+                $notes = 'barang berhasil dipickup';
+            }
         } else {
             $status = $data['popStatus'];
             $picture = null;
+            if ($data['statusPick'] == 'success') {
+                $notes = 'barang diterima digudang';
+            }
+        }
+        if ($data['statusPick'] == 'failed') {
+            $notes = 'barang gagal di pickup';
+        }
+        if ($data['statusPick'] == 'updated') {
+            $notes = 'barang di pickup dengan perubahan data';
         }
         $tracking = [
             'pickupId' => $data['pickupId'],
             'docs' => 'proof-of-pickup',
             'status' => $status,
-            'notes' => 'barang diterima digudang',
+            'notes' => $notes,
             'picture' => $picture,
         ];
         try {

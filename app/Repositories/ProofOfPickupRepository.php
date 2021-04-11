@@ -36,7 +36,7 @@ class ProofOfPickupRepository
             $proof->driver_pick = $data['driverPick'];
             $proof->notes = $data['notes'];
             $proof->created_by = $data['userId'];
-            $proof->status_pick = $data['statusPick'];
+            $proof->status_pick = $data['statusPick']; // success, updated, failed
             if ($data['driverPick']) {
                 /**
                  * draft: pop sudah berhasil di submit dari driver app
