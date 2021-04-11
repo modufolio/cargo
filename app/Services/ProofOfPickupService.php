@@ -73,15 +73,17 @@ class ProofOfPickupService {
         // CREATE TRACKING
         if ($data['driverPick']) {
             $status = 'draft';
+            $picture = $data['picture'];
         } else {
             $status = $data['popStatus'];
+            $picture = null;
         }
         $tracking = [
             'pickupId' => $data['pickupId'],
             'docs' => 'proof-of-pickup',
             'status' => $status,
             'notes' => 'barang diterima digudang',
-            'picture' => null,
+            'picture' => $picture,
         ];
         try {
             $this->trackingRepository->recordTrackingByPickupRepo($tracking);
