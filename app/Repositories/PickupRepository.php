@@ -12,6 +12,7 @@ use Indonesia;
 use Carbon\Carbon;
 use DB;
 use InvalidArgumentException;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class PickupRepository
 {
@@ -37,6 +38,13 @@ class PickupRepository
      */
     public function createPickupRepo($data, $promo)
     {
+        $config = [
+            'table' => 'pickups',
+            'length' => 12,
+            'field' => 'number',
+            'prefix' => Carbon::now('Asia/Jakarta')->format('ymd'),
+            'reset_on_prefix_change' => true
+        ];
         $pickup = new $this->pickup;
 
         $pickup->fleet_id           = $data['fleetId'];
@@ -51,6 +59,7 @@ class PickupRepository
         $pickup->picktime           = $data['picktime'];
         $pickup->created_by         = $data['userId'];
         $pickup->status             = 'request';
+        $pickup->number             = IdGenerator::generate($config);
         $pickup->save();
 
         return $pickup;

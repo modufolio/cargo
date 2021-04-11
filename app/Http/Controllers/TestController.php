@@ -24,6 +24,7 @@ use App\Services\PromoService;
 use Carbon\Carbon;
 use Snowfire\Beautymail\Beautymail;
 use Indonesia;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 // MAIL
 use App\Mail\VerifyMail;
@@ -53,6 +54,7 @@ class TestController extends BaseController
      */
     public function index()
     {
+        return Carbon::now('Asia/Jakarta')->format('ymd');
         $existRoute = Route::where([
             ['origin','=','KOTA SURABAYA'],
             ['destination_island','=','SUMATERA'],
@@ -122,6 +124,7 @@ class TestController extends BaseController
         return $this->sendResponse('data user', $user);
     }
 
+
     /**
      * Show the form for creating a new resource.
      *
@@ -183,9 +186,23 @@ class TestController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $config = [
+            'table' => 'pickups',
+            'length' => 12,
+            'field' => 'number',
+            'prefix' => Carbon::now('Asia/Jakarta')->format('ymd'),
+            'reset_on_prefix_change' => true
+        ];
+        $pickups = collect(Pickup::all());
+        $data = [];
+        foreach ($pickups as $key => $value) {
+            $pickup = Pickup::find($value['id']);
+            $pickup->number = IdGenerator::generate($config);
+            $data[] = $pickup->save();
+        }
+        return response()->json($data);
     }
 
     /**
