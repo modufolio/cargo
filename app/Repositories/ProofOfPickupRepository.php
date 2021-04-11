@@ -105,7 +105,7 @@ class ProofOfPickupRepository
         $requestPickupDate = $data['requestPickupDate'];
         $pickupPlanNo = $data['pickupPlanNo'];
 
-        $pickup = $this->pickup->where(function($e) {
+        $pickup = $this->pickup->with(['pickupPlan'])->where(function($e) {
             $e->where('status', 'draft')->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function ($q) {
                 $q->where('driver_pick', false);
             });
@@ -147,9 +147,14 @@ class ProofOfPickupRepository
                         'picktime' => $order
                     ]);
                     break;
+                case 'number':
+                    $pickup = $pickup->sortable([
+                        'number' => $order
+                    ]);
+                    break;
                 default:
                     $pickup = $pickup->sortable([
-                        'id' => 'desc'
+                        'number' => 'desc'
                     ]);
                     break;
             }
@@ -160,7 +165,7 @@ class ProofOfPickupRepository
         }
 
         if (!empty($pickupOrderNo)) {
-            $pickup = $pickup->where('id', 'ilike', '%'.$pickupOrderNo.'%');
+            $pickup = $pickup->where('number', 'ilike', '%'.$pickupOrderNo.'%');
         }
 
         if (!empty($requestPickupDate)) {
@@ -168,14 +173,18 @@ class ProofOfPickupRepository
         }
 
         if (!empty($pickupPlanNo)) {
-            $pickup = $pickup->where('pickup_plan_id', 'ilike', '%'.$pickupPlanNo.'%');
+            $pickup = $pickup->whereHas('pickupPlan', function($q) use ($pickupPlanNo) {
+                $q->where('number', 'ilike', '%'.$pickupPlanNo.'%');
+            });
         }
 
         if (!empty($general)) {
             $pickup = $pickup
                 ->where('name', 'ilike', '%'.$general.'%')
-                ->orWhere('id', 'ilike', '%'.$general.'%')
-                ->orWhere('pickup_plan_id', 'ilike', '%'.$general.'%');
+                ->orWhere('number', 'ilike', '%'.$general.'%')
+                ->orWhereHas('pickupPlan', function($q) use ($general) {
+                    $q->where('number', 'ilike', '%'.$general.'%');
+                });
         }
 
         $result = $pickup->paginate($perPage);
@@ -205,9 +214,12 @@ class ProofOfPickupRepository
         $driverPick = $data['driverPick'];
 
 
-        $pickup = $this->pickup->select('id','name','pickup_plan_id','picktime','created_at','status')->where('status', 'applied')->with(['proofOfPickup' => function($q) {
-            $q->select('id','pickup_id','status','driver_pick','status_pick','created_at');
-        }])->whereNotNull('pickup_plan_id');
+        $pickup = $this->pickup->select('id','name','pickup_plan_id','picktime','created_at','status','number')->where('status', 'applied')->with([
+            'proofOfPickup' => function($q) {
+                $q->select('id','pickup_id','status','driver_pick','status_pick','created_at');
+            }, 'pickupPlan' => function($q) {
+                $q->select('id', 'number');
+            }])->whereNotNull('pickup_plan_id');
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -256,7 +268,7 @@ class ProofOfPickupRepository
         }
 
         if (!empty($poNumber)) {
-            $pickup = $pickup->where('id', 'ilike', '%'.$poNumber.'%');
+            $pickup = $pickup->where('number', 'ilike', '%'.$poNumber.'%');
         }
 
         if (!empty($poPickupDate)) {
@@ -272,7 +284,9 @@ class ProofOfPickupRepository
         }
 
         if (!empty($pickupPlanNumber)) {
-            $pickup = $pickup->where('pickup_plan_id', 'ilike', '%'.$pickupPlanNumber.'%');
+            $pickup = $pickup->whereHas('pickupPlan', function($q) use ($pickupPlanNumber) {
+                $q->where('number', 'ilike', '%'.$pickupPlanNumber.'%');
+            });
         }
 
         if (!empty($popNumber)) {
@@ -302,8 +316,10 @@ class ProofOfPickupRepository
         if (!empty($general)) {
             $pickup = $pickup
                 ->where('name', 'ilike', '%'.$general.'%')
-                ->orWhere('id', 'ilike', '%'.$general.'%')
-                ->orWhere('pickup_plan_id', 'ilike', '%'.$general.'%');
+                ->orWhere('number', 'ilike', '%'.$general.'%')
+                ->orWhereHas('pickupPlan', function($q) use ($general) {
+                    $q->where('number', 'ilike', '%'.$general.'%');
+                });
         }
 
         $result = $pickup->paginate($perPage);
