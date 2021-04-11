@@ -87,7 +87,8 @@ class PickupPlanController extends BaseController
             'district',
             'village',
             'picktime',
-            'sort'
+            'sort',
+            'number'
         ]);
         try {
             $result = $this->pickupService->getReadyToPickupService($data);

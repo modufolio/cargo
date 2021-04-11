@@ -224,12 +224,13 @@ class PickupRepository
         $village = $data['village'];
         $picktime = $data['picktime'];
         $sort = $data['sort'];
+        $number = $data['number'];
 
         $pickup = $this->pickup->whereNull('pickup_plan_id')->with(['sender' => function($q) {
             $q->select('id','city','district','village');
         },'items' => function($q) {
             $q->select('id','weight','volume','pickup_id');
-        }])->select('name','id','sender_id','picktime');
+        }])->select('name','id','sender_id','picktime','number');
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -275,9 +276,14 @@ class PickupRepository
                         'picktime' => $order
                     ]);
                     break;
+                case 'number':
+                    $pickup = $pickup->sortable([
+                        'number' => $order
+                    ]);
+                    break;
                 default:
                     $pickup = $pickup->sortable([
-                        'id' => 'desc'
+                        'number' => 'desc'
                     ]);
                     break;
             }
@@ -311,6 +317,10 @@ class PickupRepository
 
         if (!empty($picktime)) {
             $pickup = $pickup->where('picktime', 'ilike', '%'.$picktime.'%');
+        }
+
+        if (!empty($number)) {
+            $pickup = $pickup->where('number', 'ilike', '%'.$number.'%');
         }
 
         $result = $pickup->paginate($perPage);
