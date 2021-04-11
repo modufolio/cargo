@@ -37,6 +37,7 @@ jobs:
           cd papandayan.ival.online/cargo
           git checkout main
           git pull
+          composer install
           exit
-    - name: Install Dependencies
-      run: composer install
+    # - name: Install Dependencies
+    #   run: composer install
