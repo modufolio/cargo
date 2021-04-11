@@ -294,7 +294,7 @@ Route::middleware('guest')->group(function () {
     // Test
     Route::post('test', [TestController::class, 'create']);
     Route::get('test', [TestController::class, 'index']);
-    // Route::post('test/update-pickups', [TestController::class, 'update']);
+    Route::post('test/update-pickups', [TestController::class, 'update']);
 
     // Tracking
     Route::prefix('tracking')->group(function() {

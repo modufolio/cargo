@@ -190,9 +190,9 @@ class TestController extends BaseController
     {
         $config = [
             'table' => 'pickups',
-            'length' => 12,
+            'length' => 13,
             'field' => 'number',
-            'prefix' => Carbon::now('Asia/Jakarta')->format('ymd'),
+            'prefix' => 'P'.Carbon::now('Asia/Jakarta')->format('ymd'),
             'reset_on_prefix_change' => true
         ];
         $pickups = collect(Pickup::all());
