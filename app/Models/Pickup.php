@@ -25,7 +25,8 @@ class Pickup extends Model
         'pickup_plan_id',
         'picktime',
         'id',
-        'user'
+        'user',
+        'number'
     ];
 
     protected $hidden = [

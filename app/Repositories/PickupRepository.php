@@ -107,6 +107,7 @@ class PickupRepository
         $perPage = $data['perPage'];
         $page = $data['page'];
         $id = $data['id'];
+        $number = $data['number'];
         $name = $data['name'];
         $city = $data['city'];
         $district = $data['district'];
@@ -130,9 +131,9 @@ class PickupRepository
                 $order = 'desc';
             }
             switch ($sort['field']) {
-                case 'id':
+                case 'number':
                     $pickup = $pickup->sortable([
-                        'id' => $order
+                        'number' => $order
                     ]);
                     break;
                 case 'user.name':
@@ -162,7 +163,7 @@ class PickupRepository
                     break;
                 default:
                     $pickup = $pickup->sortable([
-                        'id' => 'desc'
+                        'number' => 'desc'
                     ]);
                     break;
             }
@@ -170,6 +171,10 @@ class PickupRepository
 
         if (!empty($id)) {
             $pickup = $pickup->where('id', 'ilike', '%'.$id.'%');
+        }
+
+        if (!empty($number)) {
+            $pickup = $pickup->where('number', 'ilike', '%'.$number.'%');
         }
 
         if (!empty($name)) {
