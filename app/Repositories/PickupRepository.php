@@ -328,6 +328,7 @@ class PickupRepository
         $perPage = $data['perPage'];
         $page = $data['page'];
         $id = $data['id'];
+        $number = $data['number'];
         $startDate = $data['startDate'];
         $endDate = $data['endDate'];
         $status = $data['status'];
@@ -351,43 +352,43 @@ class PickupRepository
             } else {
                 $order = 'desc';
             }
-            // switch ($sort['field']) {
-            //     case 'id':
-            //         $pickupPlan = $pickupPlan->sortable([
-            //             'id' => $order
-            //         ]);
-            //         break;
-            //     case 'user.name':
-            //         $pickupPlan = $pickupPlan->sortable([
-            //             'user.name' => $order
-            //         ]);
-            //         break;
-            //     case 'sender.city':
-            //         $pickupPlan = $pickupPlan->sortable([
-            //             'sender.city' => $order
-            //         ]);
-            //         break;
-            //     case 'sender.district':
-            //         $pickupPlan = $pickupPlan->sortable([
-            //             'sender.district' => $order
-            //         ]);
-            //         break;
-            //     case 'sender.village':
-            //         $pickupPlan = $pickupPlan->sortable([
-            //             'sender.village' => $order
-            //         ]);
-            //         break;
-            //     case 'picktime':
-            //         $pickupPlan = $pickupPlan->sortable([
-            //             'picktime' => $order
-            //         ]);
-            //         break;
-            //     default:
-            //         $pickupPlan = $pickupPlan->sortable([
-            //             'id' => 'desc'
-            //         ]);
-            //         break;
-            // }
+            switch ($sort['field']) {
+                case 'id':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'id' => $order
+                    ]);
+                    break;
+                case 'number':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'number' => $order
+                    ]);
+                    break;
+                case 'status':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'status' => $order
+                    ]);
+                    break;
+                case 'vehicle.license_plate':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'vehicle.license_plate' => $order
+                    ]);
+                    break;
+                case 'vehicle.type':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'vehicle.type' => $order
+                    ]);
+                    break;
+                case 'created_at':
+                    $pickupPlan = $pickupPlan->sortable([
+                        'created_at' => $order
+                    ]);
+                    break;
+                default:
+                    $pickupPlan = $pickupPlan->sortable([
+                        'id' => 'desc'
+                    ]);
+                    break;
+            }
         }
 
         if (!empty($id)) {

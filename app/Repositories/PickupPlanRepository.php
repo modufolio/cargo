@@ -6,6 +6,7 @@ use App\Models\PickupPlan;
 use App\Models\Pickup;
 use Carbon\Carbon;
 use InvalidArgumentException;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class PickupPlanRepository
 {
@@ -28,11 +29,20 @@ class PickupPlanRepository
      */
     public function savePickupPlanRepo($pickupId, $vehicleId, $userId)
     {
+        $config = [
+            'table' => 'pickup_plans',
+            'length' => 13,
+            'field' => 'number',
+            'prefix' => 'PP'.Carbon::now('Asia/Jakarta')->format('ymd'),
+            'reset_on_prefix_change' => true
+        ];
         $pickupPlan = new $this->pickupPlan;
         $pickupPlan->status = 'applied'; // applied, cancelled, draft
         $pickupPlan->vehicle_id = $vehicleId;
         $pickupPlan->created_by = $userId;
+        $pickupPlan->number = IdGenerator::generate($config);
         $pickupPlan->save();
+
         foreach ($pickupId as $key => $value) {
             // $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
             $pickup = $this->pickup->find($value);

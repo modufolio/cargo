@@ -114,7 +114,8 @@ class PickupPlanController extends BaseController
             'driver',
             'licenseNumber',
             'vehicleType',
-            'sort'
+            'sort',
+            'number'
         ]);
         try {
             $result = $this->pickupService->getListPickupPlanService($data);

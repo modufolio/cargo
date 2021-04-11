@@ -30,7 +30,9 @@ class PickupPlan extends Model
         'sender',
         'id',
         'created_by',
-        'deleted_by'
+        'deleted_by',
+        'number',
+        'created_at',
     ];
 
     protected $appends = ['total_pickup_order'];

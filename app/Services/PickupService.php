@@ -248,6 +248,7 @@ class PickupService {
             $pickup = $this->pickupRepository->getListPickupPlanRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
         return $pickup;

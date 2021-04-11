@@ -14,6 +14,7 @@ use App\Models\Route;
 use App\Models\Promo;
 use App\Models\Item;
 use App\Models\Pickup;
+use App\Models\PickupPlan;
 
 // SERVICE
 use App\Services\AddressService;
@@ -189,16 +190,16 @@ class TestController extends BaseController
     public function update(Request $request)
     {
         $config = [
-            'table' => 'pickups',
+            'table' => 'pickup_plans',
             'length' => 13,
             'field' => 'number',
-            'prefix' => 'P'.Carbon::now('Asia/Jakarta')->format('ymd'),
+            'prefix' => 'PP'.Carbon::now('Asia/Jakarta')->format('ymd'),
             'reset_on_prefix_change' => true
         ];
-        $pickups = collect(Pickup::all());
+        $pickups = collect(PickupPlan::all());
         $data = [];
         foreach ($pickups as $key => $value) {
-            $pickup = Pickup::find($value['id']);
+            $pickup = PickupPlan::find($value['id']);
             $pickup->number = IdGenerator::generate($config);
             $data[] = $pickup->save();
         }
