@@ -12,7 +12,7 @@ use Log;
 use Validator;
 use InvalidArgumentException;
 
-class ShipmentPlanService {
+class PickupPlanService {
 
     protected $pickupPlanRepository;
     protected $pickupRepository;
