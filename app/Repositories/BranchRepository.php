@@ -202,4 +202,28 @@ class BranchRepository
 
         return $branch;
     }
+
+    /**
+     * Get default Branchs list
+     *
+     * @return Branch
+     */
+    public function getDefaultBranchRepo()
+    {
+        return $this->branch->select('name', 'id')->get()->take(10);
+    }
+
+    /**
+     * check branch by pickup
+     *
+     * @param $pickupId
+     * @return Branch
+     */
+    public function checkBranchByPickupRepo($pickupId)
+    {
+        $branch = $this->branch->whereHas('pickups', function($q) use ($pickupId) {
+            $q->where('id', $pickupId);
+        })->first();
+        return $branch;
+    }
 }

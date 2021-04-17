@@ -24,9 +24,12 @@ class ShipmentPlan extends Model
         'pickups',
         'status',
         'id',
+        'vehicle',
         'created_by',
         'deleted_by',
-        'updated_by'
+        'updated_by',
+        'created_at',
+        'updated_at'
     ];
 
     public function getCreatedAtAttribute($value)

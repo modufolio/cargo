@@ -196,4 +196,21 @@ class BranchService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * Get default branchs.
+     *
+     * @return Branch
+     */
+    public function getDefaultBranchService()
+    {
+        try {
+            $branch = $this->branchRepository->getDefaultBranchRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mendapat semua branch');
+        }
+        return $branch;
+    }
 }

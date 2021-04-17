@@ -58,7 +58,7 @@ class RouteRepository
         $minWeight = $data['minWeight'];
         $fleet = $data['fleet'];
 
-        $route = $this->route->with('fleet')->sortable();
+        $route = $this->route->with('fleet');
 
         if (empty($perPage)) {
             $perPage = 15;
@@ -104,9 +104,14 @@ class RouteRepository
                         'price' => $order
                     ]);
                     break;
+                case 'created_at':
+                    $route = $route->sortable([
+                        'created_at' => $order
+                    ]);
+                    break;
                 default:
                     $route = $route->sortable([
-                        'id' => 'desc'
+                        'created_at' => 'desc'
                     ]);
                     break;
             }

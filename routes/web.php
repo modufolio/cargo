@@ -1,7 +1,18 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+// MODEL
+use App\Models\User;
+use App\Models\Role;
+use App\Models\Fleet;
+use App\Models\Route as RouteModel;
+use App\Models\Promo;
+use App\Models\Driver;
+use App\Models\Branch;
+use App\Models\Item;
+use App\Models\Pickup;
+use App\Models\PickupPlan;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,6 +26,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/test', function() {
+    $branch = Branch::whereHas('pickups', function($q) {
+        $q->where('id', 7);
+    })->first();
+    if (!$branch) {
+        return response()->json('nulls');
+    }
+    return $branch['id'];
 });
 
 Route::get('/test-email', function()

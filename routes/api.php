@@ -202,6 +202,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('delete', [BranchController::class, 'delete']);
             Route::post('update', [BranchController::class, 'update']);
             Route::get('list', [BranchController::class, 'list']);
+            Route::get('get-default-list', [BranchController::class, 'getDefaultList']);
         });
 
         // Driver
@@ -211,6 +212,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('edit', [DriverController::class, 'edit']);
             Route::post('disable', [DriverController::class, 'disable']);
             Route::post('create', [DriverController::class, 'create']);
+            Route::post('get-default-list', [DriverController::class, 'getDefaultList']);
         });
 
         // Pickup Plan

@@ -221,4 +221,21 @@ class DriverController extends BaseController
 
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get initial default driver list.
+     *
+     * @param Request $request
+     * @return Driver
+     */
+    public function getDefaultList(Request $request)
+    {
+        try {
+            $result = $this->driverService->getDefaultDriversService();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
 }

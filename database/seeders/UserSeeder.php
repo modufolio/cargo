@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
                 'role_id' => 9,
                 'phone' => '081944210229',
                 'username' => 'ival',
+                'branch_id' => 1,
             ],
             [
                 'name' => 'viky',
@@ -32,6 +33,7 @@ class UserSeeder extends Seeder
                 'role_id' => 1,
                 'phone' => '081228271888',
                 'username' => 'vikyyahya',
+                'branch_id' => 1,
             ],
             [
                 'name' => 'driver one',
@@ -40,6 +42,7 @@ class UserSeeder extends Seeder
                 'role_id' => 3,
                 'phone' => '081728592812',
                 'username' => 'driver_one',
+                'branch_id' => 1,
             ],
             [
                 'name' => 'driver two',
@@ -48,6 +51,7 @@ class UserSeeder extends Seeder
                 'role_id' => 3,
                 'phone' => '08122412852',
                 'username' => 'driver_two',
+                'branch_id' => 1,
             ],
             [
                 'name' => 'customer',
@@ -56,6 +60,7 @@ class UserSeeder extends Seeder
                 'role_id' => 1,
                 'phone' => '081288279211',
                 'username' => 'customer',
+                'branch_id' => 1,
             ],
             [
                 'name' => 'sisil 5',
@@ -63,7 +68,8 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('sisil123'),
                 'role_id' => 9,
                 'phone' => '082199251122',
-                'username' => 'shisilsm27'
+                'username' => 'shisilsm27',
+                'branch_id' => 1,
             ],
             [
                 'name' => 'testing lenna 5',
@@ -71,7 +77,8 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('testinglenna5'),
                 'role_id' => 3,
                 'phone' => '0821123250122',
-                'username' => '	testinglenna5'
+                'username' => '	testinglenna5',
+                'branch_id' => 1,
             ],
             [
                 'name' => 'testing lenna 4',
@@ -79,7 +86,8 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('testinglenna4'),
                 'role_id' => 9,
                 'phone' => '0896122502122',
-                'username' => '	testinglenna4'
+                'username' => '	testinglenna4',
+                'branch_id' => 2,
             ]
         ]);
         DB::commit();

@@ -1156,12 +1156,14 @@ class PickupRepository
         $village = $data['village'];
         $picktime = $data['picktime'];
         $sort = $data['sort'];
+        $number = $data['number'];
+        $branchId = $data['branchId'];
 
-        $pickup = $this->pickup->whereNotNull('pickup_plan_id')->whereNull('shipment_plan_id')->with(['sender' => function($q) {
+        $pickup = $this->pickup->where('branch_id', $branchId)->whereNotNull('pickup_plan_id')->whereNull('shipment_plan_id')->with(['sender' => function($q) {
             $q->select('id','city','district','village');
         },'items' => function($q) {
             $q->select('id','weight','volume','pickup_id');
-        }])->select('name','id','sender_id','picktime');
+        }])->select('name','id','sender_id','picktime', 'number');
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -1180,6 +1182,11 @@ class PickupRepository
                 case 'id':
                     $pickup = $pickup->sortable([
                         'id' => $order
+                    ]);
+                    break;
+                case 'number':
+                    $pickup = $pickup->sortable([
+                        'number' => $order
                     ]);
                     break;
                 case 'user.name':
@@ -1207,9 +1214,14 @@ class PickupRepository
                         'picktime' => $order
                     ]);
                     break;
+                case 'updated_at':
+                    $pickup = $pickup->sortable([
+                        'updated_at' => $order
+                    ]);
+                    break;
                 default:
                     $pickup = $pickup->sortable([
-                        'id' => 'desc'
+                        'updated_at' => 'desc'
                     ]);
                     break;
             }
@@ -1217,6 +1229,10 @@ class PickupRepository
 
         if (!empty($id)) {
             $pickup = $pickup->where('id', 'ilike', '%'.$id.'%');
+        }
+
+        if (!empty($number)) {
+            $pickup = $pickup->where('number', 'ilike', '%'.$number.'%');
         }
 
         if (!empty($name)) {
@@ -1245,7 +1261,7 @@ class PickupRepository
             $pickup = $pickup->where('picktime', 'ilike', '%'.$picktime.'%');
         }
 
-        $result = $pickup->orderBy('created_at', 'DESC')->paginate($perPage);
+        $result = $pickup->paginate($perPage);
 
         return $result;
     }
@@ -1267,8 +1283,13 @@ class PickupRepository
         $licenseNumber = $data['licenseNumber'];
         $vehicleType = $data['vehicleType'];
         $sort = $data['sort'];
+        $branchId = $data['branchId'];
 
-        $shipmentPlan = $this->shipmentPlan->with(['vehicle.driver.user', 'pickups']);
+        $shipmentPlan = $this->shipmentPlan->whereHas('pickups', function($q) use ($branchId) {
+            $q->whereHas('branch', function($o) use ($branchId) {
+                $o->where('id', $branchId);
+            });
+        })->with(['vehicle.driver.user', 'pickups']);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -1283,43 +1304,38 @@ class PickupRepository
             } else {
                 $order = 'desc';
             }
-            // switch ($sort['field']) {
-            //     case 'id':
-            //         $shipmentPlan = $shipmentPlan->sortable([
-            //             'id' => $order
-            //         ]);
-            //         break;
-            //     case 'user.name':
-            //         $shipmentPlan = $shipmentPlan->sortable([
-            //             'user.name' => $order
-            //         ]);
-            //         break;
-            //     case 'sender.city':
-            //         $shipmentPlan = $shipmentPlan->sortable([
-            //             'sender.city' => $order
-            //         ]);
-            //         break;
-            //     case 'sender.district':
-            //         $shipmentPlan = $shipmentPlan->sortable([
-            //             'sender.district' => $order
-            //         ]);
-            //         break;
-            //     case 'sender.village':
-            //         $shipmentPlan = $shipmentPlan->sortable([
-            //             'sender.village' => $order
-            //         ]);
-            //         break;
-            //     case 'picktime':
-            //         $shipmentPlan = $shipmentPlan->sortable([
-            //             'picktime' => $order
-            //         ]);
-            //         break;
-            //     default:
-            //         $shipmentPlan = $shipmentPlan->sortable([
-            //             'id' => 'desc'
-            //         ]);
-            //         break;
-            // }
+            switch ($sort['field']) {
+                case 'id':
+                    $shipmentPlan = $shipmentPlan->sortable([
+                        'id' => $order
+                    ]);
+                    break;
+                case 'status':
+                    $shipmentPlan = $shipmentPlan->sortable([
+                        'status' => $order
+                    ]);
+                    break;
+                case 'vehicle.license_plate':
+                    $shipmentPlan = $shipmentPlan->sortable([
+                        'vehicle.license_plate' => $order
+                    ]);
+                    break;
+                case 'vehicle.type':
+                    $shipmentPlan = $shipmentPlan->sortable([
+                        'vehicle.type' => $order
+                    ]);
+                    break;
+                case 'created_at':
+                    $shipmentPlan = $shipmentPlan->sortable([
+                        'created_at' => $order
+                    ]);
+                    break;
+                default:
+                    $shipmentPlan = $shipmentPlan->sortable([
+                        'updated_at' => 'desc'
+                    ]);
+                    break;
+            }
         }
 
         if (!empty($id)) {

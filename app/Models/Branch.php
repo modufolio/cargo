@@ -36,4 +36,14 @@ class Branch extends Model
     {
         return $this->hasMany(Pickup::class);
     }
+
+    public function transitTo()
+    {
+        return $this->hasMany(Transit::class, 'to');
+    }
+
+    public function transitFrom()
+    {
+        return $this->hasMany(Transit::class, 'from');
+    }
 }

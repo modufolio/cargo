@@ -49,6 +49,7 @@ class DriverService {
                 $result = $this->driverRepository->getAvailableDriverByVehicleRepo($data['value']);
             } catch (Exception $e) {
                 Log::info($e->getMessage());
+                Log::error($e);
                 throw new InvalidArgumentException('Gagal mendapat data driver');
             }
         } else {
@@ -56,6 +57,7 @@ class DriverService {
                 $result = $this->driverRepository->getAllDriverByNameRepo($data['value']);
             } catch (Exception $e) {
                 Log::info($e->getMessage());
+                Log::error($e);
                 throw new InvalidArgumentException('Gagal mendapat data driver');
             }
         }
@@ -144,6 +146,9 @@ class DriverService {
         return $result;
     }
 
+    /**
+     * create driver
+     */
     public function createDriverService($data, $userId)
     {
         $validator = Validator::make($data, [
@@ -163,6 +168,9 @@ class DriverService {
         return $result;
     }
 
+    /**
+     * disable status driver
+     */
     public function disableDriverService($data)
     {
         $validator = Validator::make($data, [
@@ -184,6 +192,21 @@ class DriverService {
         }
 
         DB::commit();
+        return $result;
+    }
+
+    /**
+     * get inital drivers list
+     */
+    public function getDefaultDriversService()
+    {
+        try {
+            $result = $this->driverRepository->getDefaultDriversRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mendapat data driver');
+        }
         return $result;
     }
 }

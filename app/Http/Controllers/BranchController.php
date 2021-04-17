@@ -137,4 +137,20 @@ class BranchController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get default branchs.
+     *
+     * @return Branch
+     * @param Request $request
+     */
+    public function getDefaultList(Request $request)
+    {
+        try {
+            $result = $this->branchService->getDefaultBranchService();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

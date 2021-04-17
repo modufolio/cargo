@@ -6,6 +6,8 @@ use App\Repositories\PickupRepository;
 use App\Repositories\DriverRepository;
 use App\Repositories\VehicleRepository;
 use App\Repositories\TrackingRepository;
+use App\Repositories\BranchRepository;
+use App\Repositories\TransitRepository;
 use Exception;
 use DB;
 use Log;
@@ -19,13 +21,17 @@ class ShipmentPlanService {
     protected $driverRepository;
     protected $vehicleRepository;
     protected $trackingRepository;
+    protected $branchRepository;
+    protected $transitRepository;
 
     public function __construct(
         ShipmentPlanRepository $shipmentPlanRepository,
         DriverRepository $driverRepository,
         VehicleRepository $vehicleRepository,
         PickupRepository $pickupRepository,
-        TrackingRepository $trackingRepository
+        TrackingRepository $trackingRepository,
+        BranchRepository $branchRepository,
+        TransitRepository $transitRepository
     )
     {
         $this->shipmentPlanRepository = $shipmentPlanRepository;
@@ -33,6 +39,8 @@ class ShipmentPlanService {
         $this->vehicleRepository = $vehicleRepository;
         $this->pickupRepository = $pickupRepository;
         $this->trackingRepository = $trackingRepository;
+        $this->branchRepository = $branchRepository;
+        $this->transitRepository = $transitRepository;
     }
 
     /**
@@ -84,21 +92,44 @@ class ShipmentPlanService {
             throw new InvalidArgumentException('Gagal menyimpan shipment plan');
         }
 
+        // CHECK TRANSIT
+        if ($data['isTransit']) {
+            $notes = 'paket ditransit ke cabang: '.$data['transitBranch']['name'];
+        } else {
+            $notes = 'paket dikirim ke alamat tujuan';
+        }
+
         // CREATE TRACKING
-        $tracking = [
-            'pickupId' => $data['pickupId'],
-            'docs' => 'shipment-plan',
-            'status' => 'applied',
-            'notes' => 'barang siap berangkat menuju kota tujuan',
-            'picture' => null,
-        ];
-        try {
-            $this->trackingRepository->recordTrackingByPickupRepo($tracking);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Gagal menyimpan data tracking');
+        foreach ($data['pickupId'] as $key => $value) {
+            $branchFrom = $this->branchRepository->checkBranchByPickupRepo($value);
+            $transitData = [
+                'pickupId' => $value,
+                'branchFrom' => $branchFrom['id'],
+                'branchTo' => $data['transitBranch']['id']
+            ];
+            try {
+                $this->transitRepository->saveTransitRepo($transitData);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal menyimpan transit data');
+            }
+            $tracking = [
+                'pickupId' => $value,
+                'docs' => 'shipment-plan',
+                'status' => 'applied',
+                'notes' => $notes,
+                'picture' => null,
+            ];
+            try {
+                $this->trackingRepository->recordTrackingByPickupRepo($tracking);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal menyimpan data tracking');
+            }
         }
 
         DB::commit();

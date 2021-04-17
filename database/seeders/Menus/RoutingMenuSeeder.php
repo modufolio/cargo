@@ -42,6 +42,11 @@ class RoutingMenuSeeder extends Seeder
                 'name' => 'Proof of Delivery',
                 'slug' => 'po-delivery',
             ],
+            [
+                'menu_id' => $menu->id,
+                'name' => 'Transit Pickup',
+                'slug' => 'transit-pickup',
+            ],
         ];
         Submenu::insert($submenu);
     }

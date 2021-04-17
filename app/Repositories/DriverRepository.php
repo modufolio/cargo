@@ -239,4 +239,13 @@ class DriverRepository
         })->get();
         return $data;
     }
+
+    /**
+     * get default driver list
+     */
+    public function getDefaultDriversRepo()
+    {
+        $data = $this->driver->with('user')->get()->take(10);
+        return $data;
+    }
 }

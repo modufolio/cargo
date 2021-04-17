@@ -35,8 +35,9 @@ class ShipmentPlanController extends BaseController
             'pickupId',
             'vehicleId',
             'driverId',
-            'branchId',
-            'userId'
+            'userId',
+            'isTransit',
+            'transitBranch'
         ]);
         DB::beginTransaction();
         try {
@@ -87,7 +88,9 @@ class ShipmentPlanController extends BaseController
             'district',
             'village',
             'picktime',
-            'sort'
+            'sort',
+            'number',
+            'branchId'
         ]);
         try {
             $result = $this->pickupService->getReadyToShipmentService($data);
@@ -114,7 +117,8 @@ class ShipmentPlanController extends BaseController
             'driver',
             'licenseNumber',
             'vehicleType',
-            'sort'
+            'sort',
+            'branchId'
         ]);
         try {
             $result = $this->pickupService->getListShipmentPlanService($data);
