@@ -95,11 +95,20 @@ class ShipmentPlanService {
         // CHECK TRANSIT
         if ($data['isTransit']) {
             $notes = 'paket ditransit ke cabang: '.$data['transitBranch']['name'];
+            // UPDATE PICKUP BRANCH
+            try {
+                $this->pickupRepository->updateBranchRepo($data['pickupId'], $data['transitBranch']['id']);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal mengupdate data cabang pada pickup order');
+            }
         } else {
             $notes = 'paket dikirim ke alamat tujuan';
         }
 
-        // CREATE TRACKING
+        // CREATE TRACKING AND TRANSIT HISTORY
         foreach ($data['pickupId'] as $key => $value) {
             $branchFrom = $this->branchRepository->checkBranchByPickupRepo($value);
             $transitData = [
