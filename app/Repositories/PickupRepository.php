@@ -1400,6 +1400,7 @@ class PickupRepository
         $district = $data['district'];
         $village = $data['village'];
         $sort = $data['sort'];
+        $number = $data['number'];
 
         $pickup = $this->pickup->with(['user','sender','shipmentPlan' => function($q) {
             $q->select('id','created_at');
@@ -1446,7 +1447,7 @@ class PickupRepository
                     break;
                 default:
                     $pickup = $pickup->sortable([
-                        'id' => 'desc'
+                        'updated_at' => 'desc'
                     ]);
                     break;
             }
@@ -1454,6 +1455,10 @@ class PickupRepository
 
         if (!empty($id)) {
             $pickup = $pickup->where('id', 'ilike', '%'.$id.'%');
+        }
+
+        if (!empty($number)) {
+            $pickup = $pickup->where('number', 'ilike', '%'.$number.'%');
         }
 
         if (!empty($name)) {

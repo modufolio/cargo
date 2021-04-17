@@ -262,7 +262,8 @@ class PickupController extends BaseController
             'district',
             'village',
             'shipmentPlanId',
-            'sort'
+            'sort',
+            'number'
         ]);
         try {
             $result = $this->pickupService->getPickupByShipmentPlanService($data);
