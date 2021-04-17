@@ -82,16 +82,6 @@ class ShipmentPlanService {
             throw new InvalidArgumentException($e->getMessage());
         }
 
-        // SAVE SHIPMENT PLAN
-        try {
-            $result = $this->shipmentPlanRepository->saveShipmentPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Gagal menyimpan shipment plan');
-        }
-
         // CHECK TRANSIT
         if ($data['isTransit']) {
             $notes = 'paket ditransit ke cabang: '.$data['transitBranch']['name'];
@@ -104,8 +94,26 @@ class ShipmentPlanService {
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal mengupdate data cabang pada pickup order');
             }
+            // UPDATE IS TRANSIT BRANCH
+            try {
+                $this->pickupRepository->updateIsTransitBranchRepo($data['pickupId'], true);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal mengupdate data cabang pada pickup order');
+            }
         } else {
             $notes = 'paket dikirim ke alamat tujuan';
+            // SAVE SHIPMENT PLAN
+            try {
+                $result = $this->shipmentPlanRepository->saveShipmentPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal menyimpan shipment plan');
+            }
         }
 
         // CREATE TRACKING AND TRANSIT HISTORY

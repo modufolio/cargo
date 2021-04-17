@@ -24,7 +24,7 @@ class Transit extends Model
 
     public function pickup()
     {
-        return $this->belongsTo(Pickup::class);
+        return $this->belongsTo(Pickup::class, 'pickup_id');
     }
 
     public function from()

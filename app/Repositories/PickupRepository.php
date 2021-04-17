@@ -1163,7 +1163,7 @@ class PickupRepository
             $q->select('id','city','district','village');
         },'items' => function($q) {
             $q->select('id','weight','volume','pickup_id');
-        }])->select('name','id','sender_id','picktime', 'number');
+        }, 'transits'])->select('name','id','sender_id','picktime', 'number');
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -1476,5 +1476,16 @@ class PickupRepository
         $result = $pickup->paginate($perPage);
 
         return $result;
+    }
+
+    /**
+     * update is transit branch in pickup order
+     * @param array $pickupId
+     */
+    public function updateIsTransitBranchRepo($pickupId, $value)
+    {
+        DB::beginTransaction();
+        $this->pickup->whereIn('id', $pickupId)->update(['is_transit' => $value]);
+        DB::commit();
     }
 }
