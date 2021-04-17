@@ -1348,10 +1348,7 @@ class PickupRepository
         }
 
         if (!empty($startDate) && !empty($endDate)) {
-            $shipmentPlan = $shipmentPlan->whereHas('pickups', function ($q) use ($startDate, $endDate){
-                $q->whereDate('picktime', '>=', date($startDate))
-                    ->whereDate('picktime', '<=', date($endDate));
-            });
+            $shipmentPlan = $shipmentPlan->whereDate('created_at', '>=', date($startDate))->whereDate('created_at', '<=', date($endDate));
         }
 
         if (!empty($status)) {
@@ -1380,7 +1377,7 @@ class PickupRepository
             });
         }
 
-        $result = $shipmentPlan->orderBy('created_at', 'DESC')->paginate($perPage);
+        $result = $shipmentPlan->paginate($perPage);
 
         return $result;
     }
