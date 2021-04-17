@@ -1498,4 +1498,13 @@ class PickupRepository
         $this->pickup->whereIn('id', $pickupId)->update(['is_transit' => $value]);
         DB::commit();
     }
+
+    /**
+     * cancel shipment plan
+     * @param array $data
+     */
+    public function cancelShipmentPlanRepo($data)
+    {
+        $this->pickup->where('shipment_plan_id', $data['shipmentPlanId'])-update(['shipment_plan_id' => null]);
+    }
 }

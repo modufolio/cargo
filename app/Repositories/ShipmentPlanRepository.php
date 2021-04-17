@@ -6,7 +6,7 @@ use App\Models\ShipmentPlan;
 use App\Models\Pickup;
 use Carbon\Carbon;
 use InvalidArgumentException;
-
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 class ShipmentPlanRepository
 {
     protected $shipmentPlan;
@@ -28,11 +28,19 @@ class ShipmentPlanRepository
      */
     public function saveShipmentPlanRepo($pickupId, $vehicleId, $userId)
     {
+        $config = [
+            'table' => 'shipment_plans',
+            'length' => 13,
+            'field' => 'number',
+            'prefix' => 'SP'.Carbon::now('Asia/Jakarta')->format('ymd'),
+            'reset_on_prefix_change' => true
+        ];
         $shipmentPlan = new $this->shipmentPlan;
         $shipmentPlan->status = 'applied'; // applied, cancelled, draft
         $shipmentPlan->vehicle_id = $vehicleId;
         $shipmentPlan->created_by = $userId;
         $shipmentPlan->updated_by = $userId;
+        $shipmentPlan->number = IdGenerator::generate($config);
         $shipmentPlan->save();
         foreach ($pickupId as $key => $value) {
             // $this->pickup->where('id', $value)->update(['pickup_plan_id' => $shipmentPlan->id]);
@@ -122,6 +130,7 @@ class ShipmentPlanRepository
             throw new InvalidArgumentException('Maaf, shipment plan tidak ditemukan');
         }
         $shipmentPlan->status = 'canceled';
+        $shipmentPlan->updated_by = $data['userId'];
         $shipmentPlan->save();
         return $shipmentPlan;
     }

@@ -312,6 +312,17 @@ class ShipmentPlanService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // UNASSIGN PICKUP WITH CURRENT SHIPMENT PLAN
+        try {
+            $this->pickupRepository->cancelShipmentPlanRepo($data['shipmentPlanId']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
 
@@ -321,6 +332,7 @@ class ShipmentPlanService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
 
