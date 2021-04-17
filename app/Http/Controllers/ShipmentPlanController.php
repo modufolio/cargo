@@ -90,7 +90,8 @@ class ShipmentPlanController extends BaseController
             'picktime',
             'sort',
             'number',
-            'branchId'
+            'branchId',
+            'isTransit'
         ]);
         try {
             $result = $this->pickupService->getReadyToShipmentService($data);

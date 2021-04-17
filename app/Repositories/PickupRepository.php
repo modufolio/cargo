@@ -1158,6 +1158,7 @@ class PickupRepository
         $sort = $data['sort'];
         $number = $data['number'];
         $branchId = $data['branchId'];
+        $isTransit = $data['isTransit'];
 
         $pickup = $this->pickup->where('branch_id', $branchId)->whereNotNull('pickup_plan_id')->whereNull('shipment_plan_id')->with(['sender' => function($q) {
             $q->select('id','city','district','village');
@@ -1225,6 +1226,10 @@ class PickupRepository
                     ]);
                     break;
             }
+        }
+
+        if (!empty($isTransit)) {
+            $pickup = $pickup->where('is_transit', $isTransit);
         }
 
         if (!empty($id)) {
