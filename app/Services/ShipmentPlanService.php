@@ -103,6 +103,24 @@ class ShipmentPlanService {
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal mengupdate data cabang pada pickup order');
             }
+
+            // TRANSIT HISTORY
+            foreach ($data['pickupId'] as $key => $value) {
+                $branchFrom = $this->branchRepository->checkBranchByPickupRepo($value);
+                $transitData = [
+                    'pickupId' => $value,
+                    'branchFrom' => $branchFrom['id'],
+                    'branchTo' => $data['transitBranch']['id']
+                ];
+                try {
+                    $this->transitRepository->saveTransitRepo($transitData);
+                } catch (Exception $e) {
+                    DB::rollback();
+                    Log::info($e->getMessage());
+                    Log::error($e);
+                    throw new InvalidArgumentException('Gagal menyimpan transit data');
+                }
+            }
         } else {
             $notes = 'paket dikirim ke alamat tujuan';
             // SAVE SHIPMENT PLAN
@@ -116,22 +134,8 @@ class ShipmentPlanService {
             }
         }
 
-        // CREATE TRACKING AND TRANSIT HISTORY
+        // CREATE TRACKING
         foreach ($data['pickupId'] as $key => $value) {
-            $branchFrom = $this->branchRepository->checkBranchByPickupRepo($value);
-            $transitData = [
-                'pickupId' => $value,
-                'branchFrom' => $branchFrom['id'],
-                'branchTo' => $data['transitBranch']['id']
-            ];
-            try {
-                $this->transitRepository->saveTransitRepo($transitData);
-            } catch (Exception $e) {
-                DB::rollback();
-                Log::info($e->getMessage());
-                Log::error($e);
-                throw new InvalidArgumentException('Gagal menyimpan transit data');
-            }
             $tracking = [
                 'pickupId' => $value,
                 'docs' => 'shipment-plan',
