@@ -132,9 +132,10 @@ class TransitService {
         }
 
         try {
-            $result = $this->popRepository->getOutstandingPickupRepo($data);
+            $result = $this->transitRepository->getOutstandingPickupRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
         return $result;

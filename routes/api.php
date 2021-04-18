@@ -271,7 +271,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
         // Transit pickup
         Route::prefix('transit')->group(function() {
             Route::post('create', [ProofOfPickupController::class, 'createPOP']);
-            Route::post('outstanding', [ProofOfPickupController::class, 'getOutstanding']);
+            Route::post('outstanding', [TransitController::class, 'getOutstanding']);
             Route::post('submitted', [ProofOfPickupController::class, 'getSubmitted']);
             Route::get('get-pending-draft', [TransitController::class, 'getPendingAndDraft']);
             Route::post('detail-pickup', [ProofOfPickupController::class, 'getDetailPickup']);

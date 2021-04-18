@@ -30,7 +30,7 @@ class TransitRepository
     {
         $config = [
             'table' => 'transits',
-            'length' => 1,
+            'length' => 12,
             'field' => 'number',
             'prefix' => 'T'.Carbon::now('Asia/Jakarta')->format('ymd'),
             'reset_on_prefix_change' => true
@@ -83,54 +83,34 @@ class TransitRepository
         $requestPickupDate = $data['requestPickupDate'];
         $pickupPlanNo = $data['pickupPlanNo'];
 
-        $transit = $this->transit->with('pickup')->where('status', 'pending')->where('received', false);
+        $transit = $this->transit->with('pickup')->where('transits.status', 'pending')->where('received', false);
 
         if (empty($perPage)) {
             $perPage = 10;
         }
 
-        // if (!empty($sort['field'])) {
-        //     $order = $sort['order'];
-        //     if ($order == 'ascend') {
-        //         $order = 'asc';
-        //     } else if ($order == 'descend') {
-        //         $order = 'desc';
-        //     } else {
-        //         $order = 'desc';
-        //     }
-        //     switch ($sort['field']) {
-        //         case 'name':
-        //             $transit = $transit->sortable([
-        //                 'name' => $order
-        //             ]);
-        //             break;
-        //         case 'id':
-        //             $transit = $transit->sortable([
-        //                 'id' => $order
-        //             ]);
-        //             break;
-        //         case 'pickup_plan_id':
-        //             $transit = $transit->sortable([
-        //                 'pickup_plan_id' => $order
-        //             ]);
-        //             break;
-        //         case 'picktime':
-        //             $transit = $transit->sortable([
-        //                 'picktime' => $order
-        //             ]);
-        //             break;
-        //         case 'number':
-        //             $transit = $transit->sortable([
-        //                 'number' => $order
-        //             ]);
-        //             break;
-        //         default:
-        //             $transit = $transit->sortable([
-        //                 'number' => 'desc'
-        //             ]);
-        //             break;
-        //     }
-        // }
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'pickup.name':
+                    $transit = $transit->sortable([
+                        'pickup.name' => $order
+                    ]);
+                    break;
+                default:
+                    $transit = $transit->sortable([
+                        'updated_at' => 'desc'
+                    ]);
+                    break;
+            }
+        }
 
         // if (!empty($customer)) {
         //     $transit = $transit->where('name', 'ilike', '%'.$customer.'%');

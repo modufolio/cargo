@@ -126,7 +126,7 @@ class Pickup extends Model
 
     public function transit()
     {
-        return $this->belongsTo(Transit::class, 'pickup_id');
+        return $this->hasOne(Transit::class, 'pickup_id');
     }
 
     public function pendingTransit() {

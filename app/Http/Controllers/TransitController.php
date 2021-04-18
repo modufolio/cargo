@@ -61,7 +61,7 @@ class TransitController extends BaseController
             'pickupPlanNo',
         ]);
         try {
-            $result = $this->popService->getOutstandingService($data);
+            $result = $this->transitService->getOutstandingService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());
