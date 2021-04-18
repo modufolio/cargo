@@ -124,8 +124,8 @@ class Pickup extends Model
         return $this->hasMany(Tracking::class);
     }
 
-    public function transits()
+    public function transit()
     {
-        return $this->hasMany(Transit::class, 'pickup_id');
+        return $this->belongsTo(Transit::class, 'pickup_id');
     }
 }

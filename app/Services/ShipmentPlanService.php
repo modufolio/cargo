@@ -85,6 +85,8 @@ class ShipmentPlanService {
         // CHECK TRANSIT
         if ($data['isTransit']) {
             $notes = 'paket ditransit ke cabang: '.$data['transitBranch']['name'];
+            $docs = 'transit';
+            $status = 'draft';
             // UPDATE PICKUP BRANCH
             try {
                 $this->pickupRepository->updateBranchRepo($data['pickupId'], $data['transitBranch']['id']);
@@ -106,14 +108,16 @@ class ShipmentPlanService {
 
             // TRANSIT HISTORY
             foreach ($data['pickupId'] as $key => $value) {
-                $branchFrom = $this->branchRepository->checkBranchByPickupRepo($value);
+                // $branchFrom = $this->branchRepository->checkBranchByPickupRepo($value);
                 $transitData = [
                     'pickupId' => $value,
-                    'branchFrom' => $branchFrom['id'],
-                    'branchTo' => $data['transitBranch']['id']
+                    'status' => 'draft',
+                    'received' => false,
+                    'notes' => $notes,
+                    'userId' => $data['userId']
                 ];
                 try {
-                    $this->transitRepository->saveTransitRepo($transitData);
+                    $this->transitRepository->saveTransitRepo($value);
                 } catch (Exception $e) {
                     DB::rollback();
                     Log::info($e->getMessage());
@@ -123,6 +127,8 @@ class ShipmentPlanService {
             }
         } else {
             $notes = 'paket dikirim ke alamat tujuan';
+            $docs = 'shipment-plan';
+            $status = 'applied';
             // SAVE SHIPMENT PLAN
             try {
                 $result = $this->shipmentPlanRepository->saveShipmentPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
@@ -138,8 +144,8 @@ class ShipmentPlanService {
         foreach ($data['pickupId'] as $key => $value) {
             $tracking = [
                 'pickupId' => $value,
-                'docs' => 'shipment-plan',
-                'status' => 'applied',
+                'docs' => $docs,
+                'status' => $status,
                 'notes' => $notes,
                 'picture' => null,
             ];

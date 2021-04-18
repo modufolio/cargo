@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transit extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     public function getCreatedAtAttribute($value)
     {
@@ -24,16 +25,6 @@ class Transit extends Model
 
     public function pickup()
     {
-        return $this->belongsTo(Pickup::class, 'pickup_id');
-    }
-
-    public function from()
-    {
-        return $this->belongsTo(Branch::class, 'from');
-    }
-
-    public function to()
-    {
-        return $this->belongsTo(Branch::class, 'to');
+        return $this->hasOne(Pickup::class, 'pickup_id');
     }
 }

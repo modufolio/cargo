@@ -3,16 +3,20 @@
 namespace App\Repositories;
 
 use App\Models\Transit;
+use App\Models\Pickup;
+
 use Carbon\Carbon;
 use InvalidArgumentException;
 
 class TransitRepository
 {
     protected $transit;
+    protected $pickup;
 
-    public function __construct(Transit $transit)
+    public function __construct(Transit $transit, Pickup $pickup)
     {
         $this->transit = $transit;
+        $this->pickup = $pickup;
     }
 
     /**
@@ -25,9 +29,33 @@ class TransitRepository
     {
         $transit = $this->transit;
         $transit->pickup_id = $data['pickupId'];
-        $transit->from = $data['branchFrom'];
-        $transit->to = $data['branchTo'];
+        $transit->status = $data['status'];
+        $transit->received = $data['received'];
+        $transit->notes = $data['notes'];
+        $transit->created_by = $data['userId'];
+        $transit->updated_by = $data['userId'];
         $transit->save();
         return $transit;
+    }
+
+    /**
+     * get pending and draft transit pickup
+     * Counter dashboard ini menampilkan jumlah ada berapa pickup order yang masih pending transit
+     *      (belum di pickup tapi sudah di transit)
+     *      dan menampilkan jumlah pickup order yang statusnya
+     *      DRAFT (pickup order yang sudah di pickup
+     *      dan di update via apps driver oleh driver)
+     */
+    public function getPendingAndDraftRepo()
+    {
+        $pending = $this->pickup->where('is_transit', true)->whereNotNull('pickup_plan_id')->where('status', 'request')->count();
+        $draft = $this->pickup->where('is_transit', true)->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function($q) {
+            $q->where('status', 'draft');
+        })->count();
+        $data = [
+            'pending' => $pending,
+            'draft' => $draft
+        ];
+        return $data;
     }
 }
