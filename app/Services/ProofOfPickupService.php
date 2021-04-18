@@ -5,6 +5,8 @@ use App\Repositories\ProofOfPickupRepository;
 use App\Repositories\PickupRepository;
 use App\Repositories\ItemRepository;
 use App\Repositories\TrackingRepository;
+use App\Repositories\BillRepository;
+use App\Repositories\PromoRepository;
 use Exception;
 use DB;
 use Log;
@@ -18,18 +20,24 @@ class ProofOfPickupService {
     protected $pickupRepository;
     protected $itemRepository;
     protected $trackingRepository;
+    protected $billRepository;
+    protected $promoRepository;
 
     public function __construct(
         ProofOfPickupRepository $proofOfPickupRepository,
         PickupRepository $pickupRepository,
         ItemRepository $itemRepository,
-        TrackingRepository $trackingRepository
+        TrackingRepository $trackingRepository,
+        BillRepository $billRepository,
+        PromoRepository $promoRepository
     )
     {
         $this->popRepository = $proofOfPickupRepository;
         $this->pickupRepository = $pickupRepository;
         $this->itemRepository = $itemRepository;
         $this->trackingRepository = $trackingRepository;
+        $this->billRepository = $billRepository;
+        $this->promoRepository = $promoRepository;
     }
 
     /**
@@ -61,6 +69,7 @@ class ProofOfPickupService {
         }
 
         DB::beginTransaction();
+        // CREATE POP
         try {
             $result = $this->popRepository->createPOPRepo($data);
         } catch (Exception $e) {
@@ -69,6 +78,44 @@ class ProofOfPickupService {
             Log::error($e);
             throw new InvalidArgumentException('Gagal membuat proof of pickup');
         }
+
+        // START CALCULATE BILL
+        try {
+            $route = $this->routeRepository->getRouteByPickupRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+        }
+
+        try {
+            $promo = $this->promoRepository->getPromoByPickup($data['pickupId']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+        }
+
+        try {
+            $items = $this->itemRepository->fetchItemByPickupRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mendapatkan items');
+        }
+
+        try {
+            $this->billRepository->calculateAndSavePrice($items, $route, $promo);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mengkalkulasi total biaya');
+        }
+        // END CALCULATE BILL
 
         // CREATE TRACKING
         if ($data['driverPick']) {

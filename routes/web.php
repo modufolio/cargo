@@ -29,6 +29,11 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function() {
+    $promo = Promo::whereHas('pickup', function($q) {
+        $q->where('id', 1);
+    })->first();
+    return $promo;
+    return $pickup['receiver']['city'];
     $branch = Branch::whereHas('pickups', function($q) {
         $q->where('id', 7);
     })->first();

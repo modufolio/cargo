@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 // MODELS
 use App\Models\Route;
+use App\Models\Pickup;
 
 // OTHER
 use InvalidArgumentException;
@@ -17,10 +18,12 @@ use Maatwebsite\Excel\Validators\ValidationException;
 class RouteRepository
 {
     protected $route;
+    protected $pickup;
 
-    public function __construct(Route $route)
+    public function __construct(Route $route, Pickup $pickup)
     {
         $this->route = $route;
+        $this->pickup = $pickup;
     }
 
     /**
@@ -283,5 +286,24 @@ class RouteRepository
                 break;
             }
         }
+    }
+
+    /**
+     * Get route by pickup,
+     * origin, destination city, and destination district
+     *
+     * @param array $data
+     * @return Route
+     */
+    public function getRouteByPickupRepo($data)
+    {
+        $pickup = $this->pickup->with(['sender', 'receiver'])->find($data['pickupId']);
+        $route = $this->route->where([
+            ['fleet_id', '=', $pickup['fleet_id']],
+            ['origin', '=', $pickup['sender']['city']],
+            ['destination_district', '=', $pickup['receiver']['district']],
+            ['destination_city', '=', $pickup['receiver']['city']],
+        ])->first();
+        return $route;
     }
 }

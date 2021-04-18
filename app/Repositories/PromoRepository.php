@@ -316,4 +316,15 @@ class PromoRepository
         return $promo;
     }
 
+    /**
+     * get promo by pickup
+     * @param integer $pickupId
+     */
+    public function getPromoByPickup($pickupId)
+    {
+        $promo = $this->promo->whereHas('pickup', function($q) use ($pickupId) {
+            $q->where('id', $pickupId);
+        })->first();
+        return $promo;
+    }
 }

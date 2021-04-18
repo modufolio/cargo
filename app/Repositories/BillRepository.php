@@ -170,4 +170,42 @@ class BillRepository
         }
         return $result;
     }
+
+    /**
+     * @param array $items
+     * @param array $route
+     * @param array $promo
+     *
+     * @return object
+     */
+    public function calculateAndSavePrice($items, $route, $promo)
+    {
+        $result = $data = [];
+        $totalWeight = array_sum(array_column($items, 'weight'));
+        if ($totalWeight >= intval($route['minimum_weight'])) {
+            foreach ($items as $key => $value) {
+                $service            = $this->service->where('id', $value['service_id'])->select('name','price')->first();
+                $servicePrice       = $service['price'] ?? 0;
+                $price              = $this->getPricePerItem($value['type'], $totalWeight, $route, $servicePrice);
+                $data['price']      = $price;
+                $data['id']         = $value['id'];
+                $itemData[]         = $data;
+                $this->item->where('id', $value['id'])->update(['price', $price]);
+            }
+            $total = array_sum(array_column($itemData, 'price'));
+            $finalTotal = $this->addingPromo($total, $promo);
+            $result = (object)[
+                'success'       => true,
+                'total_weight'  => $totalWeight,
+                'items'         => $itemData,
+                'total_price'   => $finalTotal
+            ];
+        } else {
+            $result = (object)[
+                'success' => false,
+                'message' => 'Total berat barang tidak memenuhi minimum persyaratan pengiriman'
+            ];
+        }
+        return $result;
+    }
 }
