@@ -174,4 +174,96 @@ class TransitRepository
         $transit->save();
         return $transit;
     }
+
+    /**
+     * get submitted transit
+     * @param array $data
+     */
+    public function getSubmittedPickupRepo($data = [])
+    {
+        $perPage = $data['perPage'];
+        $page = $data['page'];
+        $sort = $data['sort'];
+        $customer = $data['customer'];
+        $general = $data['general'];
+        $pickupOrderNo = $data['pickupOrderNo'];
+        $transitNumber = $data['transitNumber'];
+
+        $transit = $this->transit->with(['pickup','pickup.receiver'])
+            ->where('received', true)
+            ->where('transits.status', 'draft')->orWhere('transits.status', 'applied');
+
+        if (empty($perPage)) {
+            $perPage = 10;
+        }
+
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'pickup.name':
+                    $transit = $transit->sortable([
+                        'pickup.name' => $order
+                    ]);
+                    break;
+                case 'pickup.number':
+                    $transit = $transit->sortable([
+                        'pickup.number' => $order
+                    ]);
+                    break;
+                case 'number':
+                    $transit = $transit->sortable([
+                        'number' => $order
+                    ]);
+                    break;
+                case 'created_at':
+                    $transit = $transit->sortable([
+                        'created_at' => $order
+                    ]);
+                    break;
+                default:
+                    $transit = $transit->sortable([
+                        'updated_at' => 'desc'
+                    ]);
+                    break;
+            }
+        }
+
+        if (!empty($customer)) {
+            $transit = $transit->whereHas('pickup', function($q) use ($customer) {
+                $q->where('name', 'ilike', '%'.$customer.'%');
+            });
+        }
+
+        if (!empty($transitNumber)) {
+            $transit = $transit->where('number', 'ilike', '%'.$transitNumber.'%');
+        }
+
+        if (!empty($pickupOrderNo)) {
+            $transit = $transit->whereHas('pickup', function($q) use ($pickupOrderNo) {
+                $q->where('number', 'ilike', '%'.$pickupOrderNo.'%');
+            });
+        }
+
+        if (!empty($general)) {
+            $transit = $transit
+                ->where('number', 'ilike', '%'.$general.'%')
+                ->orWhereHas('pickup', function($q) use ($general) {
+                    $q->where('name', 'ilike', '%'.$general.'%');
+                })
+                ->orWhereHas('pickup', function($q) use ($general) {
+                    $q->where('number', 'ilike', '%'.$general.'%');
+                });
+        }
+
+        $result = $transit->paginate($perPage);
+
+        return $result;
+    }
 }

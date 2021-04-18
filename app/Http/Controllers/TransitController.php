@@ -80,18 +80,11 @@ class TransitController extends BaseController
             'sort',
             'general',
             'customer',
-            'popNumber',
-            'popDate',
-            'poNumber',
-            'popStatus',
-            'poStatus',
-            'poCreatedDate',
-            'poPickupDate',
-            'pickupPlanNumber',
-            'driverPick',
+            'transitNumber',
+            'pickupOrderNo',
         ]);
         try {
-            $result = $this->popService->getSubmittedService($data);
+            $result = $this->transitService->getSubmittedService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

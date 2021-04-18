@@ -126,15 +126,8 @@ class TransitService {
             'page' => 'bail|present',
             'general' => 'bail|present',
             'customer' => 'bail|present',
-            'popNumber' => 'bail|present',
-            'popDate' => 'bail|present',
-            'poNumber' => 'bail|present',
-            'popStatus' => 'bail|present',
-            'poStatus' => 'bail|present',
-            'poCreatedDate' => 'bail|present',
-            'poPickupDate' => 'bail|present',
-            'pickupPlanNumber' => 'bail|present',
-            'driverPick' => 'bail|present',
+            'transitNumber' => 'bail|present',
+            'pickupOrderNo' => 'bail|present',
         ]);
 
         if ($validator->fails()) {
@@ -142,9 +135,10 @@ class TransitService {
         }
 
         try {
-            $result = $this->popRepository->getSubmittedPickupRepo($data);
+            $result = $this->transitRepository->getSubmittedPickupRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
         return $result;
