@@ -27,6 +27,7 @@ use App\Http\Controllers\ProofOfPickupController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ShipmentPlanController;
 use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\TransitController;
 
 // All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], function () {
@@ -265,6 +266,16 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('list', [ShipmentPlanController::class, 'getList']);
             Route::post('delete-po', [ShipmentPlanController::class, 'deletePickupOrder']);
             Route::post('add-po', [ShipmentPlanController::class, 'addPickupOrder']);
+        });
+
+        // Transit pickup
+        Route::prefix('transit')->group(function() {
+            Route::post('create', [ProofOfPickupController::class, 'createPOP']);
+            Route::post('outstanding', [ProofOfPickupController::class, 'getOutstanding']);
+            Route::post('submitted', [ProofOfPickupController::class, 'getSubmitted']);
+            Route::get('get-pending-draft', [TransitController::class, 'getPendingAndDraft']);
+            Route::post('detail-pickup', [ProofOfPickupController::class, 'getDetailPickup']);
+            Route::post('update', [ProofOfPickupController::class, 'updatePOP']);
         });
     });
 

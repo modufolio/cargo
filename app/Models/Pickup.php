@@ -128,4 +128,8 @@ class Pickup extends Model
     {
         return $this->belongsTo(Transit::class, 'pickup_id');
     }
+
+    public function pendingTransit() {
+        return $this->transit()->where('status','pending')->get();
+    }
 }

@@ -48,10 +48,9 @@ class TransitRepository
      */
     public function getPendingAndDraftRepo()
     {
-        $pending = $this->pickup->where('is_transit', true)->whereNotNull('pickup_plan_id')->where('status', 'request')->count();
-        $draft = $this->pickup->where('is_transit', true)->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function($q) {
-            $q->where('status', 'draft');
-        })->count();
+        $transits = collect($this->transit->all());
+        $pending = $transits->where('status', 'pending')->count();
+        $draft = $transits->where('status', 'draft')->count();
         $data = [
             'pending' => $pending,
             'draft' => $draft

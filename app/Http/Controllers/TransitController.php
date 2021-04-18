@@ -2,9 +2,151 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+// SERVICE
+use App\Services\TransitService;
+use App\Services\PickupService;
 
-class TransitController extends Controller
+// OTHER
+use Illuminate\Http\Request;
+use App\Http\Controllers\BaseController;
+use Exception;
+use DB;
+
+class TransitController extends BaseController
 {
-    //
+    protected $transitService;
+    protected $pickupService;
+
+    public function __construct(TransitService $transitService, PickupService $pickupService)
+    {
+        $this->transitService = $transitService;
+        $this->pickupService = $pickupService;
+    }
+
+    /**
+     * create proof of pickup
+     */
+    public function createPOP(Request $request)
+    {
+        $data = $request->only([
+            'pickupId',
+            'statusPick',
+            'notes',
+            'userId',
+            'driverPick',
+            'popStatus'
+        ]);
+        try {
+            $result = $this->popService->createPOPService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get list pickup outstanding
+     * only admin
+     */
+    public function getOutstanding(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'sort',
+            'general',
+            'customer',
+            'pickupOrderNo',
+            'requestPickupDate',
+            'pickupPlanNo',
+        ]);
+        try {
+            $result = $this->popService->getOutstandingService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get list pickup submitted
+     * only admin
+     */
+    public function getSubmitted(Request $request)
+    {
+        $data = $request->only([
+            'perPage',
+            'page',
+            'sort',
+            'general',
+            'customer',
+            'popNumber',
+            'popDate',
+            'poNumber',
+            'popStatus',
+            'poStatus',
+            'poCreatedDate',
+            'poPickupDate',
+            'pickupPlanNumber',
+            'driverPick',
+        ]);
+        try {
+            $result = $this->popService->getSubmittedService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get pending and draft pickup
+     * only admin
+     */
+    public function getPendingAndDraft()
+    {
+        try {
+            $result = $this->transitService->getPendingAndDraftService();
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get detail pickup
+     * only admin
+     */
+    public function getDetailPickup(Request $request)
+    {
+        $data = $request->only([
+            'pickupId',
+        ]);
+        try {
+            $result = $this->pickupService->getDetailPickupAdmin($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * update proof of pickup
+     */
+    public function updatePOP(Request $request)
+    {
+        $data = $request->only([
+            'pickup',
+        ]);
+        try {
+            $result = $this->popService->updatePOPService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

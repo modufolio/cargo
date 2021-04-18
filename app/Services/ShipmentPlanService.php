@@ -117,7 +117,7 @@ class ShipmentPlanService {
                     'userId' => $data['userId']
                 ];
                 try {
-                    $this->transitRepository->saveTransitRepo($value);
+                    $this->transitRepository->saveTransitRepo($transitData);
                 } catch (Exception $e) {
                     DB::rollback();
                     Log::info($e->getMessage());
@@ -131,7 +131,7 @@ class ShipmentPlanService {
             $status = 'applied';
             // SAVE SHIPMENT PLAN
             try {
-                $result = $this->shipmentPlanRepository->saveShipmentPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
+                $this->shipmentPlanRepository->saveShipmentPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
             } catch (Exception $e) {
                 DB::rollback();
                 Log::info($e->getMessage());
@@ -160,7 +160,7 @@ class ShipmentPlanService {
         }
 
         DB::commit();
-        return $result;
+        return (object)['pickupId' => $data['pickupId']];
     }
 
     /**

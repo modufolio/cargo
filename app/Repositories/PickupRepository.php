@@ -1164,7 +1164,7 @@ class PickupRepository
             $q->select('id','city','district','village');
         },'items' => function($q) {
             $q->select('id','weight','volume','pickup_id');
-        }, 'transits'])->select('name','id','sender_id','picktime', 'number');
+        }])->select('name','id','sender_id','picktime', 'number', 'is_transit');
 
         if (empty($perPage)) {
             $perPage = 10;
