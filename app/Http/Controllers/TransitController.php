@@ -126,15 +126,17 @@ class TransitController extends BaseController
     }
 
     /**
-     * update proof of pickup
+     * update transit
      */
-    public function updatePOP(Request $request)
+    public function updateTransit(Request $request)
     {
         $data = $request->only([
-            'pickup',
+            'transitId',
+            'status',
+            'userId'
         ]);
         try {
-            $result = $this->popService->updatePOPService($data);
+            $result = $this->transitService->updateTransitService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

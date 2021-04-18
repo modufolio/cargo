@@ -266,4 +266,17 @@ class TransitRepository
 
         return $result;
     }
+
+    /**
+     * update transit data
+     * @param array $data
+     */
+    public function updateTransitRepo($data = [])
+    {
+        $transit = $this->transit->find($data['transitId']);
+        $transit->status = $data['status'];
+        $transit->updated_by = $data['userId'];
+        $transit->save();
+        return $transit;
+    }
 }

@@ -160,13 +160,15 @@ class TransitService {
     }
 
     /**
-     * update pop
+     * update transit
      * @param array $data
      */
-    public function updatePOPService($data = [])
+    public function updateTransitService($data = [])
     {
         $validator = Validator::make($data, [
-            'pickup' => 'bail|required',
+            'transitId' => 'bail|required',
+            'status' => 'bail|required',
+            'userId' => 'bail|required'
         ]);
 
         if ($validator->fails()) {
@@ -174,23 +176,30 @@ class TransitService {
         }
 
         DB::beginTransaction();
-
         try {
-            $items = $this->itemRepository->updatePickupItemsRepo($data['pickup']);
+            $transit = $this->transitRepository->updateTransitRepo($data);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
-
-        try {
-            $pickup = $this->popRepository->updatePopRepo($data['pickup']);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException($e->getMessage());
-        }
+        // $tracking = [
+        //     'pickupId' => $data['pickupId'],
+        //     'docs' => 'transit',
+        //     'status' => $data['status'],
+        //     'notes' => $data['notes'],
+        //     'picture' => null,
+        // ];
+        // try {
+        //     $this->trackingRepository->recordTrackingByPickupRepo($tracking);
+        // } catch (Exception $e) {
+        //     DB::rollback();
+        //     Log::info($e->getMessage());
+        //     Log::error($e);
+        //     throw new InvalidArgumentException('Gagal menyimpan data tracking');
+        // }
         DB::commit();
-        return ['pickup' => $pickup, 'items' => $items];
+        return ['transit' => $transit];
     }
 }
