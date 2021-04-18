@@ -58,6 +58,7 @@ class TransitController extends BaseController
             'customer',
             'transitNumber',
             'pickupOrderNo',
+            'branchId'
         ]);
         try {
             $result = $this->transitService->getOutstandingService($data);
@@ -82,6 +83,7 @@ class TransitController extends BaseController
             'customer',
             'transitNumber',
             'pickupOrderNo',
+            'branchId'
         ]);
         try {
             $result = $this->transitService->getSubmittedService($data);

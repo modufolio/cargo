@@ -81,8 +81,11 @@ class TransitRepository
         $general = $data['general'];
         $pickupOrderNo = $data['pickupOrderNo'];
         $transitNumber = $data['transitNumber'];
+        $branchId = $data['branchId'];
 
-        $transit = $this->transit->with('pickup')->where('transits.status', 'pending')->where('received', false);
+        $transit = $this->transit->with('pickup')->where('transits.status', 'pending')->where('received', false)->whereHas('pickup', function($q) use ($branchId) {
+            $q->where('branch_id', $branchId);
+        });
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -188,8 +191,11 @@ class TransitRepository
         $general = $data['general'];
         $pickupOrderNo = $data['pickupOrderNo'];
         $transitNumber = $data['transitNumber'];
+        $branchId = $data['branchId'];
 
-        $transit = $this->transit->with(['pickup','pickup.receiver'])
+        $transit = $this->transit->whereHas('pickup', function($q) use ($branchId) {
+            $q->where('branch_id', $branchId);
+        })->with(['pickup','pickup.receiver'])
             ->where('received', true)
             ->where('transits.status', 'draft')->orWhere('transits.status', 'applied');
 

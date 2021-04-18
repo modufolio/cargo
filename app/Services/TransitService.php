@@ -98,6 +98,7 @@ class TransitService {
             'customer' => 'bail|present',
             'transitNumber' => 'bail|present',
             'pickupOrderNo' => 'bail|present',
+            'branchId' => 'bail|present'
         ]);
 
         if ($validator->fails()) {
@@ -128,6 +129,7 @@ class TransitService {
             'customer' => 'bail|present',
             'transitNumber' => 'bail|present',
             'pickupOrderNo' => 'bail|present',
+            'branchId' => 'bail|present'
         ]);
 
         if ($validator->fails()) {
