@@ -80,8 +80,7 @@ class TransitRepository
         $customer = $data['customer'];
         $general = $data['general'];
         $pickupOrderNo = $data['pickupOrderNo'];
-        $requestPickupDate = $data['requestPickupDate'];
-        $pickupPlanNo = $data['pickupPlanNo'];
+        $transitNumber = $data['transitNumber'];
 
         $transit = $this->transit->with('pickup')->where('transits.status', 'pending')->where('received', false);
 
@@ -104,6 +103,21 @@ class TransitRepository
                         'pickup.name' => $order
                     ]);
                     break;
+                case 'pickup.number':
+                    $transit = $transit->sortable([
+                        'pickup.number' => $order
+                    ]);
+                    break;
+                case 'number':
+                    $transit = $transit->sortable([
+                        'number' => $order
+                    ]);
+                    break;
+                case 'created_at':
+                    $transit = $transit->sortable([
+                        'created_at' => $order
+                    ]);
+                    break;
                 default:
                     $transit = $transit->sortable([
                         'updated_at' => 'desc'
@@ -112,32 +126,32 @@ class TransitRepository
             }
         }
 
-        // if (!empty($customer)) {
-        //     $transit = $transit->where('name', 'ilike', '%'.$customer.'%');
-        // }
+        if (!empty($customer)) {
+            $transit = $transit->whereHas('pickup', function($q) use ($customer) {
+                $q->where('name', 'ilike', '%'.$customer.'%');
+            });
+        }
 
-        // if (!empty($pickupOrderNo)) {
-        //     $transit = $transit->where('number', 'ilike', '%'.$pickupOrderNo.'%');
-        // }
+        if (!empty($transitNumber)) {
+            $transit = $transit->where('number', 'ilike', '%'.$transitNumber.'%');
+        }
 
-        // if (!empty($requestPickupDate)) {
-        //     $transit = $transit->whereDate('picktime', date($requestPickupDate));
-        // }
+        if (!empty($pickupOrderNo)) {
+            $transit = $transit->whereHas('pickup', function($q) use ($pickupOrderNo) {
+                $q->where('number', 'ilike', '%'.$pickupOrderNo.'%');
+            });
+        }
 
-        // if (!empty($pickupPlanNo)) {
-        //     $transit = $transit->whereHas('pickupPlan', function($q) use ($pickupPlanNo) {
-        //         $q->where('number', 'ilike', '%'.$pickupPlanNo.'%');
-        //     });
-        // }
-
-        // if (!empty($general)) {
-        //     $transit = $transit
-        //         ->where('name', 'ilike', '%'.$general.'%')
-        //         ->orWhere('number', 'ilike', '%'.$general.'%')
-        //         ->orWhereHas('pickupPlan', function($q) use ($general) {
-        //             $q->where('number', 'ilike', '%'.$general.'%');
-        //         });
-        // }
+        if (!empty($general)) {
+            $transit = $transit
+                ->where('number', 'ilike', '%'.$general.'%')
+                ->orWhereHas('pickup', function($q) use ($general) {
+                    $q->where('name', 'ilike', '%'.$general.'%');
+                })
+                ->orWhereHas('pickup', function($q) use ($general) {
+                    $q->where('number', 'ilike', '%'.$general.'%');
+                });
+        }
 
         $result = $transit->paginate($perPage);
 

@@ -122,9 +122,8 @@ class TransitService {
             'page' => 'bail|present',
             'general' => 'bail|present',
             'customer' => 'bail|present',
+            'transitNumber' => 'bail|present',
             'pickupOrderNo' => 'bail|present',
-            'requestPickupDate' => 'bail|present',
-            'pickupPlanNo' => 'bail|present',
         ]);
 
         if ($validator->fails()) {

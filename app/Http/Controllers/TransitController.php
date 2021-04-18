@@ -56,9 +56,8 @@ class TransitController extends BaseController
             'sort',
             'general',
             'customer',
+            'transitNumber',
             'pickupOrderNo',
-            'requestPickupDate',
-            'pickupPlanNo',
         ]);
         try {
             $result = $this->transitService->getOutstandingService($data);
