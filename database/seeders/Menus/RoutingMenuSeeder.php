@@ -39,8 +39,8 @@ class RoutingMenuSeeder extends Seeder
             ],
             [
                 'menu_id' => $menu->id,
-                'name' => 'Transit Pickup',
-                'slug' => 'transit-pickup',
+                'name' => 'Incoming Order',
+                'slug' => 'incoming-order',
             ],
             [
                 'menu_id' => $menu->id,
