@@ -86,7 +86,7 @@ class ShipmentPlanService {
         if ($data['isTransit']) {
             $notes = 'paket ditransit ke cabang: '.$data['transitBranch']['name'];
             $docs = 'transit';
-            $status = 'draft';
+            $status = 'pending';
             // UPDATE PICKUP BRANCH
             try {
                 $this->pickupRepository->updateBranchRepo($data['pickupId'], $data['transitBranch']['id']);
@@ -111,7 +111,7 @@ class ShipmentPlanService {
                 // $branchFrom = $this->branchRepository->checkBranchByPickupRepo($value);
                 $transitData = [
                     'pickupId' => $value,
-                    'status' => 'draft',
+                    'status' => 'pending',
                     'received' => false,
                     'notes' => $notes,
                     'userId' => $data['userId']
