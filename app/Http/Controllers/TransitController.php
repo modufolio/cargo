@@ -24,20 +24,20 @@ class TransitController extends BaseController
     }
 
     /**
-     * create proof of pickup
+     * draft transit pickup
      */
-    public function createPOP(Request $request)
+    public function draftTransit(Request $request)
     {
         $data = $request->only([
-            'pickupId',
-            'statusPick',
+            'received',
             'notes',
+            'status',
             'userId',
-            'driverPick',
-            'popStatus'
+            'transitId',
+            'pickupId'
         ]);
         try {
-            $result = $this->popService->createPOPService($data);
+            $result = $this->transitService->draftTransitService($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }

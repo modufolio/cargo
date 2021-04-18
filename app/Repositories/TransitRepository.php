@@ -157,4 +157,21 @@ class TransitRepository
 
         return $result;
     }
+
+     /**
+     * draft transit
+     *
+     * @param array $data
+     * @return Tracking
+     */
+    public function draftTransitRepo($data = [])
+    {
+        $transit = $this->transit->find($data['transitId']);
+        $transit->status = $data['status'];
+        $transit->received = $data['received'];
+        $transit->notes = $data['notes'];
+        $transit->updated_by = $data['userId'];
+        $transit->save();
+        return $transit;
+    }
 }

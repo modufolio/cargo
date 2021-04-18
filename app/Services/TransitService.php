@@ -33,69 +33,43 @@ class TransitService {
     }
 
     /**
-     * create pop service
+     * draft transit service
      *
      * @param array $data
      * @return String
      */
-    public function createPOPService($data)
+    public function draftTransitService($data)
     {
         $validator = Validator::make($data, [
-            'pickupId' => 'bail|required',
-            'notes' => 'bail|present',
-            'driverPick' => 'bail|boolean|required',
+            'received' => 'bail|required|boolean',
+            'notes' => 'bail|required',
+            'status' => 'bail|required',
             'userId' => 'bail|required',
-            'statusPick' => 'bail|required|string'
+            'transitId' => 'bail|required',
+            'pickupId' => 'bail|required',
         ]);
 
         if ($validator->fails()) {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
-        try {
-            $this->pickupRepository->checkPickupHasPickupPlan($data);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException($e->getMessage());
-        }
-
         DB::beginTransaction();
         try {
-            $result = $this->popRepository->createPOPRepo($data);
+            $result = $this->transitRepository->draftTransitRepo($data);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
             Log::error($e);
-            throw new InvalidArgumentException('Gagal membuat proof of pickup');
+            throw new InvalidArgumentException('Gagal membuat draft transit pickup');
         }
 
         // CREATE TRACKING
-        if ($data['driverPick']) {
-            $status = 'draft';
-            $picture = $data['picture'];
-            if ($data['statusPick'] == 'success') {
-                $notes = 'barang berhasil dipickup';
-            }
-        } else {
-            $status = $data['popStatus'];
-            $picture = null;
-            if ($data['statusPick'] == 'success') {
-                $notes = 'barang diterima digudang';
-            }
-        }
-        if ($data['statusPick'] == 'failed') {
-            $notes = 'barang gagal di pickup';
-        }
-        if ($data['statusPick'] == 'updated') {
-            $notes = 'barang di pickup dengan perubahan data';
-        }
         $tracking = [
             'pickupId' => $data['pickupId'],
-            'docs' => 'proof-of-pickup',
-            'status' => $status,
-            'notes' => $notes,
-            'picture' => $picture,
+            'docs' => 'transit',
+            'status' => $data['status'],
+            'notes' => $data['notes'],
+            'picture' => null,
         ];
         try {
             $this->trackingRepository->recordTrackingByPickupRepo($tracking);
