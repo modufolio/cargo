@@ -73,7 +73,7 @@ class BillRepository
                 // $unit               = $this->unit->where('id', $value['unit_id'])->select('name','price')->first();
                 $service            = $this->service->where('id', $value['service_id'])->select('name','price')->first();
                 $servicePrice       = $service['price'] ?? 0;
-                $price              = $this->getPricePerItem($value['type'], $totalWeight, $route, $servicePrice);
+                $price              = $this->getPricePerItem($value['type'], $value['weight'], $route, $servicePrice);
                 $data['price']      = $price;
                 $data['name']       = $value['name'];
                 // $data['unit']       = $unit;
@@ -188,11 +188,13 @@ class BillRepository
             foreach ($items as $key => $value) {
                 $service            = $this->service->where('id', $value['service_id'])->select('name','price')->first();
                 $servicePrice       = $service['price'] ?? 0;
-                $price              = $this->getPricePerItem($value['type'], $totalWeight, $route, $servicePrice);
-                $this->item->where('id', $value['id'])->update(['price' => $price]);
+                $price              = $this->getPricePerItem($value['type'], $value['weight'], $route, $servicePrice);
                 $data['price']      = $price;
                 $data['id']         = $value['id'];
                 $itemData[]         = $data;
+            }
+            foreach ($itemData as $key => $value) {
+                $this->item->where('id', $value['id'])->update(['price' => $value['price']]);
             }
             $total = array_sum(array_column($itemData, 'price'));
             $finalTotal = $this->addingPromo($total, $promo);
