@@ -7,6 +7,7 @@ use App\Repositories\ItemRepository;
 use App\Repositories\TrackingRepository;
 use App\Repositories\BillRepository;
 use App\Repositories\PromoRepository;
+use App\Repositories\RouteRepository;
 use Exception;
 use DB;
 use Log;
@@ -22,6 +23,7 @@ class ProofOfPickupService {
     protected $trackingRepository;
     protected $billRepository;
     protected $promoRepository;
+    protected $routeRepository;
 
     public function __construct(
         ProofOfPickupRepository $proofOfPickupRepository,
@@ -29,7 +31,8 @@ class ProofOfPickupService {
         ItemRepository $itemRepository,
         TrackingRepository $trackingRepository,
         BillRepository $billRepository,
-        PromoRepository $promoRepository
+        PromoRepository $promoRepository,
+        RouteRepository $routeRepository
     )
     {
         $this->popRepository = $proofOfPickupRepository;
@@ -38,6 +41,7 @@ class ProofOfPickupService {
         $this->trackingRepository = $trackingRepository;
         $this->billRepository = $billRepository;
         $this->promoRepository = $promoRepository;
+        $this->routeRepository = $routeRepository;
     }
 
     /**
@@ -89,6 +93,10 @@ class ProofOfPickupService {
             throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
         }
 
+        if ($route == null) {
+            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+        }
+
         try {
             $promo = $this->promoRepository->getPromoByPickup($data['pickupId']);
         } catch (Exception $e) {
@@ -107,13 +115,19 @@ class ProofOfPickupService {
             throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mendapatkan items');
         }
 
+        $items = collect($items)->values()->all();
+
         try {
-            $this->billRepository->calculateAndSavePrice($items, $route, $promo);
+            $bill = $this->billRepository->calculateAndSavePrice($items, $route, $promo);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
             Log::error($e);
             throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mengkalkulasi total biaya');
+        }
+
+        if ($bill->success == false) {
+            throw new InvalidArgumentException($bill->message);
         }
         // END CALCULATE BILL
 

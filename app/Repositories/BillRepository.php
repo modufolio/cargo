@@ -6,6 +6,7 @@ use App\Models\Bill;
 use App\Models\Pickup;
 use App\Models\Service;
 use App\Models\Unit;
+use App\Models\Item;
 use Carbon\Carbon;
 
 class BillRepository
@@ -15,12 +16,13 @@ class BillRepository
     protected $unit;
     protected $service;
 
-    public function __construct(Bill $bill, Pickup $pickup, Unit $unit, Service $service)
+    public function __construct(Bill $bill, Pickup $pickup, Unit $unit, Service $service, Item $item)
     {
         $this->bill = $bill;
         $this->pickup = $pickup;
         $this->unit = $unit;
         $this->service = $service;
+        $this->item = $item;
     }
 
     /**
@@ -187,10 +189,10 @@ class BillRepository
                 $service            = $this->service->where('id', $value['service_id'])->select('name','price')->first();
                 $servicePrice       = $service['price'] ?? 0;
                 $price              = $this->getPricePerItem($value['type'], $totalWeight, $route, $servicePrice);
+                $this->item->where('id', $value['id'])->update(['price' => $price]);
                 $data['price']      = $price;
                 $data['id']         = $value['id'];
                 $itemData[]         = $data;
-                $this->item->where('id', $value['id'])->update(['price', $price]);
             }
             $total = array_sum(array_column($itemData, 'price'));
             $finalTotal = $this->addingPromo($total, $promo);

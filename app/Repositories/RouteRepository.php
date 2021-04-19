@@ -295,7 +295,7 @@ class RouteRepository
      * @param array $data
      * @return Route
      */
-    public function getRouteByPickupRepo($data)
+    public function getRouteByPickupRepo($data = [])
     {
         $pickup = $this->pickup->with(['sender', 'receiver'])->find($data['pickupId']);
         $route = $this->route->where([
