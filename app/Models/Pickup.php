@@ -129,7 +129,13 @@ class Pickup extends Model
         return $this->hasOne(Transit::class, 'pickup_id');
     }
 
-    public function pendingTransit() {
+    public function pendingTransit()
+    {
         return $this->transit()->where('status','pending')->get();
+    }
+
+    public function cost()
+    {
+        return $this->hasOne(Cost::class, 'pickup_id');
     }
 }
