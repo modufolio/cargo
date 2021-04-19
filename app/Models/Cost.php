@@ -13,7 +13,9 @@ class Cost extends Model
 
     use HasFactory, Sortable;
 
-    public $hidden = [
+    protected $guarded = [];
+
+    protected $hidden = [
         'pickup_id'
     ];
 

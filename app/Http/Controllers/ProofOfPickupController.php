@@ -140,6 +140,7 @@ class ProofOfPickupController extends BaseController
     {
         $data = $request->only([
             'pickup',
+            'userId'
         ]);
         try {
             $result = $this->popService->updatePOPService($data);

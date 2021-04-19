@@ -289,14 +289,78 @@ class ProofOfPickupService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
+
+        // START CALCULATE BILL
+        $route = ['pickupId' => $data['pickup']['id']];
+        try {
+            $route = $this->routeRepository->getRouteByPickupRepo($route);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+        }
+
+        if ($route == null) {
+            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+        }
+
+        try {
+            $promo = $this->promoRepository->getPromoByPickup($data['pickup']['id']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+        }
+
+        // try {
+        //     $items = $this->itemRepository->fetchItemByPickupRepo($data);
+        // } catch (Exception $e) {
+        //     DB::rollback();
+        //     Log::info($e->getMessage());
+        //     Log::error($e);
+        //     throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mendapatkan items');
+        // }
+
+        $items = collect($items)->values()->all();
+
+        try {
+            $bill = $this->billRepository->calculateAndSavePrice($items, $route, $promo);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menghitung total biaya');
+        }
+
+        if ($bill->success == false) {
+            throw new InvalidArgumentException($bill->message);
+        }
+
+        $cost = [
+            'pickupId' => $data['pickup']['id'],
+            'amount' => $bill->total_price
+        ];
+        try {
+            $this->costRepository->updateCostByPickupRepo($cost);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menyimpan total biaya');
+        }
+        // END CALCULATE BILL
 
         try {
             $pickup = $this->popRepository->updatePopRepo($data['pickup']);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
         DB::commit();

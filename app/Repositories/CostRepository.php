@@ -16,7 +16,7 @@ class CostRepository
     }
 
     /**
-     * Get cost by name
+     * save cost
      *
      * @param array $data
      * @return Cost
@@ -27,6 +27,21 @@ class CostRepository
         $cost->pickup_id = $data['pickupId'];
         $cost->amount = $data['amount'];
         $cost->save();
+        return $cost;
+    }
+
+    /**
+     * update amount cost by pickup
+     *
+     * @param array $data
+     * @return Cost
+     */
+    public function updateCostByPickupRepo($data)
+    {
+        $cost = $this->cost->updateOrCreate(
+            ['pickup_id' => $data['pickupId']],
+            ['amount' => $data['amount']]
+        );
         return $cost;
     }
 }
