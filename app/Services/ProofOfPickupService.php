@@ -8,6 +8,7 @@ use App\Repositories\TrackingRepository;
 use App\Repositories\BillRepository;
 use App\Repositories\PromoRepository;
 use App\Repositories\RouteRepository;
+use App\Repositories\CostRepository;
 use Exception;
 use DB;
 use Log;
@@ -24,6 +25,7 @@ class ProofOfPickupService {
     protected $billRepository;
     protected $promoRepository;
     protected $routeRepository;
+    protected $costRepository;
 
     public function __construct(
         ProofOfPickupRepository $proofOfPickupRepository,
@@ -32,7 +34,8 @@ class ProofOfPickupService {
         TrackingRepository $trackingRepository,
         BillRepository $billRepository,
         PromoRepository $promoRepository,
-        RouteRepository $routeRepository
+        RouteRepository $routeRepository,
+        CostRepository $costRepository
     )
     {
         $this->popRepository = $proofOfPickupRepository;
@@ -42,6 +45,7 @@ class ProofOfPickupService {
         $this->billRepository = $billRepository;
         $this->promoRepository = $promoRepository;
         $this->routeRepository = $routeRepository;
+        $this->costRepository = $costRepository;
     }
 
     /**
@@ -123,11 +127,24 @@ class ProofOfPickupService {
             DB::rollback();
             Log::info($e->getMessage());
             Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mengkalkulasi total biaya');
+            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menghitung total biaya');
         }
 
         if ($bill->success == false) {
             throw new InvalidArgumentException($bill->message);
+        }
+
+        $cost = [
+            'pickupId' => $data['pickupId'],
+            'amount' => $bill->total_price
+        ];
+        try {
+            $this->costRepository->saveCostRepo($cost);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menyimpan total biaya');
         }
         // END CALCULATE BILL
 
