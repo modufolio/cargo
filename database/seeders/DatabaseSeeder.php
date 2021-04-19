@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
                 UserSeeder::class,
                 FeatureRoleSeeder::class,
                 FleetSeeder::class,
-                UnitSeeder::class,
+                // UnitSeeder::class,
                 ServiceSeeder::class,
                 RouteSeeder::class,
                 PromoSeeder::class,
