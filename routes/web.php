@@ -10,6 +10,7 @@ use App\Models\Route as RouteModel;
 use App\Models\Promo;
 use App\Models\Driver;
 use App\Models\Branch;
+use App\Models\Debtor;
 use App\Models\Item;
 use App\Models\Pickup;
 use App\Models\PickupPlan;
@@ -29,10 +30,12 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function() {
-    $promo = Promo::whereHas('pickup', function($q) {
-        $q->where('id', 1);
-    })->first();
-    return $promo;
+    $debtor = Debtor::find(1);
+    $a = $debtor->replicate();
+    $a->temporary = true;
+    $debtor = $a->toArray();
+    $debtor = Debtor::firstOrCreate($debtor);
+    return $debtor;
     return $pickup['receiver']['city'];
     $branch = Branch::whereHas('pickups', function($q) {
         $q->where('id', 7);

@@ -154,18 +154,37 @@ class AddressRepository
         if (!$sender || $sender->user_id !== $userId) {
             throw new InvalidArgumentException('Alamat pengirim tidak ditemukan');
         }
+        if ($sender->temporary == false) {
+            $sender = $sender->replicate();
+            $sender->temporary = true;
+            $sender->is_primary = false;
+            $sender = $sender->toArray();
+            $sender = $this->sender->firstOrCreate($sender);
+        }
 
         $receiver = $this->receiver->find($data['receiverId']);
         if (!$receiver || $receiver->user_id !== $userId) {
             throw new InvalidArgumentException('Alamat penerima tidak ditemukan');
+        }
+        if ($receiver->temporary == false) {
+            $receiver = $receiver->replicate();
+            $receiver->temporary = true;
+            $receiver = $receiver->toArray();
+            $receiver = $this->receiver->firstOrCreate($receiver);
         }
 
         $debtor = $this->debtor->find($data['debtorId']);
         if (!$debtor || $debtor->user_id !== $userId) {
             throw new InvalidArgumentException('Alamat penagihan tidak ditemukan');
         }
+        if ($debtor->temporary == false) {
+            $debtor = $debtor->replicate();
+            $debtor->temporary = true;
+            $debtor = $debtor->toArray();
+            $debtor = $this->debtor->firstOrCreate($debtor);
+        }
 
-        $data = (object)[
+        $data = [
             'sender' => $sender,
             'receiver' => $receiver,
             'debtor' => $debtor

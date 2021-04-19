@@ -142,6 +142,9 @@ class PickupService {
         // END GET ROUTE
 
         // SAVE PICKUP
+        $data['senderId']   = $address['sender']['id'];
+        $data['debtorId']   = $address['debtor']['id'];
+        $data['receiverId'] = $address['receiver']['id'];
         try {
             $pickup = $this->pickupRepository->createPickupRepo($data, $promo);
         } catch (Exception $e) {
