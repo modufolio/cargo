@@ -3,8 +3,6 @@ name: Papandayan Laravel Deployment
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   deploy:
@@ -19,14 +17,12 @@ jobs:
       with:
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     - name: Check 'papandayan.ival.online' service url
-      if: github.ref == 'refs/heads/main'
       uses: jtalk/url-health-check-action@v1.2
       with:
         url: https://papandayan.ival.online/public/
         max-attempts: 3
         retry-delay: 5s
     - name: Deploy to 'papandayan.ival.online'
-      if: github.ref == 'refs/heads/main'
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST_IVAL_ONLINE }}
