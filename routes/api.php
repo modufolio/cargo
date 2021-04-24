@@ -284,7 +284,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
         Route::prefix('pod')->group(function() {
             Route::post('create', [ProofOfPickupController::class, 'createPOD']);
             Route::post('outstanding', [ProofOfDeliveryController::class, 'getOutstanding']);
-            Route::post('submitted', [ProofOfPickupController::class, 'getSubmitted']);
+            Route::post('submitted', [ProofOfDeliveryController::class, 'getSubmitted']);
             Route::get('get-pending-draft', [ProofOfPickupController::class, 'getPendingAndDraft']);
             Route::post('detail-pickup', [ProofOfDeliveryController::class, 'getDetailPickup']);
             Route::post('update-status-delivery', [ProofOfDeliveryController::class, 'updateStatusDeliveryPOD']);
@@ -319,7 +319,7 @@ Route::middleware('guest')->group(function () {
     // Test
     Route::post('test', [TestController::class, 'create']);
     Route::get('test', [TestController::class, 'index']);
-    Route::post('test/update-shipment-plans', [TestController::class, 'update']);
+    Route::post('test/update-pod', [TestController::class, 'update']);
 
     // Tracking
     Route::prefix('tracking')->group(function() {

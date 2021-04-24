@@ -16,6 +16,7 @@ use App\Models\Item;
 use App\Models\Pickup;
 use App\Models\PickupPlan;
 use App\Models\ShipmentPlan;
+use App\Models\ProofOfDelivery;
 
 // SERVICE
 use App\Services\AddressService;
@@ -191,16 +192,16 @@ class TestController extends BaseController
     public function update(Request $request)
     {
         $config = [
-            'table' => 'shipment_plans',
+            'table' => 'proof_of_deliveries',
             'length' => 13,
             'field' => 'number',
-            'prefix' => 'SP'.Carbon::now('Asia/Jakarta')->format('ymd'),
+            'prefix' => 'PD'.Carbon::now('Asia/Jakarta')->format('ymd'),
             'reset_on_prefix_change' => true
         ];
-        $collect = collect(ShipmentPlan::all());
+        $collect = collect(ProofOfDelivery::all());
         $result = [];
         foreach ($collect as $key => $value) {
-            $data = ShipmentPlan::find($value['id']);
+            $data = ProofOfDelivery::find($value['id']);
             $data->number = IdGenerator::generate($config);
             $result[] = $data->save();
         }

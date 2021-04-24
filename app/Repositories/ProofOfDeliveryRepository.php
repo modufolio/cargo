@@ -220,7 +220,7 @@ class ProofOfDeliveryRepository
             ->where('is_transit', false)
             ->with([
                 'proofOfDelivery' => function($q) {
-                    $q->select('id','pickup_id','status','notes','status_delivery','created_at');
+                    $q->select('id','pickup_id','status','notes','status_delivery','created_at','number');
                 }, 'shipmentPlan' => function($q) {
                     $q->select('id', 'number');
                 }]);
