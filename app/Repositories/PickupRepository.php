@@ -1161,11 +1161,19 @@ class PickupRepository
         $branchId = $data['branchId'];
         $isTransit = $data['isTransit'];
 
-        $pickup = $this->pickup->where('branch_id', $branchId)->whereNotNull('pickup_plan_id')->whereNull('shipment_plan_id')->with(['sender' => function($q) {
-            $q->select('id','city','district','village');
-        },'items' => function($q) {
-            $q->select('id','weight','volume','pickup_id');
-        }])->select('name','id','sender_id','picktime', 'number', 'is_transit');
+        $pickup = $this->pickup
+            ->where('status', 'applied')
+            ->where('branch_id', $branchId)
+            ->whereNotNull('pickup_plan_id')
+            ->whereNull('shipment_plan_id')
+            ->whereHas('pickupPlan', function($q) {
+                $q->where('status', 'applied');
+            })
+            ->with(['sender' => function($q) {
+                $q->select('id','city','district','village');
+            },'items' => function($q) {
+                $q->select('id','weight','volume','pickup_id');
+            }])->select('name','id','sender_id','picktime', 'number', 'is_transit');
 
         if (empty($perPage)) {
             $perPage = 10;
