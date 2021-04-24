@@ -2,13 +2,19 @@
 
 namespace App\Repositories;
 
+// MODEL
 use App\Models\ProofOfDelivery;
 use App\Models\Pickup;
-use Carbon\Carbon;
+
+// OTHER
 use DB;
 use InvalidArgumentException;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+
+// VENDOR
+use Carbon\Carbon;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class ProofOfDeliveryRepository
 {
@@ -196,7 +202,7 @@ class ProofOfDeliveryRepository
     }
 
     /**
-     * get submitted proof of pickup
+     * get submitted proof of delivery
      * @param array $data
      */
     public function getSubmittedPickupRepo($data = [])
@@ -205,24 +211,19 @@ class ProofOfDeliveryRepository
         $page = $data['page'];
         $sort = $data['sort'];
         $customer = $data['customer'];
-        $poNumber = $data['poNumber'];
-        $poPickupDate = $data['poPickupDate'];
-        $poStatus = $data['poStatus'];
-        $poCreatedDate = $data['poCreatedDate'];
-        $pickupPlanNumber = $data['pickupPlanNumber'];
-        $popNumber = $data['popNumber'];
-        $popDate = $data['popDate'];
-        $popStatus = $data['popStatus'];
-        $general = $data['general'];
-        $driverPick = $data['driverPick'];
 
 
-        $pickup = $this->pickup->select('id','name','pickup_plan_id','picktime','created_at','status','number')->where('status', 'applied')->with([
-            'proofOfPickup' => function($q) {
-                $q->select('id','pickup_id','status','driver_pick','status_pick','created_at');
-            }, 'pickupPlan' => function($q) {
-                $q->select('id', 'number');
-            }])->whereNotNull('pickup_plan_id');
+        $pickup = $this->pickup->select('id','name','number','shipment_plan_id')
+            ->where('status', 'applied')
+            ->whereNotNull('shipment_plan_id')
+            ->has('proofOfDelivery')
+            ->where('is_transit', false)
+            ->with([
+                'proofOfDelivery' => function($q) {
+                    $q->select('id','pickup_id','status','notes','status_delivery','created_at');
+                }, 'shipmentPlan' => function($q) {
+                    $q->select('id', 'number');
+                }]);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -248,9 +249,9 @@ class ProofOfDeliveryRepository
                         'id' => $order
                     ]);
                     break;
-                case 'pickup_plan_id':
+                case 'shipment_plan.number':
                     $pickup = $pickup->sortable([
-                        'pickup_plan_id' => $order
+                        'shipmentPlan.number' => $order
                     ]);
                     break;
                 case 'picktime':
@@ -260,7 +261,7 @@ class ProofOfDeliveryRepository
                     break;
                 default:
                     $pickup = $pickup->sortable([
-                        'id' => 'desc'
+                        'proofOfDelivery.created_at' => 'desc'
                     ]);
                     break;
             }
@@ -411,20 +412,24 @@ class ProofOfDeliveryRepository
     /**
      * update status delivery pod
      */
-    public function updateStatusDeliveryPODRepo($data = [])
+    public function submitPODRepo($data = [])
     {
-        $result = $this->pod->updateOrCreate(
-            [
-                'pickup_id' => $data['pickupId'],
-                'created_by' => $data['userId']
-            ],
-            [
-                'status_delivery' => $data['statusDelivery'],
-                'updated_by' => $data['userId'],
-                'status' => $data['status'],
-                'notes' => $data['notes']
-            ]
-        );
-        return $result;
+        $config = [
+            'table' => 'proof_of_deliveries',
+            'length' => 13,
+            'field' => 'number',
+            'prefix' => 'PD'.Carbon::now('Asia/Jakarta')->format('ymd'),
+            'reset_on_prefix_change' => true
+        ];
+        $pod = new $this->pod;
+        $pod->pickup_id = $data['pickupId'];
+        $pod->status_delivery = $data['statusDelivery'];
+        $pod->status = $data['status'];
+        $pod->notes = $data['notes'];
+        $pod->number = IdGenerator::generate($config);
+        $pod->created_by = $data['userId'];
+        $pod->updated_by = $data['userId'];
+        $pod->save();
+        return $pod;
     }
 }

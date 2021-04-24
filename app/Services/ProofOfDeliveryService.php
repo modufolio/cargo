@@ -231,16 +231,7 @@ class ProofOfDeliveryService {
             'sort' => 'bail|present',
             'page' => 'bail|present',
             'general' => 'bail|present',
-            'customer' => 'bail|present',
-            'popNumber' => 'bail|present',
-            'popDate' => 'bail|present',
-            'poNumber' => 'bail|present',
-            'popStatus' => 'bail|present',
-            'poStatus' => 'bail|present',
-            'poCreatedDate' => 'bail|present',
-            'poPickupDate' => 'bail|present',
-            'pickupPlanNumber' => 'bail|present',
-            'driverPick' => 'bail|present',
+            'customer' => 'bail|present'
         ]);
 
         if ($validator->fails()) {
@@ -430,7 +421,7 @@ class ProofOfDeliveryService {
             'userId' => $data['userId']
         ];
         try {
-            $result = $this->podRepository->updateStatusDeliveryPODRepo($payload);
+            $result = $this->podRepository->submitPODRepo($payload);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             Log::error($e);
