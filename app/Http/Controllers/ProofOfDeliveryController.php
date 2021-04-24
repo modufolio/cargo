@@ -33,10 +33,8 @@ class ProofOfDeliveryController extends BaseController
             'perPage',
             'page',
             'sort',
-            'general',
             'customer',
             'pickupOrderNo',
-            'requestPickupDate',
             'shipmentPlanNumber',
             'branchId'
         ]);
@@ -59,17 +57,13 @@ class ProofOfDeliveryController extends BaseController
             'perPage',
             'page',
             'sort',
-            'general',
             'customer',
-            'popNumber',
-            'popDate',
-            'poNumber',
-            'popStatus',
-            'poStatus',
-            'poCreatedDate',
-            'poPickupDate',
-            'pickupPlanNumber',
-            'driverPick',
+            'pickupOrderNo',
+            'shipmentPlanNumber',
+            'branchId',
+            'podNumber',
+            'statusDelivery',
+            'podStatus'
         ]);
         try {
             $result = $this->podService->getSubmittedService($data);

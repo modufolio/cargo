@@ -106,18 +106,20 @@ class ProofOfDeliveryRepository
         $page = $data['page'];
         $sort = $data['sort'];
         $customer = $data['customer'];
-        $general = $data['general'];
+        // $general = $data['general'];
         $pickupOrderNo = $data['pickupOrderNo'];
-        $requestPickupDate = $data['requestPickupDate'];
         $shipmentPlanNumber = $data['shipmentPlanNumber'];
         $branchId = $data['branchId'];
 
         $pickup = $this->pickup
-            ->whereNotNull('shipment_plan_id')
+            ->with(['shipmentPlan' => function($q) {
+                $q->where('status', 'applied');
+            }])
+            ->has('shipmentPlan')
+            ->where('pickups.status', 'applied')
             ->where('branch_id', $branchId)
             ->where('is_transit', false)
-            ->with(['shipmentPlan'])
-            ->whereHas('shipmentPlan', function($e) {
+            ->whereHas('proofOfPickup', function($e) {
                 $e->where('status', 'applied');
             })
             ->doesntHave('proofOfDelivery');
@@ -177,24 +179,20 @@ class ProofOfDeliveryRepository
             $pickup = $pickup->where('number', 'ilike', '%'.$pickupOrderNo.'%');
         }
 
-        if (!empty($requestPickupDate)) {
-            $pickup = $pickup->whereDate('picktime', date($requestPickupDate));
-        }
-
         if (!empty($shipmentPlanNumber)) {
             $pickup = $pickup->whereHas('shipmentPlan', function($q) use ($shipmentPlanNumber) {
                 $q->where('number', 'ilike', '%'.$shipmentPlanNumber.'%');
             });
         }
 
-        if (!empty($general)) {
-            $pickup = $pickup
-                ->where('name', 'ilike', '%'.$general.'%')
-                ->orWhere('number', 'ilike', '%'.$general.'%')
-                ->orWhereHas('shipmentPlan', function($q) use ($general) {
-                    $q->where('number', 'ilike', '%'.$general.'%');
-                });
-        }
+        // if (!empty($general)) {
+        //     $pickup = $pickup
+        //         ->whereHas('shipmentPlan', function($q) use ($general) {
+        //             $q->where('number', 'ilike', '%'.$general.'%');
+        //         })
+        //         ->orWhere('name', 'ilike', '%'.$general.'%')
+        //         ->orWhere('number', 'ilike', '%'.$general.'%');
+        // }
 
         $result = $pickup->paginate($perPage);
 
@@ -210,11 +208,17 @@ class ProofOfDeliveryRepository
         $perPage = $data['perPage'];
         $page = $data['page'];
         $sort = $data['sort'];
+        $branchId = $data['branchId'];
         $customer = $data['customer'];
-
+        $pickupOrderNo = $data['pickupOrderNo'];
+        $shipmentPlanNumber = $data['shipmentPlanNumber'];
+        $podNumber = $data['podNumber'];
+        $statusDelivery = $data['statusDelivery'];
+        $podStatus = $data['podStatus'];
 
         $pickup = $this->pickup->select('id','name','number','shipment_plan_id')
-            ->where('status', 'applied')
+            ->where('pickups.status', 'applied')
+            ->where('branch_id', $branchId)
             ->whereNotNull('shipment_plan_id')
             ->has('proofOfDelivery')
             ->where('is_transit', false)
@@ -244,9 +248,9 @@ class ProofOfDeliveryRepository
                         'name' => $order
                     ]);
                     break;
-                case 'id':
+                case 'number':
                     $pickup = $pickup->sortable([
-                        'id' => $order
+                        'number' => $order
                     ]);
                     break;
                 case 'shipment_plan.number':
@@ -254,14 +258,19 @@ class ProofOfDeliveryRepository
                         'shipmentPlan.number' => $order
                     ]);
                     break;
-                case 'picktime':
+                case 'proof_of_delivery.number':
                     $pickup = $pickup->sortable([
-                        'picktime' => $order
+                        'proofOfDelivery.number' => $order
+                    ]);
+                    break;
+                case 'proof_of_delivery.status_delivery':
+                    $pickup = $pickup->sortable([
+                        'proofOfDelivery.status_delivery' => $order
                     ]);
                     break;
                 default:
                     $pickup = $pickup->sortable([
-                        'proofOfDelivery.created_at' => 'desc'
+                        'proofOfDelivery.updated_at' => 'desc'
                     ]);
                     break;
             }
@@ -271,60 +280,48 @@ class ProofOfDeliveryRepository
             $pickup = $pickup->where('name', 'ilike', '%'.$customer.'%');
         }
 
-        if (!empty($poNumber)) {
-            $pickup = $pickup->where('number', 'ilike', '%'.$poNumber.'%');
+        if (!empty($pickupOrderNo)) {
+            $pickup = $pickup->where('number', 'ilike', '%'.$pickupOrderNo.'%');
         }
 
-        if (!empty($poPickupDate)) {
-            $pickup = $pickup->whereDate('picktime', date($poPickupDate));
-        }
-
-        if (!empty($poStatus)) {
-            $pickup = $pickup->where('status', $poStatus);
-        }
-
-        if (!empty($poCreatedDate)) {
-            $pickup = $pickup->whereDate('created_at', date($poCreatedDate));
-        }
-
-        if (!empty($pickupPlanNumber)) {
-            $pickup = $pickup->whereHas('pickupPlan', function($q) use ($pickupPlanNumber) {
-                $q->where('number', 'ilike', '%'.$pickupPlanNumber.'%');
+        if (!empty($shipmentPlanNumber)) {
+            $pickup = $pickup->whereHas('shipmentPlan', function($q) use ($shipmentPlanNumber) {
+                $q->where('number', 'ilike', '%'.$shipmentPlanNumber.'%');
             });
         }
 
-        if (!empty($popNumber)) {
-            $pickup = $pickup->whereHas('proofOfPickup', function($q) use ($popNumber) {
-                $q->where('id', 'ilike', '%'.$popNumber.'%');
+        if (!empty($podNumber)) {
+            $pickup = $pickup->whereHas('proofOfDelivery', function($q) use ($podNumber) {
+                $q->where('number', 'ilike', '%'.$podNumber.'%');
             });
         }
 
-        if (!empty($popDate)) {
-            $pickup = $pickup->whereHas('proofOfPickup', function($q) use ($popDate) {
-                $q->whereDate('created_at', date($popDate));
+        if (!empty($statusDelivery)) {
+            $pickup = $pickup->whereHas('proofOfDelivery', function($q) use ($statusDelivery) {
+                $q->whereIn('proof_of_deliveries.status_delivery', $statusDelivery);
             });
         }
 
-        if (!empty($popStatus)) {
-            $pickup = $pickup->whereHas('proofOfPickup', function($q) use ($popStatus) {
-                $q->where('status', $popStatus);
+        if (!empty($podStatus)) {
+            $pickup = $pickup->whereHas('proofOfDelivery', function($q) use ($podStatus) {
+                $q->whereIn('proof_of_deliveries.status', $podStatus);
             });
         }
 
-        if (!empty($driverPick)) {
-            $pickup = $pickup->whereHas('proofOfPickup', function($q) use ($driverPick) {
-                $q->where('driver_pick', $driverPick);
-            });
-        }
+        // if (!empty($driverPick)) {
+        //     $pickup = $pickup->whereHas('proofOfPickup', function($q) use ($driverPick) {
+        //         $q->where('driver_pick', $driverPick);
+        //     });
+        // }
 
-        if (!empty($general)) {
-            $pickup = $pickup
-                ->where('name', 'ilike', '%'.$general.'%')
-                ->orWhere('number', 'ilike', '%'.$general.'%')
-                ->orWhereHas('pickupPlan', function($q) use ($general) {
-                    $q->where('number', 'ilike', '%'.$general.'%');
-                });
-        }
+        // if (!empty($general)) {
+        //     $pickup = $pickup
+        //         ->where('name', 'ilike', '%'.$general.'%')
+        //         ->orWhere('number', 'ilike', '%'.$general.'%')
+        //         ->orWhereHas('pickupPlan', function($q) use ($general) {
+        //             $q->where('number', 'ilike', '%'.$general.'%');
+        //         });
+        // }
 
         $result = $pickup->paginate($perPage);
 

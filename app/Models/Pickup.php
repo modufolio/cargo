@@ -27,6 +27,8 @@ class Pickup extends Model
         'shipmentPlan',
         'shipment_plan_id',
         'picktime',
+        'proofOfDelivery',
+        'proof_of_delivery',
         'id',
         'user',
         'number'
@@ -146,4 +148,5 @@ class Pickup extends Model
     {
         return $this->hasOne(ProofOfDelivery::class, 'pickup_id');
     }
+
 }
