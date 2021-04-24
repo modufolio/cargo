@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 use Kyslik\ColumnSortable\Sortable;
 use App\Models\Item;
+// use App\Models\Tracking;
 
 class Pickup extends Model
 {
@@ -17,6 +18,8 @@ class Pickup extends Model
     public $timestamps = true;
 
     protected $guarded = [];
+
+    // protected $appends = ['redelivery_count'];
 
     public $sortable = [
         'created_at',
@@ -31,7 +34,8 @@ class Pickup extends Model
         'proof_of_delivery',
         'id',
         'user',
-        'number'
+        'number',
+        'redelivery_count'
     ];
 
     protected $hidden = [
@@ -149,4 +153,12 @@ class Pickup extends Model
         return $this->hasOne(ProofOfDelivery::class, 'pickup_id');
     }
 
+    // public function getRedeliveryCountAttribute()
+    // {
+    //     $tracking = Tracking::where('pickup_id', $this->id)
+    //         ->where('docs', 'proof-of-delivery')
+    //         ->where('status_delivery','re-delivery')
+    //         ->count();
+    //     return $tracking;
+    // }
 }

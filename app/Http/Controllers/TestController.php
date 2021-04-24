@@ -57,6 +57,12 @@ class TestController extends BaseController
      */
     public function index()
     {
+        $data = ProofOfDelivery::where('pickup_id', 40)->select('redelivery_count')->first();
+        if (!$data) {
+            return response()->json('$data');
+        }
+        return response()->json($data->redelivery_count);
+
         return Carbon::now('Asia/Jakarta')->format('ymd');
         $existRoute = Route::where([
             ['origin','=','KOTA SURABAYA'],

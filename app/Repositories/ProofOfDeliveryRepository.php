@@ -224,7 +224,7 @@ class ProofOfDeliveryRepository
             ->where('is_transit', false)
             ->with([
                 'proofOfDelivery' => function($q) {
-                    $q->select('id','pickup_id','status','notes','status_delivery','created_at','number');
+                    $q->select('id','pickup_id','status','notes','status_delivery','created_at','number','redelivery_count');
                 }, 'shipmentPlan' => function($q) {
                     $q->select('id', 'number');
                 }]);
@@ -266,6 +266,11 @@ class ProofOfDeliveryRepository
                 case 'proof_of_delivery.status_delivery':
                     $pickup = $pickup->sortable([
                         'proofOfDelivery.status_delivery' => $order
+                    ]);
+                    break;
+                case 'proof_of_delivery.redelivery_count':
+                    $pickup = $pickup->sortable([
+                        'proofOfDelivery.redelivery_count' => $order
                     ]);
                     break;
                 default:
@@ -438,7 +443,20 @@ class ProofOfDeliveryRepository
         $pod->number = IdGenerator::generate($config);
         $pod->created_by = $data['userId'];
         $pod->updated_by = $data['userId'];
+        $pod->redelivery_count = $data['totalRedelivery'];
         $pod->save();
         return $pod;
+    }
+
+    /**
+     * get total redelivery of pod pickup
+     */
+    public function getTotalRedelivery($data = [])
+    {
+        $result = $this->pod->where('pickup_id', $data['pickupId'])->select('redelivery_count')->first();
+        if (!$result) {
+            return 0;
+        }
+        return $result->redelivery_count;
     }
 }

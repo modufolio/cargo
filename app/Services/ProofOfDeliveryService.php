@@ -408,7 +408,7 @@ class ProofOfDeliveryService {
             $status = 'submitted';
             $trackingNotes = 'Pengiriman ulang ('.$data['notes'].')';
             try {
-                $totalRedelivery = $this->trackingRepository->getTotalRedelivery($data);
+                $totalRedelivery = $this->podRepository->getTotalRedelivery($data);
             } catch (Exception $e) {
                 Log::info($e->getMessage());
                 Log::error($e);
@@ -416,16 +416,19 @@ class ProofOfDeliveryService {
             }
             if ($totalRedelivery >= 3) {
                 throw new InvalidArgumentException('Order ini tidak dapat dilakukan pengiriman ulang');
+            } else {
+                $totalRedelivery += 1;
             }
-
         }
         if ($data['statusDelivery'] == 'failed') {
             $status = 'applied';
             $trackingNotes = 'Pengiriman gagal';
+            $totalRedelivery = 0;
         }
         if ($data['statusDelivery'] == 'success') {
             $status = 'applied';
             $trackingNotes = 'Pengiriman berhasil';
+            $totalRedelivery = 0;
         }
 
         // SAVE STATUS DELIVERY POD
@@ -434,7 +437,8 @@ class ProofOfDeliveryService {
             'status' => $status,
             'pickupId' => $data['pickupId'],
             'notes' => $data['notes'],
-            'userId' => $data['userId']
+            'userId' => $data['userId'],
+            'totalRedelivery' => $totalRedelivery
         ];
         try {
             $result = $this->podRepository->submitPODRepo($payload);
