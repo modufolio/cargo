@@ -111,4 +111,19 @@ class ProofOfDeliveryController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get pending and draft pod
+     * only admin
+     */
+    public function getPendingAndDraft(Request $request)
+    {
+        try {
+            $result = $this->podService->getPendingAndDraftService($request);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

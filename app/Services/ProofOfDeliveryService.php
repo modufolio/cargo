@@ -252,14 +252,15 @@ class ProofOfDeliveryService {
     }
 
     /**
-     * get pending and draft pickup
+     * get pending and draft POD
      */
-    public function getPendingAndDraftService()
+    public function getPendingAndDraftService($request)
     {
         try {
-            $result = $this->podRepository->getPendingAndDraftRepo();
+            $result = $this->podRepository->getPendingAndDraftRepo($request);
         } catch (Exception $e) {
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
         return $result;

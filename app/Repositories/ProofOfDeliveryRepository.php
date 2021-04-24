@@ -329,20 +329,32 @@ class ProofOfDeliveryRepository
     }
 
     /**
-     * get pending and draft pickup
-     * Counter dashboard ini menampilkan jumlah ada berapa pickup order yang masih pending
-     *      (belum di pickup tapi sudah dibuatkan pickup plan)
-     *      dan menampilkan jumlah pickup order yang statusnya
-     *      DRAFT (pickup order yang sudah di pickup
-     *      dan di update via apps driver oleh driver)
+     * get pending and draft POD
      */
-    public function getPendingAndDraftRepo()
+    public function getPendingAndDraftRepo($request)
     {
-        $pending = $this->pickup->whereNotNull('pickup_plan_id')->where('status', 'request')->count();
-        $draft = $this->pickup->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function($q) {
-            // $q->where('driver_pick', true)->where('status', 'draft');
-            $q->where('status', 'draft');
-        })->count();
+        $branchId = $request->branchId;
+        $pending = $this->pickup
+            ->with(['shipmentPlan' => function($q) {
+                $q->where('status', 'applied');
+            }])
+            ->has('shipmentPlan')
+            ->where('pickups.status', 'applied')
+            ->where('branch_id', $branchId)
+            ->where('is_transit', false)
+            ->whereHas('proofOfPickup', function($e) {
+                $e->where('status', 'applied');
+            })
+            ->doesntHave('proofOfDelivery')
+            ->count();
+        $draft = $this->pickup
+            ->where('status', 'applied')
+            ->where('branch_id', $branchId)
+            ->whereNotNull('pickup_plan_id')
+            ->whereNotNull('shipment_plan_id')
+            ->whereHas('proofOfDelivery', function($q) {
+                $q->where('status', 'draft');
+            })->count();
         $data = [
             'pending' => $pending,
             'draft' => $draft
