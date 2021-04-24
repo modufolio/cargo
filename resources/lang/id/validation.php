@@ -169,6 +169,7 @@ return [
         'maxVolume' => 'Volume maksimal',
         'maxWeight' => 'Berat maksimal',
         'route' => 'Rute',
-        'notes' => 'Catatan'
+        'notes' => 'Catatan',
+        'shipmentPlanNumber' => 'Nomor shipment plan'
     ],
 ];

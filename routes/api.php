@@ -28,6 +28,8 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ShipmentPlanController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\TransitController;
+use App\Http\Controllers\ProofOfDeliveryController;
+
 
 // All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], function () {
@@ -276,6 +278,16 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::get('get-pending-draft', [TransitController::class, 'getPendingAndDraft']);
             Route::post('detail-pickup', [ProofOfPickupController::class, 'getDetailPickup']);
             Route::post('update', [TransitController::class, 'updateTransit']);
+        });
+
+        // Proof of delivery
+        Route::prefix('pod')->group(function() {
+            Route::post('create', [ProofOfPickupController::class, 'createPOD']);
+            Route::post('outstanding', [ProofOfDeliveryController::class, 'getOutstanding']);
+            Route::post('submitted', [ProofOfPickupController::class, 'getSubmitted']);
+            Route::get('get-pending-draft', [ProofOfPickupController::class, 'getPendingAndDraft']);
+            Route::post('detail-pickup', [ProofOfPickupController::class, 'getDetailPickup']);
+            Route::post('update', [ProofOfPickupController::class, 'updatePOD']);
         });
     });
 

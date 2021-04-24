@@ -22,7 +22,10 @@ class Pickup extends Model
         'created_at',
         'sender',
         'name',
+        'pickupPlan',
         'pickup_plan_id',
+        'shipmentPlan',
+        'shipment_plan_id',
         'picktime',
         'id',
         'user',
@@ -137,5 +140,10 @@ class Pickup extends Model
     public function cost()
     {
         return $this->hasOne(Cost::class, 'pickup_id');
+    }
+
+    public function proofOfDelivery()
+    {
+        return $this->hasOne(ProofOfDelivery::class, 'pickup_id');
     }
 }

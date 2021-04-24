@@ -18,6 +18,8 @@ class ShipmentPlan extends Model
         'deleted_by'
     ];
 
+    protected $table = 'shipment_plans';
+
     protected $guarded = [];
 
     public $sortable = [
