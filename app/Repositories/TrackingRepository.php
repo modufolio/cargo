@@ -84,4 +84,17 @@ class TrackingRepository
         $tracking->save();
         return $tracking;
     }
+
+    /**
+     * get total redelivery
+     */
+    public function getTotalRedelivery($data = [])
+    {
+        $result = $this->tracking
+            ->where('docs', 'proof-of-delivery')
+            ->where('status_delivery', 're-delivery')
+            ->where('pickup_id', $data['pickupId'])
+            ->count();
+        return $result;
+    }
 }

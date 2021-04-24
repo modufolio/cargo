@@ -198,10 +198,8 @@ class ProofOfDeliveryService {
             'perPage' => 'bail|present',
             'sort' => 'bail|present',
             'page' => 'bail|present',
-            'general' => 'bail|present',
             'customer' => 'bail|present',
             'pickupOrderNo' => 'bail|present',
-            'requestPickupDate' => 'bail|present',
             'shipmentPlanNumber' => 'bail|present',
             'branchId' => 'required'
         ]);
@@ -230,8 +228,13 @@ class ProofOfDeliveryService {
             'perPage' => 'bail|present',
             'sort' => 'bail|present',
             'page' => 'bail|present',
-            'general' => 'bail|present',
-            'customer' => 'bail|present'
+            'customer' => 'bail|present',
+            'pickupOrderNo' => 'bail|present',
+            'shipmentPlanNumber' => 'bail|present',
+            'branchId' => 'required',
+            'podNumber' => 'bail|present',
+            'statusDelivery' => 'bail|present',
+            'podStatus' => 'bail|present'
         ]);
 
         if ($validator->fails()) {
@@ -242,6 +245,7 @@ class ProofOfDeliveryService {
             $result = $this->podRepository->getSubmittedPickupRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
         return $result;
@@ -402,6 +406,17 @@ class ProofOfDeliveryService {
         if ($data['statusDelivery'] == 're-delivery') {
             $status = 'submitted';
             $trackingNotes = 'Pengiriman ulang ('.$data['notes'].')';
+            try {
+                $totalRedelivery = $this->trackingRepository->getTotalRedelivery($data);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException($e->getMessage());
+            }
+            if ($totalRedelivery >= 3) {
+                throw new InvalidArgumentException('Order ini tidak dapat dilakukan pengiriman ulang');
+            }
+
         }
         if ($data['statusDelivery'] == 'failed') {
             $status = 'applied';
