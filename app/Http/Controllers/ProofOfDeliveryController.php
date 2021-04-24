@@ -79,4 +79,42 @@ class ProofOfDeliveryController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get detail pickup of pod
+     * only admin
+     */
+    public function getDetailPickup(Request $request)
+    {
+        $data = $request->only([
+            'pickupId',
+        ]);
+        try {
+            $result = $this->podService->getDetailPickupAdmin($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * update status delivery proof of delivery
+     */
+    public function updateStatusDeliveryPOD(Request $request)
+    {
+        $data = $request->only([
+            'statusDelivery',
+            'userId',
+            'pickupId',
+            'notes'
+        ]);
+        try {
+            $result = $this->podService->updateStatusDeliveryPODService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

@@ -368,4 +368,94 @@ class ProofOfDeliveryService {
         DB::commit();
         return ['pickup' => $pickup, 'items' => $items];
     }
+
+    /**
+     * get detail pickup for admin
+     * @param array $data
+     */
+    public function getDetailPickupAdmin($data = [])
+    {
+        $validator = Validator::make($data, [
+            'pickupId' => 'bail|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->podRepository->getDetailPickupAdminRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
+
+    /**
+     * update status delivery pod
+     */
+    public function updateStatusDeliveryPODService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'statusDelivery' => 'required',
+            'userId' => 'required',
+            'pickupId' => 'required',
+            'notes' => 'bail'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        if ($data['statusDelivery'] == 're-delivery') {
+            $status = 'submitted';
+            $trackingNotes = 'Pengiriman ulang ('.$data['notes'].')';
+        }
+        if ($data['statusDelivery'] == 'failed') {
+            $status = 'applied';
+            $trackingNotes = 'Pengiriman gagal';
+        }
+        if ($data['statusDelivery'] == 'success') {
+            $status = 'applied';
+            $trackingNotes = 'Pengiriman berhasil';
+        }
+
+        // SAVE STATUS DELIVERY POD
+        $payload = [
+            'statusDelivery' => $data['statusDelivery'],
+            'status' => $status,
+            'pickupId' => $data['pickupId'],
+            'notes' => $data['notes'],
+            'userId' => $data['userId']
+        ];
+        try {
+            $result = $this->podRepository->updateStatusDeliveryPODRepo($payload);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // RECORD TRACKING
+        $tracking = [
+            'pickupId' => $data['pickupId'],
+            'docs' => 'proof-of-delivery',
+            'status' => $status,
+            'statusDelivery' => $data['statusDelivery'],
+            'notes' => $trackingNotes
+        ];
+
+        try {
+            $this->trackingRepository->recordTrackingPOD($tracking);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal menyimpan data tracking');
+        }
+        // END OF RECORD TRACKING
+
+        return $result;
+    }
 }

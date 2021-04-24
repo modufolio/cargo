@@ -106,9 +106,15 @@ class ProofOfDeliveryRepository
         $shipmentPlanNumber = $data['shipmentPlanNumber'];
         $branchId = $data['branchId'];
 
-        $pickup = $this->pickup->whereNotNull('shipment_plan_id')->with(['shipmentPlan'])->whereHas('shipmentPlan', function($e) {
-            $e->where('status', 'applied');
-        })->doesntHave('proofOfDelivery')->where('branch_id', $branchId)->where('is_transit', false);
+        $pickup = $this->pickup
+            ->whereNotNull('shipment_plan_id')
+            ->where('branch_id', $branchId)
+            ->where('is_transit', false)
+            ->with(['shipmentPlan'])
+            ->whereHas('shipmentPlan', function($e) {
+                $e->where('status', 'applied');
+            })
+            ->doesntHave('proofOfDelivery');
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -359,5 +365,66 @@ class ProofOfDeliveryRepository
         $pod->status_pick = $data['proof_of_pickup']['status_pick'];
         $pod->notes = $data['proof_of_pickup']['notes'];
         $pod->save();
+    }
+
+    /**
+     * get detail pickup order for web
+     * @param array $data
+     */
+    public function getDetailPickupAdminRepo($data = [])
+    {
+        $pickup = $this->pickup->select('id','name','phone','picktime','sender_id','receiver_id','shipment_plan_id','status','number')->where('id', $data['pickupId'])->with(
+            [
+                'sender' => function($q) {
+                    $q->select('id', 'province','city','district','village','postal_code','street');
+                },
+                'items' => function($q) {
+                    $q->select('id','name','pickup_id','unit_count','service_id','weight','volume','type','price');
+                },
+                'cost',
+                'items.service' => function($q) {
+                    $q->select('id','name');
+                },
+                'shipmentPlan' => function($q) {
+                    $q->select('id','vehicle_id','number');
+                },
+                'shipmentPlan.vehicle' => function($q) {
+                    $q->select('id','driver_id');
+                },
+                'shipmentPlan.vehicle.driver' => function($q) {
+                    $q->select('id','user_id');
+                },
+                'shipmentPlan.vehicle.driver.user' => function($q) {
+                    $q->select('id','name');
+                },
+                'proofOfDelivery' => function($q) {
+                    $q->select('id', 'pickup_id', 'notes', 'status', 'status_delivery');
+                }
+            ])->first();
+
+        if (!$pickup) {
+            throw new InvalidArgumentException('Maaf, pickup order tidak ditemukan');
+        }
+        return $pickup;
+    }
+
+    /**
+     * update status delivery pod
+     */
+    public function updateStatusDeliveryPODRepo($data = [])
+    {
+        $result = $this->pod->updateOrCreate(
+            [
+                'pickup_id' => $data['pickupId'],
+                'created_by' => $data['userId']
+            ],
+            [
+                'status_delivery' => $data['statusDelivery'],
+                'updated_by' => $data['userId'],
+                'status' => $data['status'],
+                'notes' => $data['notes']
+            ]
+        );
+        return $result;
     }
 }

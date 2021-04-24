@@ -17,6 +17,7 @@ class CreateProofOfDeliveriesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('pickup_id');
             $table->string('status');
+            $table->string('status_delivery');
             $table->text('notes')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by');

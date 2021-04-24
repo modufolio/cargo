@@ -69,4 +69,19 @@ class TrackingRepository
             'path' => $tracking_url
         ];
     }
+
+    /**
+     * record tracking POD
+     */
+    public function recordTrackingPOD($data = [])
+    {
+        $tracking = new $this->tracking;
+        $tracking->pickup_id = $data['pickupId'];
+        $tracking->docs = $data['docs'];
+        $tracking->status = $data['status'];
+        $tracking->notes = $data['notes'];
+        $tracking->status_delivery = $data['statusDelivery'];
+        $tracking->save();
+        return $tracking;
+    }
 }

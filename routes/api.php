@@ -286,8 +286,8 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('outstanding', [ProofOfDeliveryController::class, 'getOutstanding']);
             Route::post('submitted', [ProofOfPickupController::class, 'getSubmitted']);
             Route::get('get-pending-draft', [ProofOfPickupController::class, 'getPendingAndDraft']);
-            Route::post('detail-pickup', [ProofOfPickupController::class, 'getDetailPickup']);
-            Route::post('update', [ProofOfPickupController::class, 'updatePOD']);
+            Route::post('detail-pickup', [ProofOfDeliveryController::class, 'getDetailPickup']);
+            Route::post('update-status-delivery', [ProofOfDeliveryController::class, 'updateStatusDeliveryPOD']);
         });
     });
 
