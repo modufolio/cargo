@@ -137,6 +137,11 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
                 Route::post('create', [ProofOfPickupController::class, 'createPOP']);
             });
 
+             // shipment plan
+             Route::prefix('shipment-plan')->group(function() {
+                Route::get('list', [ShipmentPlanController::class, 'getDriverShipmentPlanList']);
+            });
+
             // item
             Route::prefix('item')->group(function() {
                 Route::post('update', [ItemController::class, 'update']);

@@ -349,4 +349,30 @@ class ShipmentPlanService {
         DB::commit();
         return $shipmentPlan;
     }
+
+    /**
+     * get shipment plan driver
+     */
+    public function getDriverShipmentPlanListService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        // SHIPMENT PLAN
+        try {
+            $result = $this->shipmentPlanRepository->getDriverShipmentPlanListRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }

@@ -244,4 +244,23 @@ class ShipmentPlanController extends BaseController
         DB::commit();
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get list shipment plan driver
+     */
+    public function getDriverShipmentPlanList(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->shipmentPlanService->getDriverShipmentPlanListService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
 }
