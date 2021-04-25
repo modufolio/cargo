@@ -263,4 +263,24 @@ class ShipmentPlanController extends BaseController
         DB::commit();
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get pickup order in shipment plan driver
+     */
+    public function getPickupOrderDriverShipmentPlanList(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+            'shipmentPlanId'
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->shipmentPlanService->getPickupOrderDriverShipmentPlanListService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
 }

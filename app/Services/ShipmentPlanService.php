@@ -375,4 +375,31 @@ class ShipmentPlanService {
         }
         return $result;
     }
+
+    /**
+     * get list po in shipment plan by driver
+     */
+    public function getPickupOrderDriverShipmentPlanListService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'required',
+            'shipmentPlanId' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        // SHIPMENT PLAN
+        try {
+            $result = $this->shipmentPlanRepository->getPickupOrderDriverShipmentPlanListRepo($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }

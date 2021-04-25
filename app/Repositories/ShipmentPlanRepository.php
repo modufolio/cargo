@@ -152,4 +152,23 @@ class ShipmentPlanRepository
             })->get();
         return $result;
     }
+
+    /**
+     * get po shipment plan driver
+     */
+    public function getPickupOrderDriverShipmentPlanListRepo($data = [])
+    {
+        $userId = $data['userId'];
+        $shipmentPlanId = $data['shipmentPlanId'];
+        $result = $this->pickup
+            ->where('is_transit', false)
+            ->whereHas('shipmentPlan', function ($q) use ($userId, $shipmentPlanId) {
+                $q->where('id', $shipmentPlanId)->whereHas('vehicle', function($q) use ($userId) {
+                    $q->whereHas('driver', function($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    });
+                });
+            })->get();
+        return $result;
+    }
 }
