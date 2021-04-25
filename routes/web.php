@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
 // MODEL
 use App\Models\User;
 use App\Models\Role;
@@ -27,6 +28,10 @@ use App\Models\PickupPlan;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/flush-file-cache', function() {
+    Cache::store("file")->flush();
 });
 
 Route::get('/test', function() {
