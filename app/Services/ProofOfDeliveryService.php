@@ -528,7 +528,7 @@ class ProofOfDeliveryService {
             'docs' => 'proof-of-delivery',
             'status' => 'submitted',
             'statusDelivery' => 're-delivery',
-            'notes' => $data['notes']
+            'notes' => $data['notes'] ?? 'Order akan dikirim ulang'
         ];
 
         try {
