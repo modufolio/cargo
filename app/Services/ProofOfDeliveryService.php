@@ -513,7 +513,7 @@ class ProofOfDeliveryService {
 
         // UPDATE REDELIVERY COUNT
         try {
-            $this->podRepository->updateRedeliveryCount($data['pickupId'], $totalRedelivery);
+            $result = $this->podRepository->updateRedeliveryCount($data['pickupId'], $totalRedelivery);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
