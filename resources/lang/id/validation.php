@@ -171,6 +171,7 @@ return [
         'route' => 'Rute',
         'notes' => 'Catatan',
         'shipmentPlanNumber' => 'Nomor shipment plan',
-        'podNumber' => 'Nomor pickup order'
+        'podNumber' => 'Nomor pickup order',
+        'picture' => 'Gambar'
     ],
 ];

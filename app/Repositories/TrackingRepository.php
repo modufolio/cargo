@@ -97,4 +97,20 @@ class TrackingRepository
             ->count();
         return $result;
     }
+
+    /**
+     * record tracking POD driver
+     */
+    public function recordTrackingPODDriver($data = [])
+    {
+        $tracking = new $this->tracking;
+        $tracking->pickup_id = $data['pickupId'];
+        $tracking->docs = $data['docs'];
+        $tracking->status = $data['status'];
+        $tracking->notes = $data['notes'];
+        $tracking->status_delivery = $data['statusDelivery'];
+        $tracking->picture = $data['picture'];
+        $tracking->save();
+        return $tracking;
+    }
 }

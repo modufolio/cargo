@@ -543,4 +543,89 @@ class ProofOfDeliveryService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * submit POD by driver
+     */
+    public function submitPODDriver($data = [])
+    {
+        $validator = Validator::make($data, [
+            'statusDelivery' => 'bail|required',
+            'userId' => 'bail|required',
+            'pickupId' => 'bail|required',
+            'notes' => 'bail',
+            'picture' => 'bail|present'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+
+        if ($data['statusDelivery'] == 're-delivery') {
+            $trackingNotes = 'Pengiriman ulang ('.$data['notes'].')';
+            try {
+                $totalRedelivery = $this->podRepository->getTotalRedelivery($data);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException($e->getMessage());
+            }
+            if ($totalRedelivery >= 3) {
+                throw new InvalidArgumentException('Order ini tidak dapat dilakukan pengiriman ulang');
+            } else {
+                $totalRedelivery += 1;
+            }
+        }
+        if ($data['statusDelivery'] == 'failed') {
+            $trackingNotes = 'Pengiriman gagal';
+            $totalRedelivery = 0;
+        }
+        if ($data['statusDelivery'] == 'success') {
+            $trackingNotes = 'Pengiriman berhasil';
+            $totalRedelivery = 0;
+        }
+
+        // SAVE STATUS DELIVERY POD
+        $payload = [
+            'statusDelivery' => $data['statusDelivery'],
+            'status' => 'draft',
+            'pickupId' => $data['pickupId'],
+            'notes' => $data['notes'],
+            'userId' => $data['userId'],
+            'totalRedelivery' => $totalRedelivery
+        ];
+        try {
+            $result = $this->podRepository->submitPODRepo($payload);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // RECORD TRACKING
+        $tracking = [
+            'pickupId' => $data['pickupId'],
+            'docs' => 'proof-of-delivery',
+            'status' => 'draft',
+            'statusDelivery' => $data['statusDelivery'],
+            'notes' => $trackingNotes,
+            'picture' => $data['picture'] ?? null
+        ];
+
+        try {
+            $this->trackingRepository->recordTrackingPODDriver($tracking);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal menyimpan data tracking');
+        }
+        // END OF RECORD TRACKING
+
+        return $result;
+    }
 }

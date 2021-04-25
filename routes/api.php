@@ -137,10 +137,15 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
                 Route::post('create', [ProofOfPickupController::class, 'createPOP']);
             });
 
-             // shipment plan
-             Route::prefix('shipment-plan')->group(function() {
+            // shipment plan
+            Route::prefix('shipment-plan')->group(function() {
                 Route::get('list', [ShipmentPlanController::class, 'getDriverShipmentPlanList']);
                 Route::post('pickup', [ShipmentPlanController::class, 'getPickupOrderDriverShipmentPlanList']);
+            });
+
+            // proof of delivery
+            Route::prefix('pod')->group(function() {
+                Route::get('submit', [ProofOfDeliveryController::class, 'submitDriver']);
             });
 
             // item

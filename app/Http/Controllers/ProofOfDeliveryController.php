@@ -147,4 +147,23 @@ class ProofOfDeliveryController extends BaseController
         DB::commit();
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * api submit pod dari driver
+     */
+    public function ProofOfDeliveryController(Request $request)
+    {
+        $data = $request->only([
+            'pickupId', 'userId', 'notes', 'statusDelivery', 'picture'
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->podService->submitPODDriver($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
 }
