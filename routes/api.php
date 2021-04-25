@@ -288,6 +288,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::get('get-pending-draft', [ProofOfDeliveryController::class, 'getPendingAndDraft']);
             Route::post('detail-pickup', [ProofOfDeliveryController::class, 'getDetailPickup']);
             Route::post('update-status-delivery', [ProofOfDeliveryController::class, 'updateStatusDeliveryPOD']);
+            Route::post('redelivery', [ProofOfDeliveryController::class, 'redeliveryPOD']);
         });
     });
 

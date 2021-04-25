@@ -390,8 +390,8 @@ class ProofOfDeliveryRepository
     {
         $pickup = $this->pickup->select('id','name','phone','picktime','sender_id','receiver_id','shipment_plan_id','status','number')->where('id', $data['pickupId'])->with(
             [
-                'sender' => function($q) {
-                    $q->select('id', 'province','city','district','village','postal_code','street');
+                'receiver' => function($q) {
+                    $q->select('id','name','phone','province','city','district','village','postal_code','street');
                 },
                 'items' => function($q) {
                     $q->select('id','name','pickup_id','unit_count','service_id','weight','volume','type','price');
@@ -413,7 +413,7 @@ class ProofOfDeliveryRepository
                     $q->select('id','name');
                 },
                 'proofOfDelivery' => function($q) {
-                    $q->select('id', 'pickup_id', 'notes', 'status', 'status_delivery');
+                    $q->select('id', 'pickup_id', 'notes', 'status', 'status_delivery', 'created_at', 'redelivery_count');
                 }
             ])->first();
 
@@ -458,5 +458,14 @@ class ProofOfDeliveryRepository
             return 0;
         }
         return $result->redelivery_count;
+    }
+
+    /**
+     * update redelivery count
+     */
+    public function updateRedeliveryCount($pickupId, $totalRedelivery)
+    {
+        $result = $this->pod->where('pickup_id', $pickupId)->update(['redelivery_count' => $totalRedelivery]);
+        return $result;
     }
 }

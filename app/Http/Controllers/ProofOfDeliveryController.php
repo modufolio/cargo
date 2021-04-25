@@ -126,4 +126,25 @@ class ProofOfDeliveryController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * redelivery pod
+     */
+    public function redeliveryPOD(Request $request)
+    {
+        $data = $request->only([
+            'pickupId',
+            'userId',
+            'notes'
+        ]);
+        DB::beginTransaction();
+        try {
+            $result = $this->podService->redeliveryPODService($data);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+        DB::commit();
+        return $this->sendResponse(null, $result);
+    }
 }

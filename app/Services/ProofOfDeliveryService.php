@@ -18,7 +18,7 @@ use InvalidArgumentException;
 
 class ProofOfDeliveryService {
 
-    protected $proofOfDeliveryRepository;
+    protected $podRepository;
     protected $pickupRepository;
     protected $itemRepository;
     protected $trackingRepository;
@@ -28,7 +28,7 @@ class ProofOfDeliveryService {
     protected $costRepository;
 
     public function __construct(
-        ProofOfDeliveryRepository $proofOfDeliveryRepository,
+        ProofOfDeliveryRepository $podRepository,
         PickupRepository $pickupRepository,
         ItemRepository $itemRepository,
         TrackingRepository $trackingRepository,
@@ -38,7 +38,7 @@ class ProofOfDeliveryService {
         CostRepository $costRepository
     )
     {
-        $this->podRepository = $proofOfDeliveryRepository;
+        $this->podRepository = $podRepository;
         $this->pickupRepository = $pickupRepository;
         $this->itemRepository = $itemRepository;
         $this->trackingRepository = $trackingRepository;
@@ -404,12 +404,15 @@ class ProofOfDeliveryService {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
+        DB::beginTransaction();
+
         if ($data['statusDelivery'] == 're-delivery') {
             $status = 'submitted';
             $trackingNotes = 'Pengiriman ulang ('.$data['notes'].')';
             try {
                 $totalRedelivery = $this->podRepository->getTotalRedelivery($data);
             } catch (Exception $e) {
+                DB::rollback();
                 Log::info($e->getMessage());
                 Log::error($e);
                 throw new InvalidArgumentException($e->getMessage());
@@ -443,6 +446,7 @@ class ProofOfDeliveryService {
         try {
             $result = $this->podRepository->submitPODRepo($payload);
         } catch (Exception $e) {
+            DB::rollback();
             Log::info($e->getMessage());
             Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
@@ -467,6 +471,76 @@ class ProofOfDeliveryService {
         }
         // END OF RECORD TRACKING
 
+        return $result;
+    }
+
+    /**
+     * redelivery POD
+     */
+    public function redeliveryPODService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'pickupId' => 'bail|required',
+            'notes' => 'bail|present'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+
+        // CHECK REDELIVERY COUNT
+        try {
+            $totalRedelivery = $this->podRepository->getTotalRedelivery($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            DB::rollback();
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        // CHECK REDELIVERY COUNT
+
+        // VALIDATE REDELIVERY COUNT
+        if ($totalRedelivery >= 3) {
+            DB::rollback();
+            throw new InvalidArgumentException('Order ini tidak dapat dilakukan pengiriman ulang');
+        } else {
+            $totalRedelivery += 1;
+        }
+        // VALIDATE REDELIVERY COUNT
+
+        // UPDATE REDELIVERY COUNT
+        try {
+            $this->podRepository->updateRedeliveryCount($data['pickupId'], $totalRedelivery);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        // UPDATE REDELIVERY COUNT
+
+        // RECORD TRACKING
+        $tracking = [
+            'pickupId' => $data['pickupId'],
+            'docs' => 'proof-of-delivery',
+            'status' => 'submitted',
+            'statusDelivery' => 're-delivery',
+            'notes' => $data['notes']
+        ];
+
+        try {
+            $this->trackingRepository->recordTrackingPOD($tracking);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal menyimpan data tracking');
+        }
+        // END OF RECORD TRACKING
+        DB::commit();
         return $result;
     }
 }
