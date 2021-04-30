@@ -62,11 +62,6 @@ class RoleSeeder extends Seeder
                 'name' => 'Admin',
                 'slug' => 'admin',
                 'ranking' => 1,
-            ],
-            [
-                'name' => 'Guest',
-                'slug' => 'guest',
-                'ranking' => 5,
             ]
         ];
         Role::insert($roles);
