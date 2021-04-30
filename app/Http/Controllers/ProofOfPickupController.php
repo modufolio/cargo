@@ -34,7 +34,8 @@ class ProofOfPickupController extends BaseController
             'notes',
             'userId',
             'driverPick',
-            'popStatus'
+            'popStatus',
+            'picture'
         ]);
         try {
             $result = $this->popService->createPOPService($data);
