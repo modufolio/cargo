@@ -1,4 +1,4 @@
-name: Papandayan Laravel Deployment
+name: Papandayan Project Deployment
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
     - name: Check 'cargo.ivalpha.com' service url
       uses: jtalk/url-health-check-action@v1.2
       with:
-        url: https://cargo.ivalpha.com/cargo/public/
+        url: https://cargo.ivalpha.com/public/
         max-attempts: 3
         retry-delay: 5s
     - name: Deploy to 'cargo.ivalpha.com'
@@ -30,7 +30,7 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD_IVALPHA }}
         port: ${{ secrets.PORT_IVALPHA }}
         script: |
-          cd cargo.ivalpha.com/cargo
+          cd cargo.ivalpha.com
           git checkout main
           git pull
           composer install
