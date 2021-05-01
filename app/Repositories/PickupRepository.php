@@ -1137,7 +1137,9 @@ class PickupRepository
     public function updateBranchRepo($pickupId, $branchId)
     {
         DB::beginTransaction();
+        $branchFrom = $this->pickup->select('branch_id', 'id')->whereIn('id', $pickupId)->get();
         $this->pickup->whereIn('id', $pickupId)->update(['branch_id' => $branchId]);
+        return $branchFrom;
         DB::commit();
     }
 

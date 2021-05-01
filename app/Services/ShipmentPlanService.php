@@ -89,7 +89,7 @@ class ShipmentPlanService {
             $status = 'pending';
             // UPDATE PICKUP BRANCH
             try {
-                $this->pickupRepository->updateBranchRepo($data['pickupId'], $data['transitBranch']['id']);
+                $branchFrom = $this->pickupRepository->updateBranchRepo($data['pickupId'], $data['transitBranch']['id']);
             } catch (Exception $e) {
                 DB::rollback();
                 Log::info($e->getMessage());
@@ -166,6 +166,23 @@ class ShipmentPlanService {
                 Log::info($e->getMessage());
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal menyimpan data tracking');
+            }
+
+
+            $branch = collect($branchFrom)->firstWhere('id', $value);
+            $driverLog = [
+                'pickupId' => $value,
+                'driverId' => $data['driverId'],
+                'branchFrom' => $branch['branch_id'],
+                'branchTo' => $data['isTransit'] ? $data['transitBranch']['id'] : null,
+            ];
+            try {
+                $this->trackingRepository->recordPickupDriverLog($driverLog);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal menyimpan data tracking driver');
             }
         }
 
