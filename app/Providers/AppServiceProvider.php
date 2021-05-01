@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
         // Passport:routes();
         View::composer(['telescope::layout'], function ($view) {
             $view->with('telescopeScriptVariables', [
-                'path' => env('APP_URL') == 'https://cargo.test' ? 'telescope' : 'cargo/public/telescope',
+                'path' => env('APP_URL') == 'https://cargo.test' ? 'telescope' : 'public/telescope',
                 'timezone' => config('app.timezone'),
                 'recording' => !cache('telescope:pause-recording')
             ]);
