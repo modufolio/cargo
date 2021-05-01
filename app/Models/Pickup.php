@@ -161,4 +161,9 @@ class Pickup extends Model
     //         ->count();
     //     return $tracking;
     // }
+
+    public function pickupDriverLogs()
+    {
+        return $this->hasMany(PickupDriverLog::class);
+    }
 }

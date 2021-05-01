@@ -46,4 +46,14 @@ class Branch extends Model
     {
         return $this->hasMany(Transit::class, 'from');
     }
+
+    public function pickupDriverLogFroms()
+    {
+        return $this->hasMany(PickupDriverLog::class, 'branch_from');
+    }
+
+    public function pickupDriverLogTos()
+    {
+        return $this->hasMany(PickupDriverLog::class, 'branch_to');
+    }
 }

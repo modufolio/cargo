@@ -112,6 +112,21 @@ class PickupPlanService {
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal menyimpan data tracking');
             }
+
+            $driverLog = [
+                'pickupId' => $value,
+                'driverId' => $data['driverId'],
+                'branchFrom' => null,
+                'branchTo' => $data['branchId'],
+            ];
+            try {
+                $this->trackingRepository->recordPickupDriverLog($driverLog);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal menyimpan data tracking driver');
+            }
         }
 
         DB::commit();

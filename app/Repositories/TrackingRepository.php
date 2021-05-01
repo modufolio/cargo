@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Tracking;
+use App\Models\PickupDriverLog;
 use Carbon\Carbon;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\File;
@@ -11,10 +12,12 @@ use Illuminate\Support\Facades\Storage;
 class TrackingRepository
 {
     protected $tracking;
+    protected $pickupDriverLog;
 
-    public function __construct(Tracking $tracking)
+    public function __construct(Tracking $tracking, PickupDriverLog $pickupDriverLog)
     {
         $this->tracking = $tracking;
+        $this->pickupDriverLog = $pickupDriverLog;
     }
 
     /**
@@ -112,5 +115,20 @@ class TrackingRepository
         $tracking->picture = $data['picture'];
         $tracking->save();
         return $tracking;
+    }
+
+
+    /**
+     * record driver pickup log
+     */
+    public function recordPickupDriverLog($data = [])
+    {
+        $log = new $this->pickupDriverLog;
+        $log->pickup_id = $data['pickupId'];
+        $log->driver_id = $data['driverId'];
+        $log->branch_from = $data['branchFrom'] ?? null;
+        $log->branch_to = $data['branchTo'] ?? null;
+        $log->save();
+        return $log;
     }
 }

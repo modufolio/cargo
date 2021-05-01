@@ -29,4 +29,9 @@ class Driver extends Model
     {
         return $this->hasMany(Vehicle::class);
     }
+
+    public function pickupDriverLogs()
+    {
+        return $this->hasMany(PickupDriverLog::class);
+    }
 }
