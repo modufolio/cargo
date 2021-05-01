@@ -138,6 +138,16 @@ class ShipmentPlanService {
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal menyimpan shipment plan');
             }
+
+            // UPDATE IS TRANSIT BRANCH
+            try {
+                $this->pickupRepository->updateIsTransitBranchRepo($data['pickupId'], false);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal mengupdate data cabang pada pickup order');
+            }
         }
 
         // CREATE TRACKING
