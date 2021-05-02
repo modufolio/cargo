@@ -468,4 +468,17 @@ class ProofOfDeliveryRepository
         $result = $this->pod->where('pickup_id', $pickupId)->update(['redelivery_count' => $totalRedelivery]);
         return $result;
     }
+
+    /**
+     * get PO in POD by driver
+     */
+    public function getPickupListRepo($data = [])
+    {
+        $userId = $data['userId'];
+        $filter = $data['filter'];
+        $podId = $data['podId'];
+        // $pickup = $this->pickup->whereHas('proofOfDelivery', function($q) use ($podId) {
+        //     $q->where('id', $podId);
+        // })->whereHas('');
+    }
 }

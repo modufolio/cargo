@@ -151,7 +151,7 @@ class ProofOfDeliveryController extends BaseController
     /**
      * api submit pod dari driver
      */
-    public function ProofOfDeliveryController(Request $request)
+    public function submitDriver(Request $request)
     {
         $data = $request->only([
             'pickupId', 'userId', 'notes', 'statusDelivery', 'picture'
@@ -164,6 +164,22 @@ class ProofOfDeliveryController extends BaseController
             return $this->sendError($e->getMessage());
         }
         DB::commit();
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get pickup list in POD by driver
+     */
+    public function getPickupList(Request $request)
+    {
+        $data = $request->only([
+            'podId', 'userId', 'filter'
+        ]);
+        try {
+            $result = $this->podService->getPickupList($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
         return $this->sendResponse(null, $result);
     }
 }

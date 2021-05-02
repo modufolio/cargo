@@ -628,4 +628,19 @@ class ProofOfDeliveryService {
 
         return $result;
     }
+
+    /**
+     * get pickup order in POD by driver
+     */
+    public function getPickupList($data = [])
+    {
+        try {
+            $result = $this->podRepository->getPickupListRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }
