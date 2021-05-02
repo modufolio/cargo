@@ -160,15 +160,22 @@ class ShipmentPlanRepository
     {
         $userId = $data['userId'];
         $shipmentPlanId = $data['shipmentPlanId'];
+        $filter = $data['filter'];
         $result = $this->pickup
             ->where('is_transit', false)
+            ->with(['receiver'])
             ->whereHas('shipmentPlan', function ($q) use ($userId, $shipmentPlanId) {
                 $q->where('id', $shipmentPlanId)->whereHas('vehicle', function($q) use ($userId) {
                     $q->whereHas('driver', function($q) use ($userId) {
                         $q->where('user_id', $userId);
                     });
                 });
-            })->get();
+            });
+        $result = $result->whereHas('receiver', function($q) use ($filter) {
+            $q->where('street' , 'ilike', '%'.$filter.'%');
+        })->orWhere('number', 'ilike', '%'.$filter.'%')
+        ->orWhere('name', 'ilike', '%'.$filter.'%');
+        $result = $result->paginate(10);
         return $result;
     }
 

@@ -410,7 +410,8 @@ class ShipmentPlanService {
     {
         $validator = Validator::make($data, [
             'userId' => 'required',
-            'shipmentPlanId' => 'required'
+            'shipmentPlanId' => 'required',
+            'filter' => 'bail'
         ]);
 
         if ($validator->fails()) {

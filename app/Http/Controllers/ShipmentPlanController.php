@@ -271,7 +271,8 @@ class ShipmentPlanController extends BaseController
     {
         $data = $request->only([
             'userId',
-            'shipmentPlanId'
+            'shipmentPlanId',
+            'filter'
         ]);
         DB::beginTransaction();
         try {
