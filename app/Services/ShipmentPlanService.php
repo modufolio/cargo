@@ -429,4 +429,19 @@ class ShipmentPlanService {
         }
         return $result;
     }
+
+    /**
+     * get dashboard shipment plan driver
+     */
+    public function getDashboardDriverService($data = [])
+    {
+        try {
+            $result = $this->shipmentPlanRepository->getDashboardDriverRepo($data['shipmentPlanId']);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }

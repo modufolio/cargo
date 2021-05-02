@@ -57,6 +57,16 @@ class TestController extends BaseController
      */
     public function index()
     {
+        $data = Pickup::where('shipment_plan_id', 2)->with('items')->get()->pluck('items');
+        $items = collect($data)->flatten()->toArray();
+        // return $items;
+        $volume = array_sum(array_column($items, 'volume'));
+        $weight = array_sum(array_column($items, 'weight'));
+        $result = [
+            'volume' => $volume,
+            'weight' => $weight
+        ];
+        return response()->json($result);
         $data = ProofOfDelivery::where('pickup_id', 40)->select('redelivery_count')->first();
         if (!$data) {
             return response()->json('$data');

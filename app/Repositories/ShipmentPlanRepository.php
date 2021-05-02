@@ -171,4 +171,23 @@ class ShipmentPlanRepository
             })->get();
         return $result;
     }
+
+    /**
+     * get dashboard shipment plan repo
+     */
+    public function getDashboardDriverRepo($shipmentPlanId)
+    {
+        $shipmentPlanPickup = $this->pickup->where('shipment_plan_id', $shipmentPlanId);
+        $totalPickup = $shipmentPlanPickup->count();
+        $capacity = $shipmentPlanPickup->with('items')->get()->pluck('items');
+        $items = collect($capacity)->flatten()->toArray();
+        $volume = array_sum(array_column($items, 'volume'));
+        $weight = array_sum(array_column($items, 'weight'));
+        $result = [
+            'volume' => $volume,
+            'weight' => $weight,
+            'totalOrder' => $totalPickup
+        ];
+        return $result;
+    }
 }

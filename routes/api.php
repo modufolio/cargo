@@ -141,6 +141,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::prefix('shipment-plan')->group(function() {
                 Route::get('list', [ShipmentPlanController::class, 'getDriverShipmentPlanList']);
                 Route::post('pickup', [ShipmentPlanController::class, 'getPickupOrderDriverShipmentPlanList']);
+                Route::post('dashboard', [ShipmentPlanController::class, 'getDashboardDriver']);
             });
 
             // proof of delivery
