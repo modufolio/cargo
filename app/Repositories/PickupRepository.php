@@ -11,7 +11,9 @@ use App\Models\User;
 use Indonesia;
 use Carbon\Carbon;
 use DB;
+use Log;
 use InvalidArgumentException;
+use Exception;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class PickupRepository
@@ -1137,10 +1139,17 @@ class PickupRepository
     public function updateBranchRepo($pickupId, $branchId)
     {
         DB::beginTransaction();
-        $branchFrom = $this->pickup->select('branch_id', 'id')->whereIn('id', $pickupId)->get();
-        $this->pickup->whereIn('id', $pickupId)->update(['branch_id' => $branchId]);
-        return $branchFrom;
+        try {
+            $branchFrom = $this->pickup->select('branch_id', 'id')->whereIn('id', $pickupId)->get();
+            $this->pickup->whereIn('id', $pickupId)->update(['branch_id' => $branchId]);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            DB::rollback();
+            throw new InvalidArgumentException('Gagal mengupdate cabang pada pickup');
+        }
         DB::commit();
+        return $branchFrom;
     }
 
     /**
@@ -1515,4 +1524,18 @@ class PickupRepository
     {
         $this->pickup->where('shipment_plan_id', $data['shipmentPlanId'])-update(['shipment_plan_id' => null]);
     }
+
+    /**
+     * check pickup have shipment
+     *
+     */
+    // public function checkPickupHaveShipment($pickupPlanId)
+    // {
+    //     $hasPOPApplied = $this->pickup->whereHas('proofOfPickup', function($q) {
+    //         $q->where('status', 'applied');
+    //     })->get();
+    //     if ($hasPOPApplied) {
+    //         throw new InvalidArgumentException('Maaf, Pickup ini tidak dapat dibatalkan');
+    //     }
+    // }            PENDING PENGERJAAN
 }

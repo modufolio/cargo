@@ -43,12 +43,12 @@ class PickupPlanRepository
         $pickupPlan->number = IdGenerator::generate($config);
         $pickupPlan->save();
 
-        foreach ($pickupId as $key => $value) {
-            // $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
-            $pickup = $this->pickup->find($value);
-            $pickup->pickupPlan()->associate($pickupPlan);
-            $pickup->save();
-        }
+        // foreach ($pickupId as $key => $value) {
+            $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
+            // $pickup = $this->pickup->find($value);
+            // $pickup->pickupPlan()->associate($pickupPlan);
+            // $pickup->save();
+        // }
         $pickupPlan->fresh();
         return $pickupPlan;
     }

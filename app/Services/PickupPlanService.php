@@ -41,7 +41,7 @@ class PickupPlanService {
      * @param array $data
      * @return String
      */
-    public function savePickupPlanService($data)
+    public function savePickupPlanService($data = [])
     {
         $validator = Validator::make($data, [
             'pickupId' => 'bail|required|array',
@@ -67,7 +67,7 @@ class PickupPlanService {
 
         // ASSIGN DRIVER TO CURRENT VEHICLE
         try {
-            $vehicle = $this->vehicleRepository->assignDriverRepo($data['vehicleId'], $data['driverId']);
+            $this->vehicleRepository->assignDriverRepo($data['vehicleId'], $data['driverId']);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -77,7 +77,7 @@ class PickupPlanService {
 
         // UPDATE BRANCH ID PADA PICKUP
         try {
-            $pickup = $this->pickupRepository->updateBranchRepo($data['pickupId'], $data['branchId']);
+            $this->pickupRepository->updateBranchRepo($data['pickupId'], $data['branchId']);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -111,6 +111,7 @@ class PickupPlanService {
                 Log::info($e->getMessage());
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal menyimpan data tracking');
+                break;
             }
 
             $driverLog = [
@@ -126,6 +127,7 @@ class PickupPlanService {
                 Log::info($e->getMessage());
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal menyimpan data tracking driver');
+                break;
             }
         }
 
@@ -247,6 +249,15 @@ class PickupPlanService {
         }
 
         DB::beginTransaction();
+        // // CHECK EVERY DATE PICKUP HAVE SHIPMENT OR NOT
+        // try {
+        //     $this->pickupRepository->checkPickupHaveShipment($data['pickupPlanId']);
+        // } catch (Exception $e) {
+        //     Log::info($e->getMessage());
+        //     Log::error($e);
+        //     throw new InvalidArgumentException($e->getMessage());
+        // }
+
         // CANCEL PICKUP PLAN
         try {
             $pickupPlan = $this->pickupPlanRepository->cancelPickupPlanRepo($data);

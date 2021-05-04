@@ -9,6 +9,8 @@ class PickupDriverLog extends Model
 {
     use HasFactory;
 
+    protected $table = 'pickup_driver_logs';
+
     public function pickup()
     {
         return $this->belongsTo(Pickup::class);

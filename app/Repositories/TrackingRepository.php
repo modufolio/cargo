@@ -48,7 +48,7 @@ class TrackingRepository
         $tracking->docs = $data['docs'];
         $tracking->status = $data['status'];
         $tracking->notes = $data['notes'];
-        $tracking->picture = $data['picture'];
+        $tracking->picture = $data['picture'] ?? null;
         $tracking->save();
         return $tracking;
     }
