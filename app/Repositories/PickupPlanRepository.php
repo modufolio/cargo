@@ -22,7 +22,7 @@ class PickupPlanRepository
     /**
      * save pickup plan
      *
-     * @param int $pickupId
+     * @param array $pickupId
      * @param int $vehicleId
      * @param int $userId
      * @return PickupPlan
@@ -43,8 +43,9 @@ class PickupPlanRepository
         $pickupPlan->number = IdGenerator::generate($config);
         $pickupPlan->save();
 
+        $this->pickup->whereIn('id', $pickupId)->update(['pickup_plan_id' => $pickupPlan->id]);
         // foreach ($pickupId as $key => $value) {
-            $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
+            // $this->pickup->where('id', $value)->update(['pickup_plan_id' => $pickupPlan->id]);
             // $pickup = $this->pickup->find($value);
             // $pickup->pickupPlan()->associate($pickupPlan);
             // $pickup->save();
