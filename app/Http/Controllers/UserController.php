@@ -14,9 +14,9 @@ use App\Http\Controllers\BaseController;
 
 class UserController extends BaseController
 {
+    protected $authService;
     protected $userService;
     protected $mailService;
-    protected $authService;
     protected $addressService;
 
 
@@ -379,6 +379,35 @@ class UserController extends BaseController
             return $this->sendError($e->getMessage());
         }
         DB::commit();
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get by name and phone
+     */
+    public function getByPickupNamePhone(Request $request)
+    {
+        $data = $request->only([
+            'query',
+        ]);
+        try {
+            $result = $this->userService->getByPickupNamePhoneService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get default data name and phone
+     */
+    public function getDefaultByPickupNamePhone()
+    {
+        try {
+            $result = $this->userService->getDefaultByPickupNamePhoneService();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
         return $this->sendResponse(null, $result);
     }
 }

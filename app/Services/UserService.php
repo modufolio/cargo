@@ -452,4 +452,34 @@ class UserService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * get user by pickup name and phone
+     */
+    public function getByPickupNamePhoneService($data = [])
+    {
+        try {
+            $result = $this->userRepository->getByPickupNamePhoneRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mencari data pengguna');
+        }
+        return $result;
+    }
+
+    /**
+     * get default username and phone by pickup
+     */
+    public function getDefaultByPickupNamePhoneService()
+    {
+        try {
+            $result = $this->userRepository->getDefaultByPickupNamePhoneRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mendapat data awal pengguna');
+        }
+        return $result;
+    }
 }

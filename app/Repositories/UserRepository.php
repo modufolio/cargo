@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Pickup;
 
 use InvalidArgumentException;
 
@@ -17,11 +18,13 @@ class UserRepository
 {
     protected $user;
     protected $role;
+    protected $pickup;
 
-    public function __construct(Role $role, User $user)
+    public function __construct(Role $role, User $user, Pickup $pickup)
     {
         $this->role = $role;
         $this->user = $user;
+        $this->pickup = $pickup;
     }
 
     /**
@@ -368,6 +371,28 @@ class UserRepository
         } else {
             throw new InvalidArgumentException('Avatar gagal dihapus');
         }
+        return $user;
+    }
+
+    /**
+     * get by pickup name and phone
+     */
+    public function getByPickupNamePhoneRepo($data = [])
+    {
+        $query = $data['query'];
+        $user = $this->pickup->with(['user', 'sender', 'receiver', 'debtor'])
+            ->where(function($q) use ($query) {
+                $q->where('name', 'ilike', '%'.$query.'%')->orWhere('phone', 'ilike', '%'.$query.'%');
+            })->get();
+        return $user;
+    }
+
+    /**
+     * get default data by pickup name and phone
+     */
+    public function getDefaultByPickupNamePhoneRepo()
+    {
+        $user = $this->pickup->with(['user', 'sender', 'receiver', 'debtor'])->orderBy('id', 'desc')->get()->take(10);
         return $user;
     }
 }

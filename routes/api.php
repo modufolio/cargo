@@ -29,6 +29,7 @@ use App\Http\Controllers\ShipmentPlanController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\TransitController;
 use App\Http\Controllers\ProofOfDeliveryController;
+use App\Http\Controllers\DropController;
 
 
 // All Authenticated User
@@ -169,6 +170,8 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('search-name', [UserController::class, 'searchName']);
             Route::post('search-email', [UserController::class, 'searchEmail']);
             Route::post('change-password', [UserController::class, 'changePassword']);
+            Route::post('get-by-pickup-name-phone', [UserController::class, 'getByPickupNamePhone']);
+            Route::post('get-default-by-pickup-name-phone', [UserController::class, 'getDefaultByPickupNamePhone']);
         });
 
         // Role
@@ -301,6 +304,15 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('detail-pickup', [ProofOfDeliveryController::class, 'getDetailPickup']);
             Route::post('update-status-delivery', [ProofOfDeliveryController::class, 'updateStatusDeliveryPOD']);
             Route::post('redelivery', [ProofOfDeliveryController::class, 'redeliveryPOD']);
+        });
+
+        // Drop
+        Route::prefix('drop')->group(function() {
+            Route::post('paginate', [DropController::class, 'paginate']);
+            Route::post('get-by-pickup-plan', [DropController::class, 'getByPickupPlan']);
+            Route::post('get-by-shipment-plan', [DropController::class, 'getByShipmentPlan']);
+            Route::post('create-by-admin', [DropController::class, 'createByAdmin']);
+            Route::post('delete', [DropController::class, 'deletePickup']);
         });
     });
 
