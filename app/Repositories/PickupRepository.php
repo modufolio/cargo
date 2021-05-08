@@ -32,7 +32,7 @@ class PickupRepository
     }
 
     /**
-     * Save Pickup Address / alamat pickup / alamat pengirim
+     * Save Pickup
      *
      * @param array $data
      * @param Promo $promo
@@ -1538,4 +1538,41 @@ class PickupRepository
     //         throw new InvalidArgumentException('Maaf, Pickup ini tidak dapat dibatalkan');
     //     }
     // }            PENDING PENGERJAAN
+
+    /**
+     * Save Drop Order
+     *
+     * @param array $data
+     * @param Promo $promo
+     * @return Pickup
+     */
+    public function createDropRepo($data, $promo)
+    {
+        $config = [
+            'table' => 'pickups',
+            'length' => 12,
+            'field' => 'number',
+            'prefix' => 'P'.Carbon::now('Asia/Jakarta')->format('ymd'),
+            'reset_on_prefix_change' => true
+        ];
+        $pickup = new $this->pickup;
+
+        $pickup->fleet_id           = $data['fleetId'];
+        $pickup->user_id            = $data['userId'];
+        $pickup->promo_id           = $promo['id'] ?? null;
+        $pickup->name               = $data['name'];
+        $pickup->phone              = $data['phone'];
+        $pickup->sender_id          = $data['senderId'];
+        $pickup->receiver_id        = $data['receiverId'];
+        $pickup->debtor_id          = $data['debtorId'];
+        $pickup->notes              = $data['notes'];
+        $pickup->picktime           = $data['picktime'];
+        $pickup->created_by         = $data['userId'];
+        $pickup->status             = 'applied';
+        $pickup->number             = IdGenerator::generate($config);
+        $pickup->is_drop            = true;
+        $pickup->save();
+
+        return $pickup;
+    }
 }

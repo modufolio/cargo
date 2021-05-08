@@ -192,4 +192,67 @@ class AddressRepository
 
         return $data;
     }
+
+    /**
+     * search address customer
+     */
+    public function searchCustomerAddressRepo($data = [])
+    {
+        $type = $data['type'];
+        $userId = $data['id'];
+        $query = $data['query'];
+        switch ($type) {
+            case 'sender':
+                $result = $this->sender->where('user_id', $userId)->where(function ($q) use ($query) {
+                    $q->where('street', 'ilike','%'.$query.'%')
+                        ->orWhere('city', 'ilike', '%'.$query.'%')
+                        ->orWhere('province', 'ilike', '%'.$query.'%')
+                        ->orWhere('district', 'ilike', '%'.$query.'%')
+                        ->orWhere('village', 'ilike', '%'.$query.'%')
+                        ->orWhere('postal_code', 'ilike', '%'.$query.'%')
+                        ->orWhere('notes', 'ilike', '%'.$query.'%');
+                })
+                ->select('province','city','district','village','postal_code','street','notes')
+                ->distinct()
+                ->get();
+                break;
+            case 'debtor':
+                $result = $this->debtor->where('user_id', $userId)->where(function ($q) use ($query) {
+                    $q->where('street', 'ilike','%'.$query.'%')
+                        ->orWhere('city', 'ilike', '%'.$query.'%')
+                        ->orWhere('province', 'ilike', '%'.$query.'%')
+                        ->orWhere('district', 'ilike', '%'.$query.'%')
+                        ->orWhere('village', 'ilike', '%'.$query.'%')
+                        ->orWhere('postal_code', 'ilike', '%'.$query.'%')
+                        ->orWhere('notes', 'ilike', '%'.$query.'%');
+                })
+                ->select('province','city','district','village','postal_code','street','notes')
+                ->distinct()
+                ->get();
+                break;
+            case 'receiver':
+                $result = $this->receiver->where('user_id', $userId)->where(function ($q) use ($query) {
+                    $q->where('street', 'ilike','%'.$query.'%')
+                        ->orWhere('city', 'ilike', '%'.$query.'%')
+                        ->orWhere('province', 'ilike', '%'.$query.'%')
+                        ->orWhere('district', 'ilike', '%'.$query.'%')
+                        ->orWhere('village', 'ilike', '%'.$query.'%')
+                        ->orWhere('postal_code', 'ilike', '%'.$query.'%')
+                        ->orWhere('notes', 'ilike', '%'.$query.'%');
+                })
+                ->select('province','city','district','village','postal_code','street','notes')
+                ->distinct()
+                ->get();
+                break;
+            default:
+                throw new InvalidArgumentException('Tipe alamat tidak ditemukan');
+                break;
+        }
+        $result = collect($result)->toArray();
+        // if (count($result) > 0) {
+        //     // $result = array_diff_key($result, array_flip(["id"]));
+        //     // $result = array_unique($result, SORT_REGULAR);
+        // }
+        return $result;
+    }
 }

@@ -482,4 +482,34 @@ class UserService {
         }
         return $result;
     }
+
+    /**
+     * get user by name and phone
+     */
+    public function getByNamePhoneService($data = [])
+    {
+        try {
+            $result = $this->userRepository->getByNamePhoneRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mencari data pengguna');
+        }
+        return $result;
+    }
+
+    /**
+     * get default customer name and phone
+     */
+    public function getDefaultByNamePhoneService()
+    {
+        try {
+            $result = $this->userRepository->getDefaultByNamePhoneRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mendapat data awal pengguna');
+        }
+        return $result;
+    }
 }

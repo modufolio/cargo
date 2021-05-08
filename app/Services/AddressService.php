@@ -146,4 +146,29 @@ class AddressService {
 
         return $address;
     }
+
+    /**
+     * search address customer
+     */
+    public function searchCustomerAddressService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'type' => 'bail|required|string',
+            'id' => 'bail|required',
+            'query' => 'bail|present',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $address = $this->addressRepository->searchCustomerAddressRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mendapat data alamat customer');
+        }
+        return $address;
+    }
 }

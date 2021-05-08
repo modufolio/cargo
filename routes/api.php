@@ -30,6 +30,7 @@ use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\TransitController;
 use App\Http\Controllers\ProofOfDeliveryController;
 use App\Http\Controllers\DropController;
+use App\Http\Controllers\AddressController;
 
 
 // All Authenticated User
@@ -64,6 +65,9 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
     Route::get('receiver', [ReceiverController::class, 'index']);
     Route::put('receiver/{id}', [ReceiverController::class, 'update']);
     Route::delete('receiver/{id}', [ReceiverController::class, 'destroy']);
+
+    // Address
+    Route::post('address/search', [AddressController::class, 'search']);
 
     // Unit
     Route::resource('unit', UnitController::class);
@@ -172,6 +176,8 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('change-password', [UserController::class, 'changePassword']);
             Route::post('get-by-pickup-name-phone', [UserController::class, 'getByPickupNamePhone']);
             Route::post('get-default-by-pickup-name-phone', [UserController::class, 'getDefaultByPickupNamePhone']);
+            Route::post('get-default-by-name-phone', [UserController::class, 'getDefaultByNamePhone']);
+            Route::post('search-by-name-phone', [UserController::class, 'getByNamePhone']);
         });
 
         // Role
@@ -311,7 +317,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('paginate', [DropController::class, 'paginate']);
             Route::post('get-by-pickup-plan', [DropController::class, 'getByPickupPlan']);
             Route::post('get-by-shipment-plan', [DropController::class, 'getByShipmentPlan']);
-            Route::post('create-by-admin', [DropController::class, 'createByAdmin']);
+            Route::post('create', [DropController::class, 'create']);
             Route::post('delete', [DropController::class, 'deletePickup']);
         });
     });

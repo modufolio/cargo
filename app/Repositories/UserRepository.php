@@ -395,4 +395,64 @@ class UserRepository
         $user = $this->pickup->with(['user', 'sender', 'receiver', 'debtor'])->orderBy('id', 'desc')->get()->take(10);
         return $user;
     }
+
+    /**
+     * get user by name and phone
+     */
+    public function getByNamePhoneRepo($data = [])
+    {
+        $query = $data['query'];
+        // $user = $this->user->with(['senders' => function($q) {
+        //     $q->select('user_id','province','city','district','village','postal_code','street','notes');
+        // }, 'receivers' => function($q) {
+        //     $q->select('user_id','name','phone','province','city','district','village','postal_code','street','notes');
+        // }, 'debtors' => function($q) {
+        //     $q->select('user_id','name','phone','province','city','district','village','postal_code','street','notes');
+        // }])
+        //     ->where(function($q) use ($query) {
+        //         $q->where('name', 'ilike', '%'.$query.'%')->orWhere('phone', 'ilike', '%'.$query.'%');
+        //     })->whereHas('role', function($q) {
+        //         $q->where('slug', 'customer');
+        //     })->get();
+
+        $user = $this->user->where(function($q) use ($query) {
+            $q->where('name', 'ilike', '%'.$query.'%')->orWhere('phone', 'ilike', '%'.$query.'%');
+        })->whereHas('role', function($q) {
+            $q->where('slug', 'customer');
+        })->get();
+
+        $user = collect($user);
+
+
+
+        // $data = [];
+
+        // $userReceivers = [];
+        // $userSenders = [];
+        // $userDebtors = [];
+        // $data = $user;
+        // foreach ($user as $key => $val) {
+        //     // $data[] = $val;
+        //     $senders = collect($val['senders'])->toArray();
+        //     // dd($senders);
+        //     $senders = array_map("unserialize", array_unique(array_map("serialize", $senders)));
+        //     $senders = array_unique($senders, SORT_REGULAR);
+        //     // $data['senders'] = $senders;
+        //     $data[$key]['senders'] = $senders;
+        //     // dd($data[$key]['senders']);
+        // }
+
+        return $user;
+    }
+
+    /**
+     * get default data customer by name and phone
+     */
+    public function getDefaultByNamePhoneRepo()
+    {
+        $user = $this->user->whereHas('role', function($q) {
+            $q->where('slug', 'customer');
+        })->orderBy('id', 'desc')->get()->take(10);
+        return $user;
+    }
 }

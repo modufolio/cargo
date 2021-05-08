@@ -410,4 +410,33 @@ class UserController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * search by name and phone
+     */
+    public function getByNamePhone(Request $request)
+    {
+        $data = $request->only([
+            'query',
+        ]);
+        try {
+            $result = $this->userService->getByNamePhoneService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+    /**
+     * get default data name and phone
+     */
+    public function getDefaultByNamePhone()
+    {
+        try {
+            $result = $this->userService->getDefaultByNamePhoneService();
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

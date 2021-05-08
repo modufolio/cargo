@@ -129,4 +129,24 @@ class AddressController extends BaseController
 
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * search address
+     */
+    public function search(Request $request)
+    {
+        $data = $request->only([
+            'id',
+            'type',
+            'query'
+        ]);
+
+        try {
+            $result = $this->addressService->searchCustomerAddressService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendResponse(null, $result);
+    }
 }
