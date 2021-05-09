@@ -87,4 +87,21 @@ class ServiceController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * delete service.
+     *
+     */
+    public function update(Request $request)
+    {
+        $data = $request->only([
+            'serviceId'
+        ]);
+        try {
+            $result = $this->serviceService->deleteService($data);
+        } catch (Exception $th) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

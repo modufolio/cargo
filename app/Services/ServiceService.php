@@ -97,4 +97,27 @@ class ServiceService {
         }
         return $result;
     }
+
+    /**
+     * delete service
+     */
+    public function deleteService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'serviceId' => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->serviceRepository->deleteServiceRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }

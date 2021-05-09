@@ -114,4 +114,14 @@ class ServiceRepository
         $service->save();
         return $service;
     }
+
+    /**
+     * delete service
+     */
+    public function deleteServiceRepo($data = [])
+    {
+        $service = $this->service->find($data['serviceId']);
+        $service->delete();
+        return $service;
+    }
 }
