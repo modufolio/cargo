@@ -427,7 +427,7 @@ class PickupService {
 
         // create user
         if ($data['form']['newCustomer']) {
-            $username = explode("@", $request->email, 2);
+            $username = explode("@", $data['customer']['email'], 2);
             $payload = [
                 'email' => $data['customer']['email'],
                 'name' => $data['customer']['name'],
