@@ -47,7 +47,7 @@ class PickupService {
         ReceiverRepository $receiverRepository,
         DebtorRepository $debtorRepository,
         TrackingRepository $trackingRepository,
-        UserRepository $userRepository,
+        UserRepository $userRepository
     )
     {
         $this->pickupRepository = $pickupRepository;
