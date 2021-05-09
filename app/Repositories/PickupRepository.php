@@ -348,8 +348,11 @@ class PickupRepository
         $licenseNumber = $data['licenseNumber'];
         $vehicleType = $data['vehicleType'];
         $sort = $data['sort'];
+        $branchId = $data['branchId'];
 
-        $pickupPlan = $this->pickupPlan->with(['vehicle.driver.user', 'pickups']);
+        $pickupPlan = $this->pickupPlan->with(['vehicle.driver.user', 'pickups' => function($q) use ($branchId) {
+            $q->where('branch_id', $branchId);
+        }]);
 
         if (empty($perPage)) {
             $perPage = 10;
