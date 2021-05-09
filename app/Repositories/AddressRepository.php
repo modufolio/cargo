@@ -226,7 +226,7 @@ class AddressRepository
                         ->orWhere('postal_code', 'ilike', '%'.$query.'%')
                         ->orWhere('notes', 'ilike', '%'.$query.'%');
                 })
-                ->select('province','city','district','village','postal_code','street','notes')
+                ->select('province','city','district','village','postal_code','street','notes','name','phone')
                 ->distinct()
                 ->get();
                 break;
@@ -240,7 +240,7 @@ class AddressRepository
                         ->orWhere('postal_code', 'ilike', '%'.$query.'%')
                         ->orWhere('notes', 'ilike', '%'.$query.'%');
                 })
-                ->select('province','city','district','village','postal_code','street','notes')
+                ->select('province','city','district','village','postal_code','street','notes','name','phone')
                 ->distinct()
                 ->get();
                 break;
