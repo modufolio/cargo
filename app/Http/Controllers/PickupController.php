@@ -215,6 +215,7 @@ class PickupController extends BaseController
             'userId',
             'items',
             'form',
+            'customer'
         ]);
         DB::beginTransaction();
         try {
