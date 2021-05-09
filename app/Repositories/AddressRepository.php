@@ -250,9 +250,12 @@ class AddressRepository
         }
         $result = collect($result)->toArray();
         // if (count($result) > 0) {
-        //     // $result = array_diff_key($result, array_flip(["id"]));
-        //     // $result = array_unique($result, SORT_REGULAR);
+        //     $result = array_diff_key($result, array_flip(["id"]));
+        //     $result = array_unique($result, SORT_REGULAR);
         // }
+        if (count($result) == 0) {
+            return [];
+        }
         return $result;
     }
 }

@@ -143,19 +143,23 @@ class BillRepository
     public function calculatePriceWithoutPromo($items, $route)
     {
         $result = $data = [];
-        $totalWeight = array_sum(array_column($items, 'unit_total'));
+        $totalWeight = array_sum(array_column($items, 'weight'));
+        $service = collect($this->service->select('id','name','price')->get());
         if ($totalWeight >= intval($route['minimum_weight'])) {
             foreach ($items as $key => $value) {
-                // $unit               = $this->unit->where('id', $value['unit_id'])->select('price','slug')->first();
-                $service            = $this->service->where('id', $value['service_id'])->select('name','price')->first();
+                // $unit            = $this->unit->where('id', $value['unit_id'])->select('price','slug')->first();
+                $service            = collect($service->where('id', $value['service_id'])->first())->pluck('name');
                 $servicePrice       = $service['price'] ?? 0;
-                $data['price']      = ($value['unit_total'] * intval($route['price'])) + $servicePrice;
+                $data['price']      = ($value['weight'] * intval($route['price'])) + $servicePrice;
                 $data['name']       = $value['name'];
-                // $data['unit']       = $unit;
-                $data['unit_total'] = $value['unit_total'];
+                // $data['unit']    = $unit;
+                $data['weight']     = $value['weight'];
+                $data['type']       = $value['type'];
+                $data['volume']     = $value['volume'];
                 $data['unit_count'] = $value['unit_count'];
                 $data['service']    = $service ?? null;
-                $itemData[] = $data;
+                $data['service_id'] = $value['service_id'];
+                $itemData[]         = $data;
             }
             $total = array_sum(array_column($itemData, 'price'));
             $result = (object)[
