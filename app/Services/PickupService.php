@@ -426,7 +426,7 @@ class PickupService {
         DB::beginTransaction();
 
         // create user
-        if ($data['form']['newCustomer']) {
+        if ($data['form']['newCustomer'] == true) {
             $username = explode("@", $data['customer']['email'], 2);
             $payload = [
                 'email' => $data['customer']['email'],
