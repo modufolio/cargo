@@ -397,9 +397,9 @@ class UserRepository
     }
 
     /**
-     * get user by name and phone
+     * get user by name, email and phone
      */
-    public function getByNamePhoneRepo($data = [])
+    public function getByNamePhoneEmailRepo($data = [])
     {
         $query = $data['query'];
         // $user = $this->user->with(['senders' => function($q) {
@@ -416,7 +416,9 @@ class UserRepository
         //     })->get();
 
         $user = $this->user->where(function($q) use ($query) {
-            $q->where('name', 'ilike', '%'.$query.'%')->orWhere('phone', 'ilike', '%'.$query.'%');
+            $q->where('name', 'ilike', '%'.$query.'%')
+                ->orWhere('phone', 'ilike', '%'.$query.'%')
+                ->orWhere('email', 'ilike', '%'.$query.'%');
         })->whereHas('role', function($q) {
             $q->where('slug', 'customer');
         })->get();

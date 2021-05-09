@@ -484,12 +484,12 @@ class UserService {
     }
 
     /**
-     * get user by name and phone
+     * get user by name, email and phone
      */
-    public function getByNamePhoneService($data = [])
+    public function getByNamePhoneEmailService($data = [])
     {
         try {
-            $result = $this->userRepository->getByNamePhoneRepo($data);
+            $result = $this->userRepository->getByNamePhoneEmailRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             Log::error($e);
