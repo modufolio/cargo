@@ -166,6 +166,7 @@ class SenderService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Gagal menyimpan alamat pengirim');
         }
         DB::commit();
