@@ -352,7 +352,9 @@ class PickupRepository
 
         $pickupPlan = $this->pickupPlan->with(['vehicle.driver.user', 'pickups' => function($q) use ($branchId) {
             $q->where('branch_id', $branchId);
-        }]);
+        }])->whereHas('pickups', function($q) use ($branchId) {
+            $q->where('branch_id', $branchId);
+        });
 
         if (empty($perPage)) {
             $perPage = 10;
