@@ -83,7 +83,7 @@ class BillService {
         }
 
         if (!$result->success) {
-            throw new InvalidArgumentException($result->nessage);
+            throw new InvalidArgumentException($result->message);
         }
 
         return $result;
