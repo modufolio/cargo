@@ -13,6 +13,7 @@ use App\Repositories\DebtorRepository;
 use App\Repositories\ReceiverRepository;
 use App\Repositories\SenderRepository;
 use App\Repositories\TrackingRepository;
+use App\Repositories\UserRepository;
 use Exception;
 use DB;
 use Log;
@@ -32,6 +33,7 @@ class PickupService {
     protected $debtorRepository;
     protected $proofOfPickupRepository;
     protected $trackingRepository;
+    protected $userRepository;
 
     public function __construct(
         PickupRepository $pickupRepository,
@@ -44,7 +46,8 @@ class PickupService {
         SenderRepository $senderRepository,
         ReceiverRepository $receiverRepository,
         DebtorRepository $debtorRepository,
-        TrackingRepository $trackingRepository
+        TrackingRepository $trackingRepository,
+        UserRepository $userRepository,
     )
     {
         $this->pickupRepository = $pickupRepository;
@@ -58,6 +61,7 @@ class PickupService {
         $this->receiverRepository = $receiverRepository;
         $this->debtorRepository = $debtorRepository;
         $this->trackingRepository = $trackingRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -412,6 +416,7 @@ class PickupService {
             'items' => 'bail|required',
             'userId' => 'bail|required',
             'form' => 'bail|required',
+            'customer' => 'bail|required',
         ]);
 
         if ($validator->fails()) {
@@ -420,10 +425,44 @@ class PickupService {
 
         DB::beginTransaction();
 
+        // create user
+        if ($data['form']['newCustomer']) {
+            $username = explode("@", $request->email, 2);
+            $payload = [
+                'email' => $data['customer']['email'],
+                'name' => $data['customer']['name'],
+                'username' => $username,
+                'role_id' => 1,
+                'branch_id' => $data['customer']['branchId'],
+                'phone' => $data['customer']['phone'],
+                'password' => 'user1234'
+            ];
+            try {
+                $customer = $this->userRepository->save($payload);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException($e->getMessage());
+            }
+        } else {
+            try {
+                $customer = $this->userRepository->getByEmail($data['form']['email']);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException($e->getMessage());
+            }
+        }
+
+        // customer
         $data['form']['sender']['is_primary'] = $data['form']['receiver']['is_primary'] = $data['form']['debtor']['is_primary'] = false;
         $data['form']['sender']['temporary'] = $data['form']['receiver']['temporary'] = $data['form']['debtor']['temporary'] = true;
         $data['form']['sender']['title'] = $data['form']['receiver']['title'] = $data['form']['debtor']['title'] = $data['form']['name'];
-        $data['form']['sender']['userId'] = $data['form']['receiver']['userId'] = $data['form']['debtor']['userId'] = $data['userId'];
+        $data['form']['sender']['userId'] = $data['form']['receiver']['userId'] = $data['form']['debtor']['userId'] = $customer['id'];
+
+        // user web
         $data['form']['userId'] = $data['userId'];
 
         // save sender
@@ -501,7 +540,7 @@ class PickupService {
         $data['form']['receiverId'] = $receiver['id'];
         $data['form']['debtorId'] = $debtor['id'];
         try {
-            $pickup = $this->pickupRepository->createPickupRepo($data['form'], $promo);
+            $pickup = $this->pickupRepository->createPickupAdminRepo($data['form'], $promo, $customer);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
