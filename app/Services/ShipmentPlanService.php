@@ -148,6 +148,16 @@ class ShipmentPlanService {
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal mengupdate data cabang pada pickup order');
             }
+
+            // GET PICKUP BRANCH
+            try {
+                $branchFrom = $this->pickupRepository->getPickupBranchRepo($data['pickupId']);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal mengupdate data cabang pada pickup order');
+            }
         }
 
         // CREATE TRACKING
@@ -167,7 +177,6 @@ class ShipmentPlanService {
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal menyimpan data tracking');
             }
-
 
             $branch = collect($branchFrom)->firstWhere('id', $value);
             $driverLog = [
