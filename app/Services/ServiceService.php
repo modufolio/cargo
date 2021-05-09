@@ -28,8 +28,73 @@ class ServiceService {
             $fleet = $this->serviceRepository->getAll();
         } catch (Exception $e) {
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Gagal mendapat service data');
         }
         return $fleet;
+    }
+
+    /**
+     * get paginate
+     */
+    public function getPaginate($data = [])
+    {
+        try {
+            $result = $this->serviceRepository->getPaginateRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
+
+    /**
+     * create service
+     */
+    public function createService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'name' => 'bail|required',
+            'price' => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->serviceRepository->createServiceRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
+
+    /**
+     * update service
+     */
+    public function updateService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'name' => 'bail|required',
+            'price' => 'bail|required',
+            'id' => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->serviceRepository->updateServiceRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
     }
 }

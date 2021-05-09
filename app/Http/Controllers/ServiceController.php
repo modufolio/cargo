@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
 use Exception;
+use DB;
 
 // SERVICE
 use App\Services\ServiceService;
@@ -19,11 +20,6 @@ class ServiceController extends BaseController
         $this->serviceService = $serviceService;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         try {
@@ -35,68 +31,60 @@ class ServiceController extends BaseController
     }
 
     /**
-     * Show the form for creating a new resource.
+     * get service paginate.
      *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function getPaginate(Request $request)
     {
-        //
+        $data = $request->only([
+            'perPage',
+            'page',
+            'name',
+            'price',
+            'sort'
+        ]);
+        try {
+            $result = $this->serviceService->getPaginate($data);
+        } catch (Exception $th) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * create service.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function create(Request $request)
     {
-        //
+        $data = $request->only([
+            'name',
+            'price',
+        ]);
+        try {
+            $result = $this->serviceService->createService($data);
+        } catch (Exception $th) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
     }
 
     /**
-     * Display the specified resource.
+     * update service.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function update(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $data = $request->only([
+            'name',
+            'price',
+            'id'
+        ]);
+        try {
+            $result = $this->serviceService->updateService($data);
+        } catch (Exception $th) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
     }
 }

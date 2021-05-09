@@ -73,7 +73,10 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
     Route::resource('unit', UnitController::class);
 
     // Service
-    Route::resource('service', ServiceController::class);
+    Route::get('service', [ServiceController::class, 'index']);
+    Route::post('service/paginate', [ServiceController::class, 'getPaginate']);
+    Route::post('service/create', [ServiceController::class, 'create']);
+    Route::post('service/update', [ServiceController::class, 'update']);
 
     // Debtor
     Route::resource('debtor', DebtorController::class);

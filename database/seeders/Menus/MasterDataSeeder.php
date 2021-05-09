@@ -47,6 +47,11 @@ class MasterDataSeeder extends Seeder
                 'name' => 'Driver',
                 'slug' => 'driver',
             ],
+            [
+                'menu_id' => $menu->id,
+                'name' => 'Layanan',
+                'slug' => 'service',
+            ],
         ];
         Submenu::insert($submenu);
     }
