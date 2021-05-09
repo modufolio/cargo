@@ -1153,6 +1153,25 @@ class PickupRepository
     }
 
     /**
+     * get branch in pickup order
+     * @param array $pickupId
+     */
+    public function getPickupBranchRepo($pickupId)
+    {
+        DB::beginTransaction();
+        try {
+            $branchFrom = $this->pickup->select('branch_id', 'id')->whereIn('id', $pickupId)->get();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            DB::rollback();
+            throw new InvalidArgumentException('Gagal mendapat cabang pada pickup');
+        }
+        DB::commit();
+        return $branchFrom;
+    }
+
+    /**
      * get ready to shipment pagination
      *
      * @param array $data
@@ -1571,6 +1590,42 @@ class PickupRepository
         $pickup->status             = 'applied';
         $pickup->number             = IdGenerator::generate($config);
         $pickup->is_drop            = true;
+        $pickup->save();
+
+        return $pickup;
+    }
+
+    /**
+     * Save Pickup by admin
+     *
+     * @param array $data
+     * @param Promo $promo
+     * @return Pickup
+     */
+    public function createPickupAdminRepo($data, $promo, $customer)
+    {
+        $config = [
+            'table' => 'pickups',
+            'length' => 12,
+            'field' => 'number',
+            'prefix' => 'P'.Carbon::now('Asia/Jakarta')->format('ymd'),
+            'reset_on_prefix_change' => true
+        ];
+        $pickup = new $this->pickup;
+
+        $pickup->fleet_id           = $data['fleetId'];
+        $pickup->user_id            = $customer['id'];
+        $pickup->promo_id           = $promo['id'] ?? null;
+        $pickup->name               = $data['name'];
+        $pickup->phone              = $data['phone'];
+        $pickup->sender_id          = $data['senderId'];
+        $pickup->receiver_id        = $data['receiverId'];
+        $pickup->debtor_id          = $data['debtorId'];
+        $pickup->notes              = $data['notes'];
+        $pickup->picktime           = $data['picktime'];
+        $pickup->created_by         = $data['userId'];
+        $pickup->status             = 'request';
+        $pickup->number             = IdGenerator::generate($config);
         $pickup->save();
 
         return $pickup;
