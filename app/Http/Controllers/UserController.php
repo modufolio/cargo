@@ -412,15 +412,15 @@ class UserController extends BaseController
     }
 
     /**
-     * search by name and phone
+     * search by name, phone, and email
      */
-    public function getByNamePhone(Request $request)
+    public function getByNamePhoneEmail(Request $request)
     {
         $data = $request->only([
             'query',
         ]);
         try {
-            $result = $this->userService->getByNamePhoneService($data);
+            $result = $this->userService->getByNamePhoneEmailService($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
