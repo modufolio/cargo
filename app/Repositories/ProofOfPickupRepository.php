@@ -104,13 +104,14 @@ class ProofOfPickupRepository
         $pickupOrderNo = $data['pickupOrderNo'];
         $requestPickupDate = $data['requestPickupDate'];
         $pickupPlanNo = $data['pickupPlanNo'];
+        $branchId = $data['branchId'];
 
-        $pickup = $this->pickup->with(['pickupPlan'])->where(function($e) {
-            $e->where('status', 'draft')->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function ($q) {
+        $pickup = $this->pickup->with(['pickupPlan'])->where(function($e) use ($branchId) {
+            $e->where('branch_id', $branchId)->where('status', 'draft')->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function ($q) {
                 $q->where('driver_pick', false);
             });
-        })->orWhere(function($e) {
-            $e->where('status', 'request')->whereNotNull('pickup_plan_id');
+        })->orWhere(function($e) use ($branchId) {
+            $e->where('branch_id', $branchId)->where('status', 'request')->whereNotNull('pickup_plan_id');
         });
 
         if (empty($perPage)) {
@@ -212,9 +213,9 @@ class ProofOfPickupRepository
         $popStatus = $data['popStatus'];
         $general = $data['general'];
         $driverPick = $data['driverPick'];
+        $branchId = $data['branchId'];
 
-
-        $pickup = $this->pickup->select('id','name','pickup_plan_id','picktime','created_at','status','number')->where('status', 'applied')->with([
+        $pickup = $this->pickup->select('id','name','pickup_plan_id','picktime','created_at','status','number')->where('branch_id', $branchId)->where('status', 'applied')->with([
             'proofOfPickup' => function($q) {
                 $q->select('id','pickup_id','status','driver_pick','status_pick','created_at');
             }, 'pickupPlan' => function($q) {
@@ -335,10 +336,10 @@ class ProofOfPickupRepository
      *      DRAFT (pickup order yang sudah di pickup
      *      dan di update via apps driver oleh driver)
      */
-    public function getPendingAndDraftRepo()
+    public function getPendingAndDraftRepo($branchId)
     {
-        $pending = $this->pickup->whereNotNull('pickup_plan_id')->where('status', 'request')->count();
-        $draft = $this->pickup->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function($q) {
+        $pending = $this->pickup->where('branch_id', $branchId)->whereNotNull('pickup_plan_id')->where('status', 'request')->count();
+        $draft = $this->pickup->where('branch_id', $branchId)->whereNotNull('pickup_plan_id')->whereHas('proofOfPickup', function($q) {
             // $q->where('driver_pick', true)->where('status', 'draft');
             $q->where('status', 'draft');
         })->count();

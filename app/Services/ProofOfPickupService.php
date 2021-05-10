@@ -203,6 +203,7 @@ class ProofOfPickupService {
             'pickupOrderNo' => 'bail|present',
             'requestPickupDate' => 'bail|present',
             'pickupPlanNo' => 'bail|present',
+            'branchId' => 'bail|present'
         ]);
 
         if ($validator->fails()) {
@@ -239,6 +240,7 @@ class ProofOfPickupService {
             'poPickupDate' => 'bail|present',
             'pickupPlanNumber' => 'bail|present',
             'driverPick' => 'bail|present',
+            'branchId' => 'bail|present'
         ]);
 
         if ($validator->fails()) {
@@ -257,10 +259,10 @@ class ProofOfPickupService {
     /**
      * get pending and draft pickup
      */
-    public function getPendingAndDraftService()
+    public function getPendingAndDraftService($branchId)
     {
         try {
-            $result = $this->popRepository->getPendingAndDraftRepo();
+            $result = $this->popRepository->getPendingAndDraftRepo($branchId);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException($e->getMessage());
