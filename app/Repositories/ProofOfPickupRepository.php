@@ -2,13 +2,19 @@
 
 namespace App\Repositories;
 
+// MODELS
 use App\Models\ProofOfPickup;
 use App\Models\Pickup;
-use Carbon\Carbon;
+
+// LARAVEL
 use DB;
+use Illuminate\Database\Eloquent\Builder;
 use InvalidArgumentException;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
+
+// VENDOR
+use Carbon\Carbon;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class ProofOfPickupRepository
 {
@@ -31,12 +37,20 @@ class ProofOfPickupRepository
     {
         DB::beginTransaction();
         try {
+            $config = [
+                'table' => 'proof_of_pickups',
+                'length' => 14,
+                'field' => 'number',
+                'prefix' => 'POP'.Carbon::now('Asia/Jakarta')->format('ymd'),
+                'reset_on_prefix_change' => true
+            ];
             $proof = new $this->pop;
             $proof->pickup_id = $data['pickupId'];
             $proof->driver_pick = $data['driverPick'];
             $proof->notes = $data['notes'];
             $proof->created_by = $data['userId'];
             $proof->status_pick = $data['statusPick']; // success, updated, failed
+            $proof->number = IdGenerator::generate($config);
             if ($data['driverPick']) {
                 /**
                  * draft: pop sudah berhasil di submit dari driver app
@@ -217,7 +231,7 @@ class ProofOfPickupRepository
 
         $pickup = $this->pickup->select('id','name','pickup_plan_id','picktime','created_at','status','number')->where('branch_id', $branchId)->where('status', 'applied')->with([
             'proofOfPickup' => function($q) {
-                $q->select('id','pickup_id','status','driver_pick','status_pick','created_at');
+                $q->select('id','pickup_id','status','driver_pick','status_pick','created_at','number');
             }, 'pickupPlan' => function($q) {
                 $q->select('id', 'number');
             }])->whereNotNull('pickup_plan_id');
