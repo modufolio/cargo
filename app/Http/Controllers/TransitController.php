@@ -98,10 +98,13 @@ class TransitController extends BaseController
      * get pending and draft pickup
      * only admin
      */
-    public function getPendingAndDraft()
+    public function getPendingAndDraft(Request $request)
     {
+        $data = $request->only([
+            'branchId'
+        ]);
         try {
-            $result = $this->transitService->getPendingAndDraftService();
+            $result = $this->transitService->getPendingAndDraftService($data['branchId']);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

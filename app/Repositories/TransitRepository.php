@@ -55,9 +55,11 @@ class TransitRepository
      *      DRAFT (pickup order yang sudah di pickup
      *      dan di update via apps driver oleh driver)
      */
-    public function getPendingAndDraftRepo()
+    public function getPendingAndDraftRepo($branchId)
     {
-        $transits = collect($this->transit->all());
+        $transits = collect($this->transit->whereHas('pickup', function($q) use ($branchId) {
+            $q->where('branch_id', $branchId);
+        })->get());
         $pending = $transits->where('status', 'pending')->count();
         $draft = $transits->where('status', 'draft')->count();
         $data = [

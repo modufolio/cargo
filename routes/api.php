@@ -300,7 +300,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('create', [TransitController::class, 'draftTransit']);
             Route::post('outstanding', [TransitController::class, 'getOutstanding']);
             Route::post('submitted', [TransitController::class, 'getSubmitted']);
-            Route::get('get-pending-draft', [TransitController::class, 'getPendingAndDraft']);
+            Route::post('get-pending-draft', [TransitController::class, 'getPendingAndDraft']);
             Route::post('detail-pickup', [ProofOfPickupController::class, 'getDetailPickup']);
             Route::post('update', [TransitController::class, 'updateTransit']);
         });

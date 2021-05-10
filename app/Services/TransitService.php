@@ -149,10 +149,10 @@ class TransitService {
     /**
      * get pending and draft transit pickup
      */
-    public function getPendingAndDraftService()
+    public function getPendingAndDraftService($branchId)
     {
         try {
-            $result = $this->transitRepository->getPendingAndDraftRepo();
+            $result = $this->transitRepository->getPendingAndDraftRepo($branchId);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             Log::error($e);
