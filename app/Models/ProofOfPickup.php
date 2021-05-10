@@ -26,7 +26,8 @@ class ProofOfPickup extends Model
         'pickup',
         'id',
         'created_by',
-        'updated_by'
+        'updated_by',
+        'number'
     ];
 
     protected $hidden = [

@@ -229,12 +229,9 @@ class ProofOfPickupRepository
         $driverPick = $data['driverPick'];
         $branchId = $data['branchId'];
 
-        $pickup = $this->pickup->select('id','name','pickup_plan_id','picktime','created_at','status','number')->where('branch_id', $branchId)->where('status', 'applied')->with([
-            'proofOfPickup' => function($q) {
-                $q->select('id','pickup_id','status','driver_pick','status_pick','created_at','number');
-            }, 'pickupPlan' => function($q) {
-                $q->select('id', 'number');
-            }])->whereNotNull('pickup_plan_id');
+        $pickup = $this->pop->with(['pickup' => function($q) {
+            $q->whereNotNull('pickup_plan_id');
+        },'pickup.pickupPlan']);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -250,9 +247,9 @@ class ProofOfPickupRepository
                 $order = 'desc';
             }
             switch ($sort['field']) {
-                case 'name':
+                case 'pickup.name':
                     $pickup = $pickup->sortable([
-                        'name' => $order
+                        'pickup.name' => $order
                     ]);
                     break;
                 case 'id':
@@ -260,14 +257,34 @@ class ProofOfPickupRepository
                         'id' => $order
                     ]);
                     break;
-                case 'pickup_plan_id':
+                case 'number':
                     $pickup = $pickup->sortable([
-                        'pickup_plan_id' => $order
+                        'number' => $order
                     ]);
                     break;
-                case 'picktime':
+                case 'pickup.number':
                     $pickup = $pickup->sortable([
-                        'picktime' => $order
+                        'pickup.number' => $order
+                    ]);
+                    break;
+                case 'pickup.picktime':
+                    $pickup = $pickup->sortable([
+                        'pickup.picktime' => $order
+                    ]);
+                    break;
+                case 'pickup.created_at':
+                    $pickup = $pickup->sortable([
+                        'pickup.created_at' => $order
+                    ]);
+                    break;
+                case 'status':
+                    $pickup = $pickup->sortable([
+                        'status' => $order
+                    ]);
+                    break;
+                case 'status_pick':
+                    $pickup = $pickup->sortable([
+                        'status_pick' => $order
                     ]);
                     break;
                 default:
