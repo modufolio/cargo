@@ -44,7 +44,7 @@ class ServiceController extends BaseController
             'sort'
         ]);
         try {
-            $result = $this->serviceService->getPaginate($data);
+            $result = $this->serviceService->getPaginateService($data);
         } catch (Exception $th) {
             return $this->sendError($e->getMessage());
         }
@@ -92,7 +92,7 @@ class ServiceController extends BaseController
      * delete service.
      *
      */
-    public function update(Request $request)
+    public function delete(Request $request)
     {
         $data = $request->only([
             'serviceId'

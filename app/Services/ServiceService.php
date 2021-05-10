@@ -37,7 +37,7 @@ class ServiceService {
     /**
      * get paginate
      */
-    public function getPaginate($data = [])
+    public function getPaginateService($data = [])
     {
         try {
             $result = $this->serviceRepository->getPaginateRepo($data);
