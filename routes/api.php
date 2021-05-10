@@ -181,7 +181,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('get-by-pickup-name-phone', [UserController::class, 'getByPickupNamePhone']);
             Route::post('get-default-by-pickup-name-phone', [UserController::class, 'getDefaultByPickupNamePhone']);
             Route::post('get-default-by-name-phone', [UserController::class, 'getDefaultByNamePhone']);
-            Route::post('search-by-name-phone', [UserController::class, 'getByNamePhone']);
+            Route::post('search-by-name-phone', [UserController::class, 'getByNamePhoneEmail']);
         });
 
         // Role
