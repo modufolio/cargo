@@ -64,7 +64,7 @@ class ItemRepository
     }
 
     /**
-     * Save Item Address
+     * Save Item
      *
      * @param Pickup $data
      * @return Item
@@ -156,5 +156,32 @@ class ItemRepository
             $result[] = $item;
         }
         return $result;
+    }
+
+    /**
+     * Update Item on drop order
+     *
+     * @param Pickup $data
+     * @return Item
+     */
+    public function updateItemDrop($pickup, $items)
+    {
+        // DELETE OLD ITEM
+        $this->item->where('pickup_id', $pickup['id'])->delete();
+
+        // SAVE NEW ITEM
+        $pickup = $this->pickup->find($pickup['id']);
+        $item = [];
+        foreach ($items as $key => $value) {
+            $item[] = $pickup->items()->create($value);
+            // $data = new $this->item;
+            // $data->service_id = $value['service_id'] ?? NULL;
+            // $data->name = $value['name'];
+            // $data->weight = $value['weight'];
+            // $data->volume = $value['volume'];
+            // $data->save();
+            // $item[] = $data;
+        }
+        return $item;
     }
 }

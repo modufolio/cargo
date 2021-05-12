@@ -169,6 +169,31 @@ class UserRepository
     }
 
     /**
+     * First or Create User
+     *
+     * @param array $data
+     * @return User
+     */
+    public function firstOrCreate($data = [])
+    {
+        $user = $this->user->firstOrCreate(
+            [
+                'email' => strtolower($data['email'])
+            ],
+            [
+                'name' => $data['name'],
+                'password' => bcrypt($data['password']),
+                'username' => $data['username'],
+                'role_id' => $data['role_id'],
+                'branch_id' => $data['branch_id'] ?? null,
+                'google_id' => $data['google_id'] ?? null,
+                'phone' => $data['phone'] ?? null
+            ]
+        );
+        return $user;
+    }
+
+    /**
      * Update User
      *
      * @param $data

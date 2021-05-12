@@ -118,7 +118,7 @@ class PickupRepository
         $isDrop = $data['isDrop'];
         $sort = $data['sort'];
 
-        $pickup = $this->pickup->where('is_drop', $data['isDrop'])->with(['user','sender','receiver','debtor','fleet','promo']);
+        $pickup = $this->pickup->where('is_drop', $data['isDrop'])->with(['user','sender','receiver','debtor','fleet','promo','items','items.service','cost']);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -1638,6 +1638,36 @@ class PickupRepository
         $pickup->created_by         = $data['userId'];
         $pickup->status             = 'request';
         $pickup->number             = IdGenerator::generate($config);
+        $pickup->is_drop            = $isDrop;
+        $pickup->save();
+
+        return $pickup;
+    }
+
+    /**
+     * Edit Pickup by admin
+     *
+     * @param array $data
+     * @param Promo $promo
+     * @param object $customer
+     * @param boolean $isDrop
+     * @return Pickup
+     */
+    public function editPickupAdminRepo($data, $promo, $customer, $isDrop)
+    {
+        $pickup = $this->pickup->find($data['id']);
+
+        $pickup->fleet_id           = $data['fleetId'];
+        $pickup->user_id            = $customer['id'];
+        $pickup->promo_id           = $promo['id'] ?? null;
+        $pickup->name               = $data['name'];
+        $pickup->phone              = $data['phone'];
+        $pickup->sender_id          = $data['senderId'];
+        $pickup->receiver_id        = $data['receiverId'];
+        $pickup->debtor_id          = $data['debtorId'];
+        $pickup->notes              = $data['notes'];
+        $pickup->picktime           = $data['picktime'];
+        $pickup->updated_by         = $data['userId'];
         $pickup->is_drop            = $isDrop;
         $pickup->save();
 

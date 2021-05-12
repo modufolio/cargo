@@ -260,6 +260,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('get-by-pickup-plan', [PickupController::class, 'getByPickupPlan']);
             Route::post('get-by-shipment-plan', [PickupController::class, 'getByShipmentPlan']);
             Route::post('create-pickup-admin', [PickupController::class, 'createPickupAdmin']);
+            Route::post('edit-pickup-admin', [PickupController::class, 'editPickupAdmin']);
             Route::post('delete', [PickupController::class, 'deletePickup']);
         });
 
