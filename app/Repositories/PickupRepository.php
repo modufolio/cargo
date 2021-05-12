@@ -115,9 +115,10 @@ class PickupRepository
         $district = $data['district'];
         $village = $data['village'];
         $picktime = $data['picktime'];
+        $isDrop = $data['isDrop'];
         $sort = $data['sort'];
 
-        $pickup = $this->pickup->with(['user','sender','receiver','debtor','fleet','promo']);
+        $pickup = $this->pickup->where('is_drop', $data['isDrop'])->with(['user','sender','receiver','debtor','fleet','promo']);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -1574,7 +1575,7 @@ class PickupRepository
      * @param Promo $promo
      * @return Pickup
      */
-    public function createDropRepo($data, $promo)
+    public function createDropAdminRepo($data, $promo)
     {
         $config = [
             'table' => 'pickups',
@@ -1609,9 +1610,11 @@ class PickupRepository
      *
      * @param array $data
      * @param Promo $promo
+     * @param object $customer
+     * @param boolean $isDrop
      * @return Pickup
      */
-    public function createPickupAdminRepo($data, $promo, $customer)
+    public function createPickupAdminRepo($data, $promo, $customer, $isDrop)
     {
         $config = [
             'table' => 'pickups',
@@ -1635,6 +1638,7 @@ class PickupRepository
         $pickup->created_by         = $data['userId'];
         $pickup->status             = 'request';
         $pickup->number             = IdGenerator::generate($config);
+        $pickup->is_drop            = $isDrop;
         $pickup->save();
 
         return $pickup;

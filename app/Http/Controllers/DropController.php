@@ -207,19 +207,20 @@ class DropController extends BaseController
     }
 
     /**
-     * create drop by admin.
+     * create drop admin.
      */
-    public function create(Request $request)
+    public function createDropAdmin(Request $request)
     {
         $data = $request->only([
             'userId',
             'items',
             'form',
+            'customer',
             'branchId'
         ]);
         DB::beginTransaction();
         try {
-            $result = $this->pickupService->createDropService($data);
+            $result = $this->pickupService->createDropAdminService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());

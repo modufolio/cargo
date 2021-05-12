@@ -318,10 +318,10 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
 
         // Drop
         Route::prefix('drop')->group(function() {
-            Route::post('paginate', [DropController::class, 'paginate']);
-            Route::post('get-by-pickup-plan', [DropController::class, 'getByPickupPlan']);
-            Route::post('get-by-shipment-plan', [DropController::class, 'getByShipmentPlan']);
-            Route::post('create', [DropController::class, 'create']);
+            Route::post('paginate', [PickupController::class, 'paginate']);
+            // Route::post('get-by-pickup-plan', [DropController::class, 'getByPickupPlan']);
+            // Route::post('get-by-shipment-plan', [DropController::class, 'getByShipmentPlan']);
+            Route::post('create-pickup-admin', [PickupController::class, 'createPickupAdmin']);
             Route::post('delete', [DropController::class, 'deletePickup']);
         });
     });

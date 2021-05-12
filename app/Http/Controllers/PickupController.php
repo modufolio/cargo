@@ -79,7 +79,8 @@ class PickupController extends BaseController
             'village',
             'picktime',
             'sort',
-            'number'
+            'number',
+            'isDrop'
         ]);
         try {
             $result = $this->pickupService->getAllPaginate($data);
@@ -215,7 +216,9 @@ class PickupController extends BaseController
             'userId',
             'items',
             'form',
-            'customer'
+            'customer',
+            'branchId',
+            'isDrop'
         ]);
         DB::beginTransaction();
         try {
