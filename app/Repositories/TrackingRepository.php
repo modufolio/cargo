@@ -4,10 +4,14 @@ namespace App\Repositories;
 
 use App\Models\Tracking;
 use App\Models\PickupDriverLog;
-use Carbon\Carbon;
-use InvalidArgumentException;
+
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+
+use InvalidArgumentException;
+
+use Carbon\Carbon;
+use Intervention\Image\Facades\Image;
 
 class TrackingRepository
 {
@@ -61,11 +65,17 @@ class TrackingRepository
      */
     public function uploadTrackingPicture($request)
     {
-        $tracking               = $request->file('picture');
-        $tracking_extension     = $tracking->getClientOriginalExtension();
+        $file                   = $request->file('picture');
+        $tracking_extension     = $file->getClientOriginalExtension();
         $timestamp              = Carbon::now('Asia/Jakarta')->timestamp;
         $file_name              = 'tracking'.$timestamp.'.'.$tracking_extension;
-        Storage::disk('storage_tracking')->put($file_name,  File::get($tracking));
+        $tracking = Image::make($file->path());
+        $tracking->resize(null, 400, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+        $tracking = $tracking->save(storage_path('app/public/upload/tracking/').$file_name);
+        // Storage::disk('storage_tracking')->put($file_name,  File::get($tracking));
         $tracking_url           = '/upload/tracking/'.$file_name;
         return [
             'base_url' => env('APP_URL').'/public/storage',

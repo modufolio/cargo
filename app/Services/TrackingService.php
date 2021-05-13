@@ -83,7 +83,7 @@ class TrackingService {
     public function uploadTrackingPictureService($request)
     {
         $validator = Validator::make($request->all(), [
-            'picture' => 'required|file|max:500|mimes:jpg,png,jpeg',
+            'picture' => 'required|file|max:1024|mimes:jpg,png,jpeg',
         ]);
 
         if ($validator->fails()) {
