@@ -179,7 +179,8 @@ return [
         App\Providers\TelescopeServiceProvider::class,
         // Laravolt\Indonesia\ServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
-        Spatie\DirectoryCleanup\DirectoryCleanupServiceProvider::class
+        Spatie\DirectoryCleanup\DirectoryCleanupServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class
     ],
 
     /*
@@ -234,6 +235,7 @@ return [
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         // 'Indonesia' => Laravolt\Indonesia\Facade::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Image' => Intervention\Image\Facades\Image::class
     ],
 
 ];

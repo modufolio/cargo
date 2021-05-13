@@ -15,6 +15,7 @@
         "google/apiclient": "^2.9",
         "guzzlehttp/guzzle": "^7.0.1",
         "haruncpi/laravel-id-generator": "^1.0",
+        "intervention/image": "^2.5",
         "kyslik/column-sortable": "^6.4",
         "laravel-lang/lang": "~8.0",
         "laravel/framework": "^8.12",

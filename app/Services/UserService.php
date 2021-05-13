@@ -359,7 +359,7 @@ class UserService {
     public function uploadAvatarService($request)
     {
         $validator = Validator::make($request->all(), [
-            'avatar' => 'required|file|image|max:512|mimes:jpeg,jpg,png',
+            'avatar' => 'required|file|image|max:1024|mimes:jpeg,jpg,png',
         ]);
 
         if ($validator->fails()) {

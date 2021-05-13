@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 use Carbon\Carbon;
+use Intervention\Image\Facades\Image;
 
 class UserRepository
 {
@@ -363,11 +364,18 @@ class UserRepository
      */
     public function uploadAvatar($request)
     {
-        $avatar              = $request->file('avatar');
-        $avatar_extension    = $avatar->getClientOriginalExtension();
+        $file              = $request->file('avatar');
+        $avatar_extension  = $file->getClientOriginalExtension();
         $timestamp = Carbon::now('Asia/Jakarta')->timestamp;
-        Storage::disk('storage_profile')->put('avatar'.$timestamp.'.'.$avatar_extension,  File::get($avatar));
-        $avatar_url              = '/upload/profile/avatar'.$timestamp.'.'.$avatar_extension;
+        $avatar = Image::make($file->path());
+        $avatar->resize(null, 400, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+        $name = 'avatar'.$timestamp.'.'.$avatar_extension;
+        $avatar = $avatar->save(storage_path('app/public/upload/profile/').$name);
+        // Storage::disk('storage_profile')->put($name, File::get($avatar));
+        $avatar_url              = '/upload/profile/'.$name;
         return [
             'base_url' => env('APP_URL').'/public/storage',
             'path' => $avatar_url
