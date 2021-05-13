@@ -1292,4 +1292,19 @@ class PickupService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * get all order in branch
+     */
+    public function getOrderOnBranchService($branchId)
+    {
+        try {
+            $order = $this->pickupRepository->getOrderOnBranchRepo($branchId);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $order;
+    }
 }

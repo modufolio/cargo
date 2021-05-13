@@ -265,4 +265,19 @@ class RouteService {
         DB::commit();
         return $result;
     }
+
+    /**
+     * get total route service
+     */
+    public function getTotalRouteService()
+    {
+        try {
+            $result = $this->routeRepository->getTotalRouteRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+        return $result;
+    }
 }

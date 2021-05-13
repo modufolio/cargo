@@ -31,6 +31,7 @@ use App\Http\Controllers\TransitController;
 use App\Http\Controllers\ProofOfDeliveryController;
 use App\Http\Controllers\DropController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\DashboardController;
 
 
 // All Authenticated User
@@ -324,6 +325,11 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             // Route::post('get-by-shipment-plan', [DropController::class, 'getByShipmentPlan']);
             Route::post('create-pickup-admin', [PickupController::class, 'createPickupAdmin']);
             Route::post('cancel', [DropController::class, 'cancelPickup']);
+        });
+
+        // DASHBOARD
+        Route::prefix('dashboard')->group(function() {
+            Route::post('card', [DashboardController::class, 'getCardData']);
         });
     });
 

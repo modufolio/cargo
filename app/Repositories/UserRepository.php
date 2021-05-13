@@ -490,4 +490,15 @@ class UserRepository
         })->orderBy('id', 'desc')->get()->take(10);
         return $user;
     }
+
+    /**
+     * get total customer
+     */
+    public function getTotalCustomerRepo()
+    {
+        $user = $this->user->whereHas('role', function($q) {
+            $q->where('slug', 'customer');
+        })->get()->count();
+        return $user;
+    }
 }

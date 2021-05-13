@@ -306,4 +306,13 @@ class RouteRepository
         ])->first();
         return $route;
     }
+
+    /**
+     * get total route
+     */
+    public function getTotalRouteRepo()
+    {
+        $route = $this->route->get()->count();
+        return $route;
+    }
 }

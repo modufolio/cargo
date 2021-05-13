@@ -277,4 +277,13 @@ class VehicleRepository
         $data = $this->vehicle::all()->take(10);
         return $data;
     }
+
+    /**
+     * get total vehicle
+     */
+    public function getTotalVehicleRepo()
+    {
+        $data = $this->vehicle->get()->count();
+        return $data;
+    }
 }

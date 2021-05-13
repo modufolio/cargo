@@ -173,4 +173,19 @@ class VehicleService {
         }
         return $result;
     }
+
+    /**
+     * get total vehicle
+     */
+    public function getTotalVehicleService()
+    {
+        try {
+            $data = $this->vehicleRepository->getTotalVehicleRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mendapat data total kendaraan');
+        }
+        return $data;
+    }
 }

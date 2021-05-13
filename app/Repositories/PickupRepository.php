@@ -1688,4 +1688,13 @@ class PickupRepository
         $drop->save();
         return $drop;
     }
+
+    /**
+     * get all order in branch
+     */
+    public function getOrderOnBranchRepo($branchId)
+    {
+        $order = $this->pickup->where('branch_id', $branchId)->count();
+        return $order;
+    }
 }
