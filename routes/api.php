@@ -323,7 +323,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             // Route::post('get-by-pickup-plan', [DropController::class, 'getByPickupPlan']);
             // Route::post('get-by-shipment-plan', [DropController::class, 'getByShipmentPlan']);
             Route::post('create-pickup-admin', [PickupController::class, 'createPickupAdmin']);
-            Route::post('delete', [DropController::class, 'deletePickup']);
+            Route::post('cancel', [DropController::class, 'cancelPickup']);
         });
     });
 

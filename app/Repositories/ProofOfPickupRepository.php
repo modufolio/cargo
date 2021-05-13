@@ -395,4 +395,23 @@ class ProofOfPickupRepository
         $pop->notes = $data['proof_of_pickup']['notes'];
         $pop->save();
     }
+
+    /**
+     * cancel pop repo
+     * @param array $data
+     */
+    public function cancelPopRepo($data = [])
+    {
+        $pickup = $this->pickup->find($data['pickupId']);
+        if ($pickup->shipment_plan_id !== null) {
+            throw new InvalidArgumentException('POP tidak dapat dibatalkan, karena shipment plan pada drop order sudah terbuat');
+        }
+        $pop = $pickup->proofOfPickup;
+        if (!$pop) {
+            throw new InvalidArgumentException('Proof of pickup tidak ditemukan');
+        }
+        $pop->status = 'cancelled';
+        $pop->save();
+        return $pop;
+    }
 }

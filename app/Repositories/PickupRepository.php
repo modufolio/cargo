@@ -1673,4 +1673,19 @@ class PickupRepository
 
         return $pickup;
     }
+
+    /**
+     * cancel drop by admin
+     */
+    public function cancelDropRepo($pickupId)
+    {
+        $drop = $this->pickup->find($data['id']);
+        if ($drop->shipment_plan_id !== null) {
+            throw new InvalidArgumentException('Drop order tidak dapat dibatalkan, karena shipment plan sudah terbuat');
+        }
+        $drop->updated_by         = $data['userId'];
+        $drop->status             = 'cancelled';
+        $drop->save();
+        return $drop;
+    }
 }

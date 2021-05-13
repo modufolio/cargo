@@ -1237,4 +1237,59 @@ class PickupService {
 		];
 		return $result;
 	}
+
+    /**
+     * cancel drop order
+     */
+    public function cancelDropService($data = [])
+    {
+        $validator = Validator::make($data, [
+			'userId' => 'bail|required',
+			'pickupId' => 'bail|required'
+		]);
+
+		if ($validator->fails()) {
+			throw new InvalidArgumentException($validator->errors()->first());
+		}
+
+		DB::beginTransaction();
+        // CANCEL DROP
+        try {
+            $drop = $this->pickupRepository->cancelDropRepo($data['pickupId']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // CANCEL PICKUP PLAN
+        try {
+            $pickupPlan = $this->pickupPlanRepository->cancelPickupPlanRepo($drop['pickup_plan_id']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        // CANCEL POP
+        try {
+            $pop = $this->popRepository->cancelPopRepo($data['pickupId']);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        $result = [
+            'pop' => $pop,
+            'pickupPlan' -> $pickupPlan,
+            'drop' => $drop
+        ];
+
+        DB::commit();
+        return $result;
+    }
 }

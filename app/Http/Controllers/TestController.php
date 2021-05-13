@@ -58,7 +58,11 @@ class TestController extends BaseController
      */
     public function index()
     {
-        $data = Pickup::where('shipment_plan_id', 2)->with('items')->get()->pluck('items');
+        $data = Pickup::find(50);
+        $pop = $data->proofOfPickup;
+        $pop->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
+        $pop->save();
+        return response()->json($pop);
         $items = collect($data)->flatten()->toArray();
         // return $items;
         $volume = array_sum(array_column($items, 'volume'));

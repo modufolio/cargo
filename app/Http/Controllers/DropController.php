@@ -230,9 +230,9 @@ class DropController extends BaseController
     }
 
     /**
-     * delete pickup
+     * cancel pickup
      */
-    public function deletePickup(Request $request)
+    public function cancelPickup(Request $request)
     {
         $data = $request->only([
             'userId',
@@ -240,7 +240,7 @@ class DropController extends BaseController
         ]);
         DB::beginTransaction();
         try {
-            $result = $this->pickupService->deletePickupService($data);
+            $result = $this->pickupService->cancelDropService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());
