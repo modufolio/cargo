@@ -150,6 +150,7 @@ class ItemRepository
             $item->weight = $value['weight'];
             $item->type = $value['type'];
             $item->volume = $value['volume'];
+            $item->unit = $value['unit'];
             $item->price = $value['price'] ?? null;
             $item->service_id = $value['service_id'] ?? null;
             $item->save();

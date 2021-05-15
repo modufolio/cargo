@@ -80,6 +80,7 @@ class BillRepository
                 $data['weight']     = $value['weight'];
                 $data['type']       = $value['type'];
                 $data['volume']     = $value['volume'];
+                $data['unit']       = $value['unit'] ?? 'buah';
                 $data['service']    = $service ?? null;
                 $itemData[] = $data;
             }
@@ -159,6 +160,7 @@ class BillRepository
                 $data['unit_count'] = $value['unit_count'];
                 $data['service']    = $service ?? null;
                 $data['service_id'] = $value['service_id'];
+                $data['unit']       = $value['unit'] ?? 'buah';
                 $itemData[]         = $data;
             }
             $total = array_sum(array_column($itemData, 'price'));
