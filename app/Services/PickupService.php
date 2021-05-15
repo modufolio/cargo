@@ -702,13 +702,28 @@ class PickupService {
 				'amount' => $bill->total_price
 			];
 			try {
-				$this->costRepository->saveCostRepo($cost);
+				$cost = $this->costRepository->saveCostRepo($cost);
 			} catch (Exception $e) {
 				DB::rollback();
 				Log::info($e->getMessage());
 				Log::error($e);
 				throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menyimpan total biaya');
 			}
+
+            // UPDATE PAYMENT
+        try {
+            $payload = [
+                'id' => $cost['id'],
+                'method' => $data['form']['paymentMethod'],
+                'dueDate' => $data['form']['paymentDueDate']
+            ];
+            $this->costRepository->updatePaymentMethod($payload);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mengubah metode pembayaran');
+        }
 			// END CALCULATE BILL
 
             // TRACKING TIDAK DILAKUKAN KARENA MASUK KE DROP

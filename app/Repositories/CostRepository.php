@@ -31,6 +31,20 @@ class CostRepository
     }
 
     /**
+     * update payment method
+     */
+    public function updatePaymentMethod($data = [])
+    {
+        $cost = $this->cost->find($data['id']);
+        if (strtolower($data['method']) == 'tempo') {
+            $cost->due_date = $data['dueDate'];
+        }
+        $cost->method = $data['method'];
+        $cost->save();
+        return $cost;
+    }
+
+    /**
      * update amount cost by pickup
      *
      * @param array $data
