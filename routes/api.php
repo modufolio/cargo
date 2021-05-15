@@ -156,7 +156,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
 
             // proof of delivery
             Route::prefix('pod')->group(function() {
-                Route::get('submit', [ProofOfDeliveryController::class, 'submitDriver']);
+                Route::post('submit', [ProofOfDeliveryController::class, 'submitDriver']);
             });
 
             // item
