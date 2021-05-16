@@ -103,12 +103,14 @@ class ProofOfDeliveryController extends BaseController
             'pickupId',
             'notes'
         ]);
+        DB::beginTransaction();
         try {
             $result = $this->podService->updateStatusDeliveryPODService($data);
         } catch (Exception $e) {
             DB::rollback();
             return $this->sendError($e->getMessage());
         }
+        DB::commit();
         return $this->sendResponse(null, $result);
     }
 

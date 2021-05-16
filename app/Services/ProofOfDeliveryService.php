@@ -418,6 +418,7 @@ class ProofOfDeliveryService {
                 throw new InvalidArgumentException($e->getMessage());
             }
             if ($totalRedelivery >= 3) {
+                DB::rollback();
                 throw new InvalidArgumentException('Order ini tidak dapat dilakukan pengiriman ulang');
             } else {
                 $totalRedelivery += 1;
@@ -470,7 +471,7 @@ class ProofOfDeliveryService {
             throw new InvalidArgumentException('Gagal menyimpan data tracking');
         }
         // END OF RECORD TRACKING
-
+        DB::commit();
         return $result;
     }
 
