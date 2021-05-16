@@ -154,28 +154,39 @@ class ShipmentPlanRepository
     }
 
     /**
-     * get po shipment plan driver
+     * get po in shipment plan driver
      */
     public function getPickupOrderDriverShipmentPlanListRepo($data = [])
     {
         $userId = $data['userId'];
         $shipmentPlanId = $data['shipmentPlanId'];
         $filter = $data['filter'];
-        $result = $this->pickup
+        $pickup = $this->pickup
+            ->whereNotNull('pickup_plan_id')
+            ->where('shipment_plan_id', $shipmentPlanId)
             ->where('is_transit', false)
             ->with(['receiver'])
-            ->whereHas('shipmentPlan', function ($q) use ($userId, $shipmentPlanId) {
-                $q->where('id', $shipmentPlanId)->whereHas('vehicle', function($q) use ($userId) {
+            ->whereHas('shipmentPlan', function ($q) use ($userId) {
+                $q->whereHas('vehicle', function($q) use ($userId) {
                     $q->whereHas('driver', function($q) use ($userId) {
                         $q->where('user_id', $userId);
                     });
                 });
             });
-        $result = $result->whereHas('receiver', function($q) use ($filter) {
-            $q->where('street' , 'ilike', '%'.$filter.'%');
-        })->orWhere('number', 'ilike', '%'.$filter.'%')
-        ->orWhere('name', 'ilike', '%'.$filter.'%');
-        $result = $result->paginate(10);
+        if ($filter) {
+            $pickup = $pickup->where(function($q) use ($filter) {
+                $q->whereHas('receiver', function($q) use ($filter) {
+                    $q->where('street' , 'ilike', '%'.$filter.'%')
+                        ->orWhere('province', 'ilike', '%'.$filter.'%')
+                        ->orWhere('name', 'ilike', '%'.$filter.'%')
+                        ->orWhere('district', 'ilike', '%'.$filter.'%')
+                        ->orWhere('village', 'ilike', '%'.$filter.'%')
+                        ->orWhere('postal_code', 'ilike', '%'.$filter.'%')
+                        ->orWhere('city', 'ilike', '%'.$filter.'%');
+                })->orWhere('number', 'ilike', '%'.$filter.'%')->orWhere('name', 'ilike', '%'.$filter.'%');
+            });
+        }
+        $result = $pickup->paginate(10);
         return $result;
     }
 
