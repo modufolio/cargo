@@ -300,7 +300,9 @@ class ProofOfPickupRepository
         }
 
         if (!empty($poNumber)) {
-            $pickup = $pickup->where('number', 'ilike', '%'.$poNumber.'%');
+            $pickup = $pickup->whereHas('pickup', function($q) use ($poNumber) {
+                $q->where('number', 'ilike', '%'.$poNumber.'%');
+            });
         }
 
         if (!empty($poPickupDate)) {
