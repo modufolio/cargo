@@ -67,6 +67,10 @@ class CostRepository
      */
     public function editCostRepo($data = [])
     {
-        return $this->cost->where('pickup_id', $data['pickupId'])->update(['amount' => $data['amount']]);
+        return $this->cost->where('pickup_id', $data['pickupId'])->update([
+            'amount' => $data['amount'],
+            'due_date' => $data['dueDate'],
+            'method' => $data['method']
+        ]);
     }
 }

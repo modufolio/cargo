@@ -1228,15 +1228,18 @@ class PickupService {
 
 			$cost = [
 				'pickupId' => $pickup['id'],
-				'amount' => $bill->total_price
+				'amount' => $bill->total_price,
+                'method' => $data['form']['paymentMethod'],
+                'dueDate' => $data['form']['paymentDueDate']
 			];
+            // UPDATE COST
 			try {
 				$this->costRepository->editCostRepo($cost);
 			} catch (Exception $e) {
 				DB::rollback();
 				Log::info($e->getMessage());
 				Log::error($e);
-				throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mengubah total biaya');
+				throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mengubah total biaya dan metode pembayaran');
 			}
 			// END CALCULATE BILL
 
