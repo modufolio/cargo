@@ -29,6 +29,12 @@ class ServiceSeeder extends Seeder
                 'price'         => 1000,
                 'created_at'    => Carbon::now('Asia/Jakarta'),
                 'updated_at'    => Carbon::now('Asia/Jakarta'),
+            ],
+            [
+                'name'          => 'Tanpa Layanan',
+                'price'         => 0,
+                'created_at'    => Carbon::now('Asia/Jakarta'),
+                'updated_at'    => Carbon::now('Asia/Jakarta'),
             ]
         ]);
         DB::commit();
