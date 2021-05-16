@@ -165,7 +165,7 @@ class ShipmentPlanRepository
             ->whereNotNull('pickup_plan_id')
             ->where('shipment_plan_id', $shipmentPlanId)
             ->where('is_transit', false)
-            ->with(['receiver'])
+            ->with(['receiver','proofOfDelivery'])
             ->whereHas('shipmentPlan', function ($q) use ($userId) {
                 $q->whereHas('vehicle', function($q) use ($userId) {
                     $q->whereHas('driver', function($q) use ($userId) {
