@@ -252,6 +252,8 @@ class ShipmentPlanController extends BaseController
     {
         $data = $request->only([
             'userId',
+            'startDate',
+            'endDate'
         ]);
         DB::beginTransaction();
         try {

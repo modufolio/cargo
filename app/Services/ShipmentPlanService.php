@@ -393,6 +393,8 @@ class ShipmentPlanService {
     {
         $validator = Validator::make($data, [
             'userId' => 'required',
+            'startDate' => 'bail|present',
+            'endDate' => 'bail|present'
         ]);
 
         if ($validator->fails()) {
@@ -400,7 +402,6 @@ class ShipmentPlanService {
         }
 
         DB::beginTransaction();
-        // SHIPMENT PLAN
         try {
             $result = $this->shipmentPlanRepository->getDriverShipmentPlanListRepo($data);
         } catch (Exception $e) {

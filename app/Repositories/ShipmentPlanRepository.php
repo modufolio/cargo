@@ -141,7 +141,9 @@ class ShipmentPlanRepository
     public function getDriverShipmentPlanListRepo($data = [])
     {
         $userId = $data['userId'];
-        $result = $this->shipmentPlan
+        $startDate = $data['startDate'];
+        $endDate = $data['endDate'];
+        $shipmentPlan = $this->shipmentPlan
             ->with(['pickups' => function($q) {
                 $q->where('is_transit', false);
             }])
@@ -149,7 +151,13 @@ class ShipmentPlanRepository
                 $q->whereHas('driver', function($q) use ($userId) {
                     $q->where('user_id', $userId);
                 });
-            })->get();
+            });
+        if (!empty($startDate) && !empty($endDate)) {
+            $shipmentPlan = $shipmentPlan
+                ->whereDate('created_at', '>=', date($startDate))
+                ->whereDate('created_at', '<=', date($endDate));
+        }
+        $result = $shipmentPlan->get();
         return $result;
     }
 
