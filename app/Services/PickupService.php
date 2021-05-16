@@ -441,7 +441,7 @@ class PickupService {
 			$payload = [
 				'email' => $data['customer']['email'],
 				'name' => $data['customer']['name'],
-				'username' => $username,
+				'username' => $username[0],
 				'role_id' => 1,
 				'branch_id' => $data['customer']['branchId'],
 				'phone' => $data['customer']['phone'],
