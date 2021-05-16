@@ -32,7 +32,7 @@ use App\Http\Controllers\ProofOfDeliveryController;
 use App\Http\Controllers\DropController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\FinanceController;
 
 // All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], function () {
@@ -330,6 +330,13 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
         // DASHBOARD
         Route::prefix('dashboard')->group(function() {
             Route::post('card', [DashboardController::class, 'getCardData']);
+        });
+
+        // FINANCE
+        Route::prefix('finance')->group(function() {
+            Route::prefix('pickup')->group(function() {
+                Route::post('paginate', [FinanceController::class, 'getFinancePickupPaginate']);
+            });
         });
     });
 

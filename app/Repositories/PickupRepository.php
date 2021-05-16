@@ -1697,4 +1697,121 @@ class PickupRepository
         $order = $this->pickup->where('branch_id', $branchId)->count();
         return $order;
     }
+
+    /**
+     * get finished pickup order paginate
+     * @param array $data
+     */
+    public function getFinishedPickupRepo($data = [])
+    {
+        $perPage = $data['perPage'];
+        $page = $data['page'];
+        $sort = $data['sort'];
+
+        $number = $data['number'];
+        $name = $data['name'];
+        $receiver = $data['receiver'];
+        $debtor = $data['debtor'];
+        $paymentMethod = $data['paymentMethod'];
+
+        $branchId = $data['branchId'];
+
+        $dateFrom = $data['dateFrom'];
+        $dateTo = $data['dateTo'];
+
+        $pickup = $this->pickup->where('branch_id', $branchId)
+            ->whereNotNull('pickup_plan_id')
+            // ->whereHas('proofOfDelivery', function($q) {
+            //     $q->where('status_delivery', 'success');
+            // })
+            ->with(['user','sender','receiver','debtor','cost']);
+
+        if (empty($perPage)) {
+            $perPage = 10;
+        }
+
+        if (!empty($sort['field'])) {
+            $order = $sort['order'];
+            if ($order == 'ascend') {
+                $order = 'asc';
+            } else if ($order == 'descend') {
+                $order = 'desc';
+            } else {
+                $order = 'desc';
+            }
+            switch ($sort['field']) {
+                case 'number':
+                    $pickup = $pickup->sortable([
+                        'number' => $order
+                    ]);
+                    break;
+                case 'name':
+                    $pickup = $pickup->sortable([
+                        'name' => $order
+                    ]);
+                    break;
+                case 'receiver.name':
+                    $pickup = $pickup->sortable([
+                        'receiver.name' => $order
+                    ]);
+                    break;
+                case 'debtor.name':
+                    $pickup = $pickup->sortable([
+                        'debtor.name' => $order
+                    ]);
+                    break;
+                case 'cost.method':
+                    $pickup = $pickup->sortable([
+                        'cost.method' => $order
+                    ]);
+                    break;
+                case 'created_at':
+                    $pickup = $pickup->sortable([
+                        'created_at' => $order
+                    ]);
+                    break;
+                default:
+                    $pickup = $pickup->sortable([
+                        'id' => 'desc'
+                    ]);
+                    break;
+            }
+        }
+
+        if (!empty($name)) {
+            $pickup = $pickup->where('name', 'ilike', '%'.$name.'%');
+        }
+
+        if (!empty($number)) {
+            $pickup = $pickup->where('number', 'ilike', '%'.$number.'%');
+        }
+
+        if (!empty($receiver)) {
+            $pickup = $pickup->whereHas('receiver', function($q) use ($receiver) {
+                $q->where('name', 'ilike', '%'.$receiver.'%');
+            });
+        }
+
+        if (!empty($debtor)) {
+            $pickup = $pickup->whereHas('debtor', function($q) use ($debtor) {
+                $q->where('name', 'ilike', '%'.$debtor.'%');
+            });
+        }
+
+        if (!empty($paymentMethod)) {
+            $pickup = $pickup->whereHas('cost', function($q) use ($paymentMethod) {
+                $q->where('method', 'ilike', '%'.$paymentMethod.'%');
+            });
+        }
+
+        if (!empty($dateFrom) && !empty($dateTo)) {
+            $pickup = $pickup
+                ->whereDate('created_at', '>=', date($dateFrom))
+                ->whereDate('created_at', '<=', date($dateTo));
+        }
+
+        $result = $pickup->paginate($perPage);
+
+        return $result;
+    }
 }
