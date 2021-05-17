@@ -168,20 +168,22 @@ class PickupService {
 		// END SAVE PICKUP
 
 		// SAVE ITEM
-        $validator = Validator::make($data['items'], [
-			'unit'          => 'bail|required',
-			'unit_count'    => 'bail|required',
-			'type'          => 'bail|required',
-			'name'          => 'bail|required',
-			'weight'        => 'bail|required',
-			'volume'        => 'bail|required',
-			'service_id'    => 'bail|nullable|present',
-		]);
+        foreach ($data['items'] as $key => $value) {
+            $validator = Validator::make($value, [
+                'unit'          => 'bail|required',
+                'unit_count'    => 'bail|required',
+                'type'          => 'bail|required',
+                'name'          => 'bail|required',
+                'weight'        => 'bail|required',
+                'volume'        => 'bail|required',
+                'service_id'    => 'bail|nullable|present',
+            ]);
 
-		if ($validator->fails()) {
-            DB::rollback();
-			throw new InvalidArgumentException($validator->errors()->first());
-		}
+            if ($validator->fails()) {
+                DB::rollback();
+                throw new InvalidArgumentException($validator->errors()->first());
+            }
+        }
 
 		try {
 			$items = $this->itemRepository->save($pickup, $data['items']);
@@ -680,20 +682,23 @@ class PickupService {
 			unset($items[$key]['service']);
 		}
 
-        $validator = Validator::make($data['items'], [
-			'unit'          => 'bail|required',
-			'unit_count'    => 'bail|required',
-			'type'          => 'bail|required',
-			'name'          => 'bail|required',
-			'weight'        => 'bail|required',
-			'volume'        => 'bail|required',
-			'service_id'    => 'bail|nullable|present',
-		]);
+        // SAVE ITEM
+        foreach ($data['items'] as $key => $value) {
+            $validator = Validator::make($value, [
+                'unit'          => 'bail|required',
+                'unit_count'    => 'bail|required',
+                'type'          => 'bail|required',
+                'name'          => 'bail|required',
+                'weight'        => 'bail|required',
+                'volume'        => 'bail|required',
+                'service_id'    => 'bail|nullable|present',
+            ]);
 
-		if ($validator->fails()) {
-            DB::rollback();
-			throw new InvalidArgumentException($validator->errors()->first());
-		}
+            if ($validator->fails()) {
+                DB::rollback();
+                throw new InvalidArgumentException($validator->errors()->first());
+            }
+        }
 
 		try {
 			$items = $this->itemRepository->save($pickup, $items);
@@ -1132,7 +1137,7 @@ class PickupService {
 				'password' => 'user1234'
 			];
 			try {
-				$customer = $this->userRepository->firstOrCreate($payload);
+				$customer = $this->userRepository->firstOrCreateUserRepo($payload);
 			} catch (Exception $e) {
 				DB::rollback();
 				Log::info($e->getMessage());

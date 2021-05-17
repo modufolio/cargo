@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Intervention\Image\Facades\Image;
 
+use App\Utilities\RandomStringGenerator;
+
 class UserRepository
 {
     protected $user;
@@ -154,8 +156,23 @@ class UserRepository
      */
     public function save($data)
     {
-        $user = new $this->user;
+        $roleId = $data['role_id'];
+        if ($roleId !== 2) {
+            $refferal = null;
+        }
+        if ($roleId == 2) {
+            $customAlphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            // Create new instance of generator class.
+            $generator = new RandomStringGenerator($customAlphabet);
+            // Change alphabet whenever needed.
+            $generator->setAlphabet($customAlphabet);
+            // Set token length.
+            $tokenLength = 7;
+            // Call method to generate random string.
+            $refferal = $generator->generate($tokenLength);
+        }
 
+        $user = new $this->user;
         $user->name         = $data['name'];
         $user->email        = strtolower($data['email']);
         $user->password     = bcrypt($data['password']);
@@ -164,6 +181,7 @@ class UserRepository
         $user->branch_id    = $data['branch_id'] ?? null;
         $user->google_id    = $data['google_id'] ?? null;
         $user->phone        = $data['phone'] ?? null;
+        $user->refferal     = $refferal;
         $user->save();
 
         return $user;
@@ -175,8 +193,23 @@ class UserRepository
      * @param array $data
      * @return User
      */
-    public function firstOrCreate($data = [])
+    public function firstOrCreateUserRepo($data = [])
     {
+        $roleId = $data['role_id'];
+        if ($roleId !== 2) {
+            $refferal = null;
+        }
+        if ($roleId == 2) {
+            $customAlphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            // Create new instance of generator class.
+            $generator = new RandomStringGenerator($customAlphabet);
+            // Change alphabet whenever needed.
+            $generator->setAlphabet($customAlphabet);
+            // Set token length.
+            $tokenLength = 7;
+            // Call method to generate random string.
+            $refferal = $generator->generate($tokenLength);
+        }
         $user = $this->user->firstOrCreate(
             [
                 'email' => strtolower($data['email'])
@@ -188,6 +221,7 @@ class UserRepository
                 'role_id' => $data['role_id'],
                 'branch_id' => $data['branch_id'] ?? null,
                 'google_id' => $data['google_id'] ?? null,
+                'refferal' => $refferal,
                 'phone' => $data['phone'] ?? null
             ]
         );
@@ -217,6 +251,10 @@ class UserRepository
         return $user;
     }
 
+    /**
+     * update branch of user
+     * @param array $data
+     */
     public function updateBranchRepo($data)
     {
         $user = $this->user->find($data['userId']);
