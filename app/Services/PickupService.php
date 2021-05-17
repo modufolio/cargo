@@ -537,9 +537,7 @@ class PickupService {
             'village'           => 'bail|required',
             'street'            => 'bail|required',
             'postal_code'       => 'bail|required',
-            'notes'             => 'bail|required',
-            'name'              => 'bail|present',
-            'phone'             => 'bail|present'
+            'notes'             => 'bail|required'
         ]);
 
         if ($validator->fails()) {
