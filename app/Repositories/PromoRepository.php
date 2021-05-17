@@ -139,14 +139,16 @@ class PromoRepository
     }
 
     /**
-     * Update Promo
+     * delete Promo
      *
      * @param $data
      * @return Promo
      */
-    public function delete($id)
+    public function deletePromoRepo($data)
     {
-        $promo = $this->promo->find($id);
+        $promo = $this->promo->find($data['promoId']);
+        $promo->deleted_by = $data['userId'];
+        $promo->save();
         $promo->delete();
         return $promo;
     }

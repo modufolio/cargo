@@ -145,4 +145,24 @@ class PromoController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * delete promo.
+     *
+     * @param Request $request
+     */
+    public function delete(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+            'promoCode',
+            'promoId'
+        ]);
+        try {
+            $result = $this->promoService->deletePromoService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

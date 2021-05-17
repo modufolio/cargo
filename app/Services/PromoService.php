@@ -197,4 +197,32 @@ class PromoService {
         DB::commit();
         return $promo;
     }
+
+    /**
+     * delete promo
+     */
+    public function deletePromoService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'promoCode' => 'bail|required',
+            'promoId' => 'bail|required',
+            'userId' => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $promo = $this->promoRepository->deletePromoRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            DB::rollback();
+            throw new InvalidArgumentException('Gagal menghapus data promo');
+        }
+        DB::commit();
+        return $promo;
+    }
 }
