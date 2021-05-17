@@ -172,6 +172,10 @@ return [
         'notes' => 'Catatan',
         'shipmentPlanNumber' => 'Nomor shipment plan',
         'podNumber' => 'Nomor pickup order',
-        'picture' => 'Gambar'
+        'picture' => 'Gambar',
+        'unit_count' => 'Jumlah unit',
+        'unit' => 'Satuan',
+        'type' => 'Tipe',
+        'service_id' => 'ID Layanan'
     ],
 ];
