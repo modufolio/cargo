@@ -33,6 +33,7 @@ use App\Http\Controllers\DropController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\ReportController;
 
 // All Authenticated User
 Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], function () {
@@ -337,6 +338,11 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::prefix('pickup')->group(function() {
                 Route::post('paginate', [FinanceController::class, 'getFinancePickupPaginate']);
             });
+        });
+
+        // REPORT
+        Route::prefix('report')->group(function() {
+            Route::post('success-order', [ReportController::class, 'getReportSuccessPickupWithRange']);
         });
     });
 
