@@ -515,21 +515,7 @@ class PickupService {
 			}
 		}
 
-        // ======= VALIDATOR ADDRESS =======
-        $validator = Validator::make($data['customer'], [
-            'email'     => 'bail|required',
-            'name'      => 'bail|required',
-            'branchId'  => 'bail|required',
-            'phone'     => 'bail|required'
-        ]);
-
-        if ($validator->fails()) {
-            DB::rollback();
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
-        // ======= END VALIDATOR ADDRESS =======
-
-		// customer
+		// address customer
 		$data['form']['sender']['is_primary'] = $data['form']['receiver']['is_primary'] = $data['form']['debtor']['is_primary'] = false;
 		$data['form']['sender']['temporary'] = $data['form']['receiver']['temporary'] = $data['form']['debtor']['temporary'] = true;
 		$data['form']['sender']['title'] = $data['form']['receiver']['title'] = $data['form']['debtor']['title'] = $data['form']['name'];
@@ -537,6 +523,74 @@ class PickupService {
 
 		// user web
 		$data['form']['userId'] = $data['userId'];
+
+        // ======= VALIDATOR ADDRESS =======
+        // SENDER
+        $validator = Validator::make($data['form']['sender'], [
+            'is_primary'        => 'bail|required|boolean',
+            'temporary'         => 'bail|required|boolean',
+            'title'             => 'bail|required',
+            'userId'            => 'bail|required',
+            'province'          => 'bail|required',
+            'city'              => 'bail|required',
+            'district'          => 'bail|required',
+            'village'           => 'bail|required',
+            'street'            => 'bail|required',
+            'postal_code'       => 'bail|required',
+            'notes'             => 'bail|required',
+            'name'              => 'bail|present',
+            'phone'             => 'bail|present'
+        ]);
+
+        if ($validator->fails()) {
+            DB::rollback();
+            throw new InvalidArgumentException($validator->errors()->first().' (pada alamat pengirim)');
+        }
+
+        // RECEIVER
+        $validator = Validator::make($data['form']['receiver'], [
+            'is_primary'        => 'bail|required|boolean',
+            'temporary'         => 'bail|required|boolean',
+            'title'             => 'bail|required',
+            'userId'            => 'bail|required',
+            'province'          => 'bail|required',
+            'city'              => 'bail|required',
+            'district'          => 'bail|required',
+            'village'           => 'bail|required',
+            'street'            => 'bail|required',
+            'postal_code'       => 'bail|required',
+            'notes'             => 'bail|required',
+            'name'              => 'bail|required',
+            'phone'             => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            DB::rollback();
+            throw new InvalidArgumentException($validator->errors()->first().' (pada alamat penerima)');
+        }
+
+        // DEBTOR
+        $validator = Validator::make($data['form']['debtor'], [
+            'is_primary'        => 'bail|required|boolean',
+            'temporary'         => 'bail|required|boolean',
+            'title'             => 'bail|required',
+            'userId'            => 'bail|required',
+            'province'          => 'bail|required',
+            'city'              => 'bail|required',
+            'district'          => 'bail|required',
+            'village'           => 'bail|required',
+            'street'            => 'bail|required',
+            'postal_code'       => 'bail|required',
+            'notes'             => 'bail|required',
+            'name'              => 'bail|required',
+            'phone'             => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            DB::rollback();
+            throw new InvalidArgumentException($validator->errors()->first().' (pada alamat penagihan)');
+        }
+        // ======= END VALIDATOR ADDRESS =======
 
 		// save sender
 		try {
