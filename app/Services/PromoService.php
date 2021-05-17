@@ -60,6 +60,7 @@ class PromoService {
             $promo = $this->promoRepository->getCreatedBy($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException('Gagal mendapatkan promo yang telah dibuat pengguna ini');
         }
         return $promo;
@@ -122,5 +123,43 @@ class PromoService {
             throw new InvalidArgumentException('Gagal mendapat semua promo');
         }
         return $branch;
+    }
+
+    /**
+     * create promo service
+     *
+     * @param array $data
+     */
+    public function createPromoService($data)
+    {
+        $validator = Validator::make($data, [
+            'code' => 'bail|required',
+            'customerId' => 'bail|required',
+            'description' => 'bail|required',
+            'discount' => 'bail|required',
+            'discountMax' => 'bail|required',
+            'endAt' => 'bail|required',
+            'maxUsed' => 'bail|required',
+            'minValue' => 'bail|required',
+            'startAt' => 'bail|required',
+            'terms' => 'bail|required',
+            'userId' => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $promo = $this->promoRepository->save($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            DB::rollback();
+            throw new InvalidArgumentException('Gagal membuat promo');
+        }
+        DB::commit();
+        return $promo;
     }
 }

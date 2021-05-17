@@ -102,16 +102,16 @@ class PromoRepository
     {
         $promo = new $this->promo;
         $promo->created_by = $data['userId'];
-        $promo->user_id = $data['targetPromo'];
+        $promo->user_id = $data['customerId'];
         $promo->discount = $data['discount'];
-        $promo->discount_max = $data['discount_max'];
-        $promo->min_value = $data['min_value'];
-        $promo->start_at = $data['start_at'];
-        $promo->end_at = $data['end_at'];
-        $promo->max_used = $data['max_used'];
+        $promo->discount_max = $data['discountMax'];
+        $promo->min_value = $data['minValue'];
+        $promo->start_at = Carbon::parse($data['startAt'])->toDateTimeString();
+        $promo->end_at = Carbon::parse($data['endAt'])->toDateTimeString();
+        $promo->max_used = $data['maxUsed'];
         $promo->description = $data['description'];
         $promo->code = $data['code'];
-        $promo->term = $data['term'];
+        $promo->terms = $data['terms'];
         $promo->save();
         return $promo;
     }

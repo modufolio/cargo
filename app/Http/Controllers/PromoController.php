@@ -89,4 +89,32 @@ class PromoController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * Create promo.
+     *
+     * @param Request $request
+     */
+    public function create(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+            'code',
+            'customerId',
+            'description',
+            'discount',
+            'discountMax',
+            'endAt',
+            'maxUsed',
+            'minValue',
+            'startAt',
+            'terms'
+        ]);
+        try {
+            $result = $this->promoService->createPromoService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }
