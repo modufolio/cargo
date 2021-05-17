@@ -176,6 +176,7 @@ return [
         'unit_count' => 'Jumlah unit',
         'unit' => 'Satuan',
         'type' => 'Tipe',
-        'service_id' => 'ID Layanan'
+        'service_id' => 'ID Layanan',
+        'branchId' => 'ID Cabang'
     ],
 ];

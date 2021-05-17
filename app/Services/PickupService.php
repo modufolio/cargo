@@ -436,7 +436,7 @@ class PickupService {
 	public function createPickupAdminService($data = [])
 	{
 		$validator = Validator::make($data, [
-			'items' => 'bail|required',
+			'items' => 'bail|required|array',
 			'userId' => 'bail|required',
 			'form' => 'bail|required',
 			'customer' => 'bail|required',
@@ -448,11 +448,45 @@ class PickupService {
 			throw new InvalidArgumentException($validator->errors()->first());
 		}
 
+        $validator = Validator::make($data['form'], [
+			'name'                  => 'bail|required',
+			'phone'                 => 'bail|required',
+			'email'                 => 'bail|required',
+			'fleetId'               => 'bail|required',
+			'promoId'               => 'bail|present',
+			'notes'                 => 'bail|present',
+			'picktime'              => 'bail|required',
+			'origin'                => 'bail|required',
+			'destination_city'      => 'bail|required',
+			'destination_district'  => 'bail|required',
+            'newCustomer'           => 'bail|required|boolean',
+            'sender'                => 'bail|required',
+            'debtor'                => 'bail|required',
+            'receiver'              => 'bail|required'
+		]);
+
+		if ($validator->fails()) {
+			throw new InvalidArgumentException($validator->errors()->first());
+		}
+
 		DB::beginTransaction();
 
 		// create user
 		if ($data['form']['newCustomer'] == true) {
-			$username = explode("@", $data['customer']['email'], 2);
+
+            $validator = Validator::make($data['customer'], [
+                'email'     => 'bail|required',
+                'name'      => 'bail|required',
+                'branchId'  => 'bail|required',
+                'phone'     => 'bail|required'
+            ]);
+
+            if ($validator->fails()) {
+				DB::rollback();
+                throw new InvalidArgumentException($validator->errors()->first());
+            }
+
+            $username = explode("@", $data['customer']['email'], 2);
 			$payload = [
 				'email' => $data['customer']['email'],
 				'name' => $data['customer']['name'],
@@ -480,6 +514,20 @@ class PickupService {
 				throw new InvalidArgumentException($e->getMessage());
 			}
 		}
+
+        // ======= VALIDATOR ADDRESS =======
+        $validator = Validator::make($data['customer'], [
+            'email'     => 'bail|required',
+            'name'      => 'bail|required',
+            'branchId'  => 'bail|required',
+            'phone'     => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            DB::rollback();
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+        // ======= END VALIDATOR ADDRESS =======
 
 		// customer
 		$data['form']['sender']['is_primary'] = $data['form']['receiver']['is_primary'] = $data['form']['debtor']['is_primary'] = false;
@@ -579,6 +627,22 @@ class PickupService {
 		foreach ($items as $key => $answer) {
 			unset($items[$key]['service']);
 		}
+
+        $validator = Validator::make($data['items'], [
+			'unit'          => 'bail|required',
+			'unit_count'    => 'bail|required',
+			'type'          => 'bail|required',
+			'name'          => 'bail|required',
+			'weight'        => 'bail|required',
+			'volume'        => 'bail|required',
+			'service_id'    => 'bail|nullable|present',
+		]);
+
+		if ($validator->fails()) {
+            DB::rollback();
+			throw new InvalidArgumentException($validator->errors()->first());
+		}
+
 		try {
 			$items = $this->itemRepository->save($pickup, $items);
 		} catch (Exception $e) {
