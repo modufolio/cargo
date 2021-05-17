@@ -79,7 +79,7 @@ class PromoController extends BaseController
             'minValue',
             'startAt',
             'endAt',
-            'id',
+            'name',
             'sort'
         ]);
         try {
@@ -112,6 +112,34 @@ class PromoController extends BaseController
         ]);
         try {
             $result = $this->promoService->createPromoService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
+
+
+    /**
+     * Update promo.
+     *
+     * @param Request $request
+     */
+    public function update(Request $request)
+    {
+        $data = $request->only([
+            'userId',
+            'description',
+            'discount',
+            'discount_max',
+            'start_at',
+            'end_at',
+            'max_used',
+            'min_value',
+            'terms',
+            'id'
+        ]);
+        try {
+            $result = $this->promoService->updatePromoService($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }

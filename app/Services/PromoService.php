@@ -162,4 +162,39 @@ class PromoService {
         DB::commit();
         return $promo;
     }
+
+    /**
+     * update promo
+     */
+    public function updatePromoService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'description' => 'bail|required',
+            'discount' => 'bail|required',
+            'discount_max' => 'bail|required',
+            'end_at' => 'bail|required',
+            'start_at' => 'bail|required',
+            'max_used' => 'bail|required',
+            'min_value' => 'bail|required',
+            'terms' => 'bail|required',
+            'userId' => 'bail|required',
+            'id' => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        DB::beginTransaction();
+        try {
+            $promo = $this->promoRepository->updatePromoRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            DB::rollback();
+            throw new InvalidArgumentException('Gagal mengubah data promo');
+        }
+        DB::commit();
+        return $promo;
+    }
 }

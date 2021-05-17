@@ -122,18 +122,18 @@ class PromoRepository
      * @param $data
      * @return Promo
      */
-    public function update($data, $id)
+    public function updatePromoRepo($data)
     {
-        $promo = $this->promo->find($id);
+        $promo = $this->promo->find($data['id']);
         $promo->discount = $data['discount'];
         $promo->discount_max = $data['discount_max'];
         $promo->min_value = $data['min_value'];
-        $promo->start_at = $data['start_at'];
-        $promo->end_at = $data['end_at'];
+        $promo->start_at = Carbon::parse($data['start_at'])->toDateTimeString();
+        $promo->end_at = Carbon::parse($data['end_at'])->toDateTimeString();
         $promo->max_used = $data['max_used'];
         $promo->description = $data['description'];
-        $promo->code = $data['code'];
-        $promo->term = $data['term'];
+        $promo->terms = $data['terms'];
+        $promo->updated_by = $data['userId'];
         $promo->save();
         return $promo;
     }
@@ -222,7 +222,7 @@ class PromoRepository
         $minValue = $data['minValue'];
         $startAt = $data['startAt'];
         $endAt = $data['endAt'];
-        $id = $data['id'];
+        $name = $data['name'];
 
         $promo = $this->promo->with(['user' => function($q) {
             $q->select('name','email','id');
@@ -269,14 +269,24 @@ class PromoRepository
                         'min_value' => $order
                     ]);
                     break;
-                case 'id':
+                case 'user.name':
                     $promo = $promo->sortable([
-                        'id' => $order
+                        'user.name' => $order
                     ]);
                     break;
                 case 'end_at':
                     $promo = $promo->sortable([
                         'end_at' => $order
+                    ]);
+                    break;
+                case 'id':
+                    $promo = $promo->sortable([
+                        'id' => $order
+                    ]);
+                    break;
+                case 'updated_at':
+                    $promo = $promo->sortable([
+                        'updated_at' => $order
                     ]);
                     break;
                 default:
@@ -291,8 +301,10 @@ class PromoRepository
             $promo = $promo->where('discount', 'ilike', '%'.$discount.'%');
         }
 
-        if (!empty($id)) {
-            $promo = $promo->where('id', 'ilike', '%'.$id.'%');
+        if (!empty($name)) {
+            $promo = $promo->whereHas('user', function($q) use ($name) {
+                $q->where('name', 'ilike', '%'.$name.'%');
+            });
         }
 
         if (!empty($discountMax)) {
