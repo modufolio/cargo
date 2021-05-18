@@ -1,6 +1,6 @@
 <?php
 
-namespace Utils;
+namespace App\Utilities;
 
 /**
  * Class RandomStringGenerator
