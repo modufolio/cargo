@@ -169,10 +169,12 @@ class PickupPlanRepository
         }
         $result = $pickupPlan->map(function($q) {
             $totalDraftPop = $this->pickup->where('pickup_plan_id', $q->id)->whereHas('proofOfPickup', function ($q) {
-                $q->where('driver_pick', true)->where('status', 'draft');
+                $q->where('driver_pick', true)->where('status', 'draft')->where(function($q) {
+                    $q->where('status_pick', 'success')->orWhere('status_pick', 'updated');
+                });
             })->count();
             $totalCancelledPop = $this->pickup->where('pickup_plan_id', $q->id)->whereHas('proofOfPickup', function ($q) {
-                $q->where('driver_pick', true)->where('status', 'cancelled');
+                $q->where('driver_pick', true)->where('status', 'draft')->where('status_pick', 'failed');
             })->count();
             $data = [
                 'created_at' => $q->created_at,
