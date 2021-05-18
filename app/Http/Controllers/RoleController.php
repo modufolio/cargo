@@ -119,11 +119,12 @@ class RoleController extends BaseController
             'name',
             'ranking',
             'description',
-            'features'
+            'features',
+            'privilleges'
         ]);
 
         try {
-            $result = $this->roleService->updateRole($data);
+            $result = $this->roleService->updateRoleService($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
