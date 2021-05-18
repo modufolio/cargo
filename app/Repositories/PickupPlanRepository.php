@@ -171,16 +171,16 @@ class PickupPlanRepository
             $totalDraftPop = $this->pickup->where('pickup_plan_id', $q->id)->whereHas('proofOfPickup', function ($q) {
                 $q->where('driver_pick', true)->where('status', 'draft');
             })->count();
-            $totalAppliedPop = $this->pickup->where('pickup_plan_id', $q->id)->whereHas('proofOfPickup', function ($q) {
-                $q->where('driver_pick', true)->where('status', 'applied');
-            })->count();
+            // $totalAppliedPop = $this->pickup->where('pickup_plan_id', $q->id)->whereHas('proofOfPickup', function ($q) {
+            //     $q->where('driver_pick', true)->where('status', 'applied');
+            // })->count();
             $data = [
                 'created_at' => $q->created_at,
                 'pickup_plan_number' => $q->number,
                 'pickup_plan_id' => $q->id,
                 'total_order' => $q->total_pickup_order,
-                'total_draft_pop' => $totalDraftPop,
-                'total_applied_pop' => $totalAppliedPop,
+                'total_draft_pop' => $totalDraftPop
+                // 'total_applied_pop' => $totalAppliedPop,
             ];
             return $data;
         });
