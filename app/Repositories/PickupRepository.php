@@ -1202,9 +1202,10 @@ class PickupRepository
             ->where('branch_id', $branchId)
             ->whereNotNull('pickup_plan_id')
             ->whereNull('shipment_plan_id')
-            ->doesnthave('transit')
-            ->orWhereHas('transit', function($q) {
-                $q->where('status', 'applied');
+            ->where(function($q) {
+                $q->doesnthave('transit')->orWhereHas('transit', function($q) {
+                    $q->where('status', 'applied');
+                });
             })
             ->whereHas('pickupPlan', function($q) {
                 $q->where('status', 'applied');
@@ -1540,9 +1541,7 @@ class PickupRepository
      */
     public function updateIsTransitBranchRepo($pickupId, $value)
     {
-        DB::beginTransaction();
-        $this->pickup->whereIn('id', $pickupId)->update(['is_transit' => $value]);
-        DB::commit();
+        return $this->pickup->whereIn('id', $pickupId)->update(['is_transit' => $value]);
     }
 
     /**
