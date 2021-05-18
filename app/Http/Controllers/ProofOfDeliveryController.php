@@ -184,4 +184,22 @@ class ProofOfDeliveryController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get dashboard POD driver
+     */
+    public function getDashboardDriver(Request $request)
+    {
+        $data = $request->only([
+            'startDate',
+            'endDate',
+            'userId'
+        ]);
+        try {
+            $result = $this->podService->getDashboardDriverService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

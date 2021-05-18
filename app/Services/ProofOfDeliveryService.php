@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Repositories\ProofOfDeliveryRepository;
 use App\Repositories\PickupRepository;
+use App\Repositories\ShipmentPlanRepository;
 use App\Repositories\ItemRepository;
 use App\Repositories\TrackingRepository;
 use App\Repositories\BillRepository;
@@ -26,6 +27,7 @@ class ProofOfDeliveryService {
     protected $promoRepository;
     protected $routeRepository;
     protected $costRepository;
+    protected $shipmentPlanRepository;
 
     public function __construct(
         ProofOfDeliveryRepository $podRepository,
@@ -35,7 +37,8 @@ class ProofOfDeliveryService {
         BillRepository $billRepository,
         PromoRepository $promoRepository,
         RouteRepository $routeRepository,
-        CostRepository $costRepository
+        CostRepository $costRepository,
+        ShipmentPlanRepository $shipmentPlanRepository
     )
     {
         $this->podRepository = $podRepository;
@@ -46,6 +49,7 @@ class ProofOfDeliveryService {
         $this->promoRepository = $promoRepository;
         $this->routeRepository = $routeRepository;
         $this->costRepository = $costRepository;
+        $this->shipmentPlanRepository = $shipmentPlanRepository;
     }
 
     /**
@@ -642,6 +646,32 @@ class ProofOfDeliveryService {
             Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
+        return $result;
+    }
+
+    /**
+     * get dashboard POD for driver service
+     */
+    public function getDashboardDriverService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'startDate' => 'bail|present',
+            'endDate' => 'bail|present'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->shipmentPlanRepository->getDashboardDriverPODRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
         return $result;
     }
 }

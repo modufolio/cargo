@@ -216,4 +216,55 @@ class ShipmentPlanRepository
         ];
         return $result;
     }
+
+    /**
+     * get landing page dashboard for app driver
+     */
+    public function getDashboardDriverPODRepo($data = [])
+    {
+        $userId = $data['userId'];
+        $startDate = $data['startDate'];
+        $endDate = $data['endDate'];
+        if (!empty($startDate) && !empty($endDate)) {
+            $shipmentPlan = $this->shipmentPlan
+                ->whereDate('created_at', '>=', date($startDate))
+                ->whereDate('created_at', '<=', date($endDate))
+                ->with(['pickups.proofOfDelivery'])
+                ->whereHas('vehicle', function($q) use ($userId) {
+                    $q->whereHas('driver', function($o) use ($userId) {
+                        $o->where('user_id', $userId);
+                    });
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $shipmentPlan = $this->shipmentPlan
+                ->with(['pickups.proofOfDelivery'])
+                ->whereHas('vehicle', function($q) use ($userId) {
+                    $q->whereHas('driver', function($o) use ($userId) {
+                        $o->where('user_id', $userId);
+                    });
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+        $result = $shipmentPlan->map(function($q) {
+            $totalDraftPOD = $this->pickup->where('shipment_plan_id', $q->id)->whereHas('proofOfDelivery', function ($q) {
+                $q->where('status', 'draft');
+            })->count();
+            // $totalAppliedPOD = $this->pickup->where('pickup_plan_id', $q->id)->whereHas('proofOfPickup', function ($q) {
+            //     $q->where('driver_pick', true)->where('status', 'applied');
+            // })->count();
+            $data = [
+                'created_at' => $q->created_at,
+                'shipment_plan_number' => $q->number,
+                'shipment_plan_id' => $q->id,
+                'total_order' => $q->total_pickup_order,
+                'total_draft_pod' => $totalDraftPOD
+                // 'total_applied_pop' => $totalAppliedPOD,
+            ];
+            return $data;
+        });
+        return $result;
+    }
 }
