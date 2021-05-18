@@ -250,10 +250,10 @@ class ShipmentPlanRepository
         }
         $result = $shipmentPlan->map(function($q) {
             $totalDraftPOD = $this->pickup->where('shipment_plan_id', $q->id)->whereHas('proofOfDelivery', function ($q) {
-                $q->where('status', 'draft');
+                $q->where('status', 'draft')->where('status_delivery', 'success');
             })->count();
-            $totalCancelledPOD = $this->pickup->where('pickup_plan_id', $q->id)->whereHas('proofOfPickup', function ($q) {
-                $q->where('status', 'cancelled');
+            $totalCancelledPOD = $this->pickup->where('shipment_plan_id', $q->id)->whereHas('proofOfDelivery', function ($q) {
+                $q->where('status_delivery', 'failed');
             })->count();
             $data = [
                 'created_at' => $q->created_at,
