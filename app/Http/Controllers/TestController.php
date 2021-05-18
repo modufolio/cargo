@@ -30,6 +30,9 @@ use Snowfire\Beautymail\Beautymail;
 use Indonesia;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
+// UTILITIES
+use App\Utilities\RandomStringGenerator;
+
 // MAIL
 use App\Mail\VerifyMail;
 use Illuminate\Support\Facades\Mail;
@@ -212,19 +215,34 @@ class TestController extends BaseController
      */
     public function update(Request $request)
     {
-        $config = [
-            'table' => 'proof_of_pickups',
-            'length' => 14,
-            'field' => 'number',
-            'prefix' => 'POP'.Carbon::now('Asia/Jakarta')->format('ymd'),
-            'reset_on_prefix_change' => true
-        ];
-        $collect = collect(ProofOfPickup::all());
+        // $config = [
+        //     'table' => 'proof_of_pickups',
+        //     'length' => 14,
+        //     'field' => 'number',
+        //     'prefix' => 'POP'.Carbon::now('Asia/Jakarta')->format('ymd'),
+        //     'reset_on_prefix_change' => true
+        // ];
+        // $collect = collect(ProofOfPickup::all());
+        // $result = [];
+        // foreach ($collect as $key => $value) {
+        //     $data = ProofOfPickup::find($value['id']);
+        //     $data->number = IdGenerator::generate($config);
+        //     $result[] = $data->save();
+        // }
+        $collect = collect(User::all());
         $result = [];
         foreach ($collect as $key => $value) {
-            $data = ProofOfPickup::find($value['id']);
-            $data->number = IdGenerator::generate($config);
-            $result[] = $data->save();
+            $data = User::find($value['id']);
+            if ($data['role_id'] == 2) {
+                $customAlphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                $generator = new RandomStringGenerator($customAlphabet);
+                $generator->setAlphabet($customAlphabet);
+                $refferal = $generator->generate(7);
+                $data->refferal = $refferal;
+                $result[] = $data->save();
+            } else {
+                $result[] = $data;
+            }
         }
         return response()->json($result);
     }

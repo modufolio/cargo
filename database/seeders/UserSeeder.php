@@ -88,6 +88,24 @@ class UserSeeder extends Seeder
                 'phone' => '0896122502122',
                 'username' => '	testinglenna4',
                 'branch_id' => 2,
+            ],
+            [
+                'name' => 'marketing 1',
+                'email' => 'marketing1@gmail.com',
+                'password' => bcrypt('marketing'),
+                'role_id' => 2,
+                'phone' => '0857122122311',
+                'username' => '	marketing1',
+                'branch_id' => 2,
+            ],
+            [
+                'name' => 'marketing 2',
+                'email' => 'marketing2@gmail.com',
+                'password' => bcrypt('marketing'),
+                'role_id' => 2,
+                'phone' => '0857122122311',
+                'username' => '	marketing2',
+                'branch_id' => 1,
             ]
         ]);
         DB::commit();
