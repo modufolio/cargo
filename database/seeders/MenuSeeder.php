@@ -41,7 +41,7 @@ class MenuSeeder extends Seeder
         $this->call(UserMenuSeeder::class);
         $this->call(OrderMenuSeeder::class);
         $this->call(RoutingMenuSeeder::class);
-        $this->call(ResiMenuSeeder::class);
+        // $this->call(ResiMenuSeeder::class);
         $this->call(ReportMenuSeeder::class);
         $this->call(FinanceMenuSeeder::class);
         DB::commit();
