@@ -143,7 +143,8 @@ class PromoService {
             'minValue' => 'bail|required',
             'startAt' => 'bail|required',
             'terms' => 'bail|required',
-            'userId' => 'bail|required'
+            'userId' => 'bail|required',
+            'scope' => 'bail|required'
         ]);
 
         if ($validator->fails()) {
@@ -151,6 +152,9 @@ class PromoService {
         }
 
         DB::beginTransaction();
+        if ($data['scope'] == 'general') {
+            $data['customerId'] = null;
+        }
         try {
             $promo = $this->promoRepository->save($data);
         } catch (Exception $e) {
@@ -178,7 +182,8 @@ class PromoService {
             'min_value' => 'bail|required',
             'terms' => 'bail|required',
             'userId' => 'bail|required',
-            'id' => 'bail|required'
+            'id' => 'bail|required',
+            'scope' => 'bail|required'
         ]);
 
         if ($validator->fails()) {

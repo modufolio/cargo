@@ -80,6 +80,7 @@ class PromoController extends BaseController
             'startAt',
             'endAt',
             'name',
+            'scope',
             'sort'
         ]);
         try {
@@ -108,7 +109,8 @@ class PromoController extends BaseController
             'maxUsed',
             'minValue',
             'startAt',
-            'terms'
+            'terms',
+            'scope'
         ]);
         try {
             $result = $this->promoService->createPromoService($data);
@@ -136,7 +138,8 @@ class PromoController extends BaseController
             'max_used',
             'min_value',
             'terms',
-            'id'
+            'id',
+            'scope'
         ]);
         try {
             $result = $this->promoService->updatePromoService($data);

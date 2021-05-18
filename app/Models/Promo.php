@@ -27,7 +27,8 @@ class Promo extends Model
         'end_at',
         'min_value',
         'updated_at',
-        'user'
+        'user',
+        'scope'
     ];
 
     public function user()

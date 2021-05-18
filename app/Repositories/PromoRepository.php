@@ -112,6 +112,7 @@ class PromoRepository
         $promo->description = $data['description'];
         $promo->code = $data['code'];
         $promo->terms = $data['terms'];
+        $promo->scope = $data['scope'];
         $promo->save();
         return $promo;
     }
@@ -225,6 +226,7 @@ class PromoRepository
         $startAt = $data['startAt'];
         $endAt = $data['endAt'];
         $name = $data['name'];
+        $scope = $data['scope'];
 
         $promo = $this->promo->with(['user' => function($q) {
             $q->select('name','email','id');
@@ -281,6 +283,11 @@ class PromoRepository
                         'end_at' => $order
                     ]);
                     break;
+                case 'scope':
+                    $promo = $promo->sortable([
+                        'scope' => $order
+                    ]);
+                    break;
                 case 'id':
                     $promo = $promo->sortable([
                         'id' => $order
@@ -323,6 +330,10 @@ class PromoRepository
 
         if (!empty($endAt)) {
             $promo = $promo->where('end_at', 'ilike', '%'.$endAt.'%');
+        }
+
+        if (!empty($scope)) {
+            $promo = $promo->where('scope', 'ilike', '%'.$scope.'%');
         }
 
         $promo = $promo->paginate($perPage);
