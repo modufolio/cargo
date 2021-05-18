@@ -252,16 +252,16 @@ class ShipmentPlanRepository
             $totalDraftPOD = $this->pickup->where('shipment_plan_id', $q->id)->whereHas('proofOfDelivery', function ($q) {
                 $q->where('status', 'draft');
             })->count();
-            // $totalAppliedPOD = $this->pickup->where('pickup_plan_id', $q->id)->whereHas('proofOfPickup', function ($q) {
-            //     $q->where('driver_pick', true)->where('status', 'applied');
-            // })->count();
+            $totalCancelledPOD = $this->pickup->where('pickup_plan_id', $q->id)->whereHas('proofOfPickup', function ($q) {
+                $q->where('status', 'cancelled');
+            })->count();
             $data = [
                 'created_at' => $q->created_at,
                 'shipment_plan_number' => $q->number,
                 'shipment_plan_id' => $q->id,
                 'total_order' => $q->total_pickup_order,
-                'total_draft_pod' => $totalDraftPOD
-                // 'total_applied_pop' => $totalAppliedPOD,
+                'total_draft_pod' => $totalDraftPOD,
+                'total_cancelled_pod' => $totalCancelledPOD,
             ];
             return $data;
         });
