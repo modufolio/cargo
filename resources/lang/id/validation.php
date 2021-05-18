@@ -177,6 +177,7 @@ return [
         'unit' => 'Satuan',
         'type' => 'Tipe',
         'service_id' => 'ID Layanan',
-        'branchId' => 'ID Cabang'
+        'branchId' => 'ID Cabang',
+        'transitBranch' => 'Cabang transit'
     ],
 ];
