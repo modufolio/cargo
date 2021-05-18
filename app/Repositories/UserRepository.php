@@ -539,4 +539,19 @@ class UserRepository
         })->get()->count();
         return $user;
     }
+
+    /**
+     * Get user by id with role
+     *
+     * @param int $id
+     * @return User
+     */
+    public function getByIdWithRole($id)
+    {
+        $user = $this->user->with('role')->find($id);
+        if (!$user) {
+            throw new InvalidArgumentException('pengguna tidak ditemukan');
+        }
+        return $user;
+    }
 }
