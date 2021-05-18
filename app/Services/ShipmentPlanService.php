@@ -84,6 +84,16 @@ class ShipmentPlanService {
 
         // CHECK TRANSIT
         if ($data['isTransit']) {
+
+            $validator = Validator::make($data, [
+                'transitBranch' => 'bail|required|array',
+            ]);
+
+            if ($validator->fails()) {
+                DB::rollback();
+                throw new InvalidArgumentException($validator->errors()->first());
+            }
+
             $notes = 'paket ditransit ke cabang: '.$data['transitBranch']['name'];
             $docs = 'transit';
             $status = 'pending';
