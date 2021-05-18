@@ -86,7 +86,7 @@ class ShipmentPlanService {
         if ($data['isTransit']) {
 
             $validator = Validator::make($data, [
-                'transitBranch' => 'bail|required|array',
+                'transitBranch' => 'bail|required',
             ]);
 
             if ($validator->fails()) {
