@@ -626,7 +626,7 @@ class ProofOfDeliveryService {
             throw new InvalidArgumentException('Gagal menyimpan data tracking');
         }
         // END OF RECORD TRACKING
-
+        DB::commit();
         return $result;
     }
 
