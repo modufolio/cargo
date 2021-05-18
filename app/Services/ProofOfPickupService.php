@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Repositories\ProofOfPickupRepository;
 use App\Repositories\PickupRepository;
+use App\Repositories\PickupPlanRepository;
 use App\Repositories\ItemRepository;
 use App\Repositories\TrackingRepository;
 use App\Repositories\BillRepository;
@@ -26,6 +27,7 @@ class ProofOfPickupService {
     protected $promoRepository;
     protected $routeRepository;
     protected $costRepository;
+    protected $pickupPlanRepository;
 
     public function __construct(
         ProofOfPickupRepository $proofOfPickupRepository,
@@ -35,7 +37,8 @@ class ProofOfPickupService {
         BillRepository $billRepository,
         PromoRepository $promoRepository,
         RouteRepository $routeRepository,
-        CostRepository $costRepository
+        CostRepository $costRepository,
+        PickupPlanRepository $pickupPlanRepository
     )
     {
         $this->popRepository = $proofOfPickupRepository;
@@ -46,6 +49,7 @@ class ProofOfPickupService {
         $this->promoRepository = $promoRepository;
         $this->routeRepository = $routeRepository;
         $this->costRepository = $costRepository;
+        $this->pickupPlanRepository = $pickupPlanRepository;
     }
 
     /**
@@ -367,5 +371,31 @@ class ProofOfPickupService {
         }
         DB::commit();
         return ['pickup' => $pickup, 'items' => $items];
+    }
+
+    /**
+     * get dashboard pop for driver service
+     */
+    public function getDashboardDriverService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'userId' => 'bail|required',
+            'startDate' => 'bail|present',
+            'endDate' => 'bail|present'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $result = $this->pickupPlanRepository->getDashboardDriverRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        return $result;
     }
 }

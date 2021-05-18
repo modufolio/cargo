@@ -178,6 +178,8 @@ return [
         'type' => 'Tipe',
         'service_id' => 'ID Layanan',
         'branchId' => 'ID Cabang',
-        'transitBranch' => 'Cabang transit'
+        'transitBranch' => 'Cabang transit',
+        'startDate' => 'Tanggal mulai',
+        'endDate' => 'Tanggal akhir'
     ],
 ];

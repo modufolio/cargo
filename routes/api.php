@@ -146,6 +146,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             // proof of pickup
             Route::prefix('pop')->group(function() {
                 Route::post('create', [ProofOfPickupController::class, 'createPOP']);
+                Route::post('dashboard', [ProofOfPickupController::class, 'getDashboardDriver']);
             });
 
             // shipment plan driver
