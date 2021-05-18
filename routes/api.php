@@ -148,14 +148,14 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
                 Route::post('create', [ProofOfPickupController::class, 'createPOP']);
             });
 
-            // shipment plan
+            // shipment plan driver
             Route::prefix('shipment-plan')->group(function() {
                 Route::post('list', [ShipmentPlanController::class, 'getDriverShipmentPlanList']);
                 Route::post('pickup', [ShipmentPlanController::class, 'getPickupOrderDriverShipmentPlanList']);
                 Route::post('dashboard', [ShipmentPlanController::class, 'getDashboardDriver']);
             });
 
-            // proof of delivery
+            // proof of delivery driver
             Route::prefix('pod')->group(function() {
                 Route::post('submit', [ProofOfDeliveryController::class, 'submitDriver']);
             });
@@ -197,6 +197,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
 
         // Menu
         Route::get('menu', [MenuController::class, 'index']);
+        Route::get('menu/privilleges', [MenuController::class, 'getAccessibleMenu']);
 
         // Route
         Route::prefix('route')->group(function() {

@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\Role;
 use App\Repositories\RoleRepository;
+use App\Repositories\UserRepository;
 use Exception;
 use DB;
 use Log;
@@ -13,10 +14,12 @@ use Illuminate\Validation\Rule;
 class RoleService {
 
     protected $roleRepository;
+    protected $userRepository;
 
-    public function __construct(RoleRepository $roleRepository)
+    public function __construct(RoleRepository $roleRepository, UserRepository $userRepository)
     {
         $this->roleRepository = $roleRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -94,7 +97,7 @@ class RoleService {
      * @param array $data
      * @return String
      */
-    public function updateRole($data = [])
+    public function updateRoleService($data = [])
     {
         $validator = Validator::make($data, [
             'userId' => 'bail|required',
@@ -106,8 +109,9 @@ class RoleService {
                 Rule::unique('roles', 'name')->ignore($data['id'])
             ],
             'ranking' => 'bail|required',
-            'description' => 'bail|required|max:255',
-            'features' => 'bail|required|array',
+            'description' => 'bail|present|max:255',
+            'features' => 'bail|present|array',
+            'privilleges' => 'bail|required|array'
         ]);
 
         if ($validator->fails()) {
@@ -121,6 +125,7 @@ class RoleService {
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
 
@@ -141,9 +146,9 @@ class RoleService {
         $validator = Validator::make($data, [
             'name' => 'bail|required|unique:roles,name',
             'ranking' => 'bail|required',
-            'features' => 'bail|required|array',
+            'features' => 'bail|present|array',
             'description' => 'bail|required|max:255',
-            'privilleges' => 'bail|array'
+            'privilleges' => 'bail|present|array'
         ]);
 
         if ($validator->fails()) {
@@ -222,6 +227,52 @@ class RoleService {
     {
         try {
             $result = $this->roleRepository->featureListRepo();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapat data fitur');
+        }
+        return $result;
+    }
+
+    /**
+     * get menu for current role
+     */
+    public function getMenuRoleService($data = [])
+    {
+        try {
+            $user = $this->userRepository->getByIdWithRole($data['userId']);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException($e->getMessage());
+        }
+
+        $menu = collect($user['role']['privilleges'])->map(function($priv) {
+            $access = explode("_", $priv);
+            $data = [
+                'type' => $access[0],
+                'slug' => $access[1]
+            ];
+            return $data;
+        });
+
+        $menuSlug = $submenuSlug = [];
+        foreach ($menu as $key => $value) {
+            if ($value['type'] == 'menu') {
+                $menuSlug[] = $value['slug'];
+            }
+            if ($value['type'] == 'submenu') {
+                $submenuSlug[] = $value['slug'];
+            }
+        }
+
+        $payload = [
+            'menuSlug' => $menuSlug,
+            'submenuSlug' => $submenuSlug
+        ];
+
+        try {
+            $result = $this->roleRepository->getMenuRoleRepo($payload);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal mendapat data fitur');

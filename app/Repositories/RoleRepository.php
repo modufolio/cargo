@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Feature;
+use App\Models\Menu;
 use InvalidArgumentException;
 use Illuminate\Support\Str;
 
@@ -14,11 +15,17 @@ class RoleRepository
     protected $user;
     protected $feature;
 
-    public function __construct(Role $role, User $user, Feature $feature)
+    public function __construct(
+        Role $role,
+        User $user,
+        Feature $feature,
+        Menu $menu
+    )
     {
         $this->role = $role;
         $this->user = $user;
         $this->feature = $feature;
+        $this->menu = $menu;
     }
 
     /**
@@ -80,8 +87,9 @@ class RoleRepository
         // $role->slug = $slug;
         $role->ranking = $data['ranking'];
         $role->description = $data['description'];
+        $role->privilleges = $data['privilleges'];
         $role->save();
-        $role->features()->sync($data['features'], false);;
+        $role->features()->sync($data['features'], false);
         return $role->fresh();
     }
 
@@ -228,5 +236,17 @@ class RoleRepository
             return true;
         }
         return false;
+    }
+
+    /**
+     * get menu role
+     */
+    public function getMenuRoleRepo($data = [])
+    {
+        $menu = $this->menu->whereIn('id', $data['menuSlug'])
+            ->with(['submenus' => function($q) use ($data) {
+                $q->whereIn('id', $data['submenuSlug']);
+            }])->get();
+        return $menu;
     }
 }
