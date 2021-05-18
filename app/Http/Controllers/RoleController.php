@@ -64,7 +64,8 @@ class RoleController extends BaseController
             'slug',
             'ranking',
             'description',
-            'features'
+            'features',
+            'privilleges'
         ]);
 
         try {

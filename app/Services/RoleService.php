@@ -143,6 +143,7 @@ class RoleService {
             'ranking' => 'bail|required',
             'features' => 'bail|required|array',
             'description' => 'bail|required|max:255',
+            'privilleges' => 'bail|array'
         ]);
 
         if ($validator->fails()) {
@@ -156,6 +157,7 @@ class RoleService {
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
+            Log::error($e);
             throw new InvalidArgumentException($e->getMessage());
         }
         DB::commit();

@@ -57,6 +57,7 @@ class RoleRepository
         $slug = Str::of($data['name'])->slug('-');
         $role->slug = $slug;
         $role->description = $data['description'];
+        $role->privilleges = $data['privilleges'];
         $role->save();
         $role->features()->attach($data['features']);
         return $role->fresh();
@@ -177,6 +178,12 @@ class RoleRepository
                     break;
                 case 'name':
                     $role = $role->sortable(['name' => $order]);
+                    break;
+                case 'updated_at':
+                    $role = $role->sortable(['updated_at' => $order]);
+                    break;
+                case 'created_at':
+                    $role = $role->sortable(['created_at' => $order]);
                     break;
                 default:
                     $role = $role->sortable(['id' => 'desc']);
