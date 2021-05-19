@@ -16,6 +16,7 @@ use App\Repositories\TrackingRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\PickupPlanRepository;
 use App\Repositories\CostRepository;
+use App\Repositories\RoleRepository;
 use Exception;
 use DB;
 use Log;
@@ -38,6 +39,7 @@ class PickupService {
 	protected $userRepository;
 	protected $pickupPlanRepository;
 	protected $costRepository;
+	protected $roleRepository;
 
 	public function __construct(
 		PickupRepository $pickupRepository,
@@ -53,7 +55,8 @@ class PickupService {
 		TrackingRepository $trackingRepository,
 		UserRepository $userRepository,
 		PickupPlanRepository $pickupPlanRepository,
-		CostRepository $costRepository
+		CostRepository $costRepository,
+		RoleRepository $roleRepository
 	)
 	{
 		$this->pickupRepository = $pickupRepository;
@@ -70,6 +73,7 @@ class PickupService {
 		$this->userRepository = $userRepository;
 		$this->pickupPlanRepository = $pickupPlanRepository;
 		$this->costRepository = $costRepository;
+		$this->roleRepository = $roleRepository;
 	}
 
 	/**
@@ -443,7 +447,8 @@ class PickupService {
 			'form' => 'bail|required',
 			'customer' => 'bail|required',
 			'isDrop' => 'boolean',
-			'branchId' => 'bail|present'
+			'branchId' => 'bail|present',
+            'marketing' => 'bail|present'
 		]);
 
 		if ($validator->fails()) {
@@ -675,6 +680,72 @@ class PickupService {
 			throw new InvalidArgumentException('Gagal menyimpan data pickup');
 		}
 		// END SAVE PICKUP
+
+        // ADDING MARKETING
+        if ($data['form']['withMarketing']) {
+            $validator = Validator::make($data['marketing'], [
+                'email'     => 'bail|required',
+                'name'      => 'bail|required',
+                'phone'     => 'bail|required'
+            ]);
+
+            if ($validator->fails()) {
+				DB::rollback();
+                throw new InvalidArgumentException($validator->errors()->first());
+            }
+
+            // get marketing data
+            $marketing = $this->roleRepository->getUserRoleByEmailRepo($data['marketing']['email']);
+
+            if ($marketing->role->slug == 'marketing') {
+                // update marketing on order
+                /**
+                 * marketing on order only update when value of "radio button with marketing" is true on create pickup/drop web
+                 */
+                $marketingId = $marketing->id;
+                $orderId = $pickup['id'];
+                try {
+                    $this->pickupRepository->updateMarketingByOrderId($orderId, $marketingId);
+                } catch (Exception $e) {
+                    DB::rollback();
+                    Log::info($e->getMessage());
+                    Log::error($e);
+                    throw new InvalidArgumentException('(Gagal mengubah marketing ID di order) '.$e->getMessage());
+                }
+
+                // update marketing ID on customer
+                $customerId = $customer['id'];
+                try {
+                    $this->userRepository->updateMarketingIdOnCustomer($customerId, $marketingId);
+                } catch (Exception $e) {
+                    DB::rollback();
+                    Log::info($e->getMessage());
+                    Log::error($e);
+                    throw new InvalidArgumentException('(Gagal mengubah marketing ID di customer) '.$e->getMessage());
+                }
+
+            }
+        } else {
+            // check current creator order is marketing or not
+            $user = $this->userRepository->getById($data['userId']);
+
+            // if marketing, update marketing id pada customer dan pickup
+            if ($user->role->slug == 'marketing') {
+                $marketingId = $marketing->id;
+                $customerId = $customer['id'];
+
+                // update marketing ID on customer
+                try {
+                    $this->userRepository->updateMarketingIdOnCustomer($customerId, $marketingId);
+                } catch (Exception $e) {
+                    DB::rollback();
+                    Log::info($e->getMessage());
+                    Log::error($e);
+                    throw new InvalidArgumentException('(Gagal mengubah marketing ID di customer) '.$e->getMessage());
+                }
+            }
+        }
+
 
 		// SAVE ITEM
 		$items = $data['items'];

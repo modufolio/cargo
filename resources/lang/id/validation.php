@@ -180,6 +180,7 @@ return [
         'branchId' => 'ID Cabang',
         'transitBranch' => 'Cabang transit',
         'startDate' => 'Tanggal mulai',
-        'endDate' => 'Tanggal akhir'
+        'endDate' => 'Tanggal akhir',
+        'picktime' => 'Waktu pickup'
     ],
 ];

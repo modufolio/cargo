@@ -500,11 +500,12 @@ class UserService {
 
     /**
      * get default customer name and phone
+     * @param array $data
      */
-    public function getDefaultByNamePhoneService()
+    public function getDefaultByNamePhoneService($data = [])
     {
         try {
-            $result = $this->userRepository->getDefaultByNamePhoneRepo();
+            $result = $this->userRepository->getDefaultByNamePhoneRepo($data);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             Log::error($e);

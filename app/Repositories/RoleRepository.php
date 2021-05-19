@@ -249,4 +249,25 @@ class RoleRepository
             }])->get();
         return $menu;
     }
+
+    /**
+     * get role by user id
+     */
+    public function getRoleByUserIdRepo($userId)
+    {
+        $role = $this->user->find($userId)->role;
+        return $role;
+    }
+
+    /**
+     * get user and role by email
+     */
+    public function getUserRoleByEmailRepo($email)
+    {
+        $user = $this->user->with('role')->where('email', $email)->first();
+        if (!$user) {
+            throw new InvalidArgumentException('Pengguna tidak ditemukan');
+        }
+        return $user;
+    }
 }

@@ -473,6 +473,7 @@ class UserRepository
     public function getByNamePhoneEmailRepo($data = [])
     {
         $query = $data['query'];
+        $role = $data['role'];
         // $user = $this->user->with(['senders' => function($q) {
         //     $q->select('user_id','province','city','district','village','postal_code','street','notes');
         // }, 'receivers' => function($q) {
@@ -490,8 +491,8 @@ class UserRepository
             $q->where('name', 'ilike', '%'.$query.'%')
                 ->orWhere('phone', 'ilike', '%'.$query.'%')
                 ->orWhere('email', 'ilike', '%'.$query.'%');
-        })->whereHas('role', function($q) {
-            $q->where('slug', 'customer');
+        })->whereHas('role', function($q) use ($role) {
+            $q->where('slug', $role);
         })->get();
 
         $user = collect($user);
@@ -520,11 +521,12 @@ class UserRepository
 
     /**
      * get default data customer by name and phone
+     * @param array $data
      */
-    public function getDefaultByNamePhoneRepo()
+    public function getDefaultByNamePhoneRepo($data)
     {
-        $user = $this->user->whereHas('role', function($q) {
-            $q->where('slug', 'customer');
+        $user = $this->user->whereHas('role', function($q) use ($data) {
+            $q->where('slug', $data['role']);
         })->orderBy('id', 'desc')->get()->take(10);
         return $user;
     }
@@ -551,6 +553,20 @@ class UserRepository
         $user = $this->user->with('role')->find($id);
         if (!$user) {
             throw new InvalidArgumentException('pengguna tidak ditemukan');
+        }
+        return $user;
+    }
+
+    /**
+     * update marketing current customer
+     */
+    public function updateMarketingIdOnCustomer($customerId, $marketingId)
+    {
+        $user = $this->user->find($customerId);
+        if ($user->marketing_id == null) {
+            $user->marketing_id = $marketingId;
+            $user->save();
+            return $user;
         }
         return $user;
     }

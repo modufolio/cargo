@@ -218,7 +218,8 @@ class PickupController extends BaseController
             'form',
             'customer',
             'branchId',
-            'isDrop'
+            'isDrop',
+            'marketing'
         ]);
         DB::beginTransaction();
         try {

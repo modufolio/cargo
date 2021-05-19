@@ -1813,4 +1813,18 @@ class PickupRepository
 
         return $result;
     }
+
+    /**
+     * update marketing on order
+     */
+    public function updateMarketingByOrderId($orderId, $marketingId)
+    {
+        $pickup = $this->pickup->find($orderId);
+        if (!$pickup) {
+            throw new InvalidArgumentException('Order tidak ditemukan');
+        }
+        $pickup->marketing_id = $marketingId;
+        $pickup->save();
+        return $pickup;
+    }
 }

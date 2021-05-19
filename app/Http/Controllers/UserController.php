@@ -418,6 +418,7 @@ class UserController extends BaseController
     {
         $data = $request->only([
             'query',
+            'role'
         ]);
         try {
             $result = $this->userService->getByNamePhoneEmailService($data);
@@ -430,10 +431,13 @@ class UserController extends BaseController
     /**
      * get default data name and phone
      */
-    public function getDefaultByNamePhone()
+    public function getDefaultByNamePhone(Request $request)
     {
+        $data = $request->only([
+            'role'
+        ]);
         try {
-            $result = $this->userService->getDefaultByNamePhoneService();
+            $result = $this->userService->getDefaultByNamePhoneService($data);
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
