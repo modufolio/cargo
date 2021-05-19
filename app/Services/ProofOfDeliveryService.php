@@ -53,144 +53,144 @@ class ProofOfDeliveryService {
     }
 
     /**
-     * create pop service
+     * create pop service DEPRECATED
      *
      * @param array $data
      * @return String
      */
-    public function createPOPService($data)
-    {
-        $validator = Validator::make($data, [
-            'pickupId' => 'bail|required',
-            'notes' => 'bail|present',
-            'driverPick' => 'bail|boolean|required',
-            'userId' => 'bail|required',
-            'statusPick' => 'bail|required|string'
-        ]);
+    // public function createPOPService($data)
+    // {
+    //     $validator = Validator::make($data, [
+    //         'pickupId' => 'bail|required',
+    //         'notes' => 'bail|present',
+    //         'driverPick' => 'bail|boolean|required',
+    //         'userId' => 'bail|required',
+    //         'statusPick' => 'bail|required|string'
+    //     ]);
 
-        if ($validator->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
+    //     if ($validator->fails()) {
+    //         throw new InvalidArgumentException($validator->errors()->first());
+    //     }
 
-        try {
-            $this->pickupRepository->checkPickupHasPickupPlan($data);
-        } catch (Exception $e) {
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException($e->getMessage());
-        }
+    //     try {
+    //         $this->pickupRepository->checkPickupHasPickupPlan($data);
+    //     } catch (Exception $e) {
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException($e->getMessage());
+    //     }
 
-        DB::beginTransaction();
-        // CREATE POP
-        try {
-            $result = $this->podRepository->createPOPRepo($data);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Gagal membuat proof of pickup');
-        }
+    //     DB::beginTransaction();
+    //     // CREATE POP
+    //     try {
+    //         $result = $this->podRepository->createPOPRepo($data);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Gagal membuat proof of pickup');
+    //     }
 
-        // START CALCULATE BILL
-        try {
-            $route = $this->routeRepository->getRouteByPickupRepo($data);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
-        }
+    //     // START CALCULATE BILL
+    //     try {
+    //         $route = $this->routeRepository->getRouteByPickupRepo($data);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+    //     }
 
-        if ($route == null) {
-            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
-        }
+    //     if ($route == null) {
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+    //     }
 
-        try {
-            $promo = $this->promoRepository->getPromoByPickup($data['pickupId']);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
-        }
+    //     try {
+    //         $promo = $this->promoRepository->getPromoByPickup($data['pickupId']);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+    //     }
 
-        try {
-            $items = $this->itemRepository->fetchItemByPickupRepo($data);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mendapatkan items');
-        }
+    //     try {
+    //         $items = $this->itemRepository->fetchItemByPickupRepo($data);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mendapatkan items');
+    //     }
 
-        $items = collect($items)->values()->all();
+    //     $items = collect($items)->values()->all();
 
-        try {
-            $bill = $this->billRepository->calculateAndSavePrice($items, $route, $promo);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menghitung total biaya');
-        }
+    //     try {
+    //         $bill = $this->billRepository->calculateAndSavePrice($items, $route, $promo);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menghitung total biaya');
+    //     }
 
-        if ($bill->success == false) {
-            throw new InvalidArgumentException($bill->message);
-        }
+    //     if ($bill->success == false) {
+    //         throw new InvalidArgumentException($bill->message);
+    //     }
 
-        $cost = [
-            'pickupId' => $data['pickupId'],
-            'amount' => $bill->total_price
-        ];
-        try {
-            $this->costRepository->saveCostRepo($cost);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menyimpan total biaya');
-        }
-        // END CALCULATE BILL
+    //     $cost = [
+    //         'pickupId' => $data['pickupId'],
+    //         'amount' => $bill->total_price
+    //     ];
+    //     try {
+    //         $this->costRepository->saveCostRepo($cost);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menyimpan total biaya');
+    //     }
+    //     // END CALCULATE BILL
 
-        // CREATE TRACKING
-        if ($data['driverPick']) {
-            $status = 'draft';
-            $picture = $data['picture'];
-            if ($data['statusPick'] == 'success') {
-                $notes = 'barang berhasil dipickup';
-            }
-        } else {
-            $status = $data['popStatus'];
-            $picture = null;
-            if ($data['statusPick'] == 'success') {
-                $notes = 'barang diterima digudang';
-            }
-        }
-        if ($data['statusPick'] == 'failed') {
-            $notes = 'barang gagal di pickup';
-        }
-        if ($data['statusPick'] == 'updated') {
-            $notes = 'barang di pickup dengan perubahan data';
-        }
-        $tracking = [
-            'pickupId' => $data['pickupId'],
-            'docs' => 'proof-of-pickup',
-            'status' => $status,
-            'notes' => $notes,
-            'picture' => $picture,
-        ];
-        try {
-            $this->trackingRepository->recordTrackingByPickupRepo($tracking);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Gagal menyimpan data tracking');
-        }
+    //     // CREATE TRACKING
+    //     if ($data['driverPick']) {
+    //         $status = 'draft';
+    //         $picture = $data['picture'];
+    //         if ($data['statusPick'] == 'success') {
+    //             $notes = 'barang berhasil dipickup';
+    //         }
+    //     } else {
+    //         $status = $data['popStatus'];
+    //         $picture = null;
+    //         if ($data['statusPick'] == 'success') {
+    //             $notes = 'barang diterima digudang';
+    //         }
+    //     }
+    //     if ($data['statusPick'] == 'failed') {
+    //         $notes = 'barang gagal di pickup';
+    //     }
+    //     if ($data['statusPick'] == 'updated') {
+    //         $notes = 'barang di pickup dengan perubahan data';
+    //     }
+    //     $tracking = [
+    //         'pickupId' => $data['pickupId'],
+    //         'docs' => 'proof-of-pickup',
+    //         'status' => $status,
+    //         'notes' => $notes,
+    //         'picture' => $picture,
+    //     ];
+    //     try {
+    //         $this->trackingRepository->recordTrackingByPickupRepo($tracking);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Gagal menyimpan data tracking');
+    //     }
 
-        DB::commit();
-        return $result;
-    }
+    //     DB::commit();
+    //     return $result;
+    // }
 
     /**
      * get outstanding proof of delivery
@@ -271,103 +271,103 @@ class ProofOfDeliveryService {
     }
 
     /**
-     * update pop
+     * update pop DEPRECATED
      * @param array $data
      */
-    public function updatePOPService($data = [])
-    {
-        $validator = Validator::make($data, [
-            'pickup' => 'bail|required',
-        ]);
+    // public function updatePOPService($data = [])
+    // {
+    //     $validator = Validator::make($data, [
+    //         'pickup' => 'bail|required',
+    //     ]);
 
-        if ($validator->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
+    //     if ($validator->fails()) {
+    //         throw new InvalidArgumentException($validator->errors()->first());
+    //     }
 
-        DB::beginTransaction();
+    //     DB::beginTransaction();
 
-        try {
-            $items = $this->itemRepository->updatePickupItemsRepo($data['pickup']);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException($e->getMessage());
-        }
+    //     try {
+    //         $items = $this->itemRepository->updatePickupItemsRepo($data['pickup']);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException($e->getMessage());
+    //     }
 
-        // START CALCULATE BILL
-        $route = ['pickupId' => $data['pickup']['id']];
-        try {
-            $route = $this->routeRepository->getRouteByPickupRepo($route);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
-        }
+    //     // START CALCULATE BILL
+    //     $route = ['pickupId' => $data['pickup']['id']];
+    //     try {
+    //         $route = $this->routeRepository->getRouteByPickupRepo($route);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+    //     }
 
-        if ($route == null) {
-            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
-        }
+    //     if ($route == null) {
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+    //     }
 
-        try {
-            $promo = $this->promoRepository->getPromoByPickup($data['pickup']['id']);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
-        }
+    //     try {
+    //         $promo = $this->promoRepository->getPromoByPickup($data['pickup']['id']);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+    //     }
 
-        // try {
-        //     $items = $this->itemRepository->fetchItemByPickupRepo($data);
-        // } catch (Exception $e) {
-        //     DB::rollback();
-        //     Log::info($e->getMessage());
-        //     Log::error($e);
-        //     throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mendapatkan items');
-        // }
+    //     // try {
+    //     //     $items = $this->itemRepository->fetchItemByPickupRepo($data);
+    //     // } catch (Exception $e) {
+    //     //     DB::rollback();
+    //     //     Log::info($e->getMessage());
+    //     //     Log::error($e);
+    //     //     throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mendapatkan items');
+    //     // }
 
-        $items = collect($items)->values()->all();
+    //     $items = collect($items)->values()->all();
 
-        try {
-            $bill = $this->billRepository->calculateAndSavePrice($items, $route, $promo);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menghitung total biaya');
-        }
+    //     try {
+    //         $bill = $this->billRepository->calculateAndSavePrice($items, $route, $promo);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menghitung total biaya');
+    //     }
 
-        if ($bill->success == false) {
-            throw new InvalidArgumentException($bill->message);
-        }
+    //     if ($bill->success == false) {
+    //         throw new InvalidArgumentException($bill->message);
+    //     }
 
-        $cost = [
-            'pickupId' => $data['pickup']['id'],
-            'amount' => $bill->total_price
-        ];
-        try {
-            $this->costRepository->updateCostByPickupRepo($cost);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menyimpan total biaya');
-        }
-        // END CALCULATE BILL
+    //     $cost = [
+    //         'pickupId' => $data['pickup']['id'],
+    //         'amount' => $bill->total_price
+    //     ];
+    //     try {
+    //         $this->costRepository->updateCostByPickupRepo($cost);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal menyimpan total biaya');
+    //     }
+    //     // END CALCULATE BILL
 
-        try {
-            $pickup = $this->podRepository->updatePopRepo($data['pickup']);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException($e->getMessage());
-        }
-        DB::commit();
-        return ['pickup' => $pickup, 'items' => $items];
-    }
+    //     try {
+    //         $pickup = $this->podRepository->updatePopRepo($data['pickup']);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         Log::info($e->getMessage());
+    //         Log::error($e);
+    //         throw new InvalidArgumentException($e->getMessage());
+    //     }
+    //     DB::commit();
+    //     return ['pickup' => $pickup, 'items' => $items];
+    // }
 
     /**
      * get detail pickup for admin
