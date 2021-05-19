@@ -77,7 +77,7 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('testinglenna5'),
                 'role_id' => 3,
                 'phone' => '0821123250122',
-                'username' => '	testinglenna5',
+                'username' => 'testinglenna5',
                 'branch_id' => 1,
             ],
             [
@@ -86,7 +86,7 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('testinglenna4'),
                 'role_id' => 9,
                 'phone' => '0896122502122',
-                'username' => '	testinglenna4',
+                'username' => 'testinglenna4',
                 'branch_id' => 2,
             ],
             [
@@ -95,7 +95,7 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('marketing'),
                 'role_id' => 2,
                 'phone' => '0857122122311',
-                'username' => '	marketing1',
+                'username' => 'marketing1',
                 'branch_id' => 2,
             ],
             [
@@ -104,7 +104,7 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('marketing'),
                 'role_id' => 2,
                 'phone' => '0857122122311',
-                'username' => '	marketing2',
+                'username' => 'marketing2',
                 'branch_id' => 1,
             ]
         ]);
