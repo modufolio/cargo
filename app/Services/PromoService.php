@@ -237,7 +237,7 @@ class PromoService {
     public function searchPromoService($data = [])
     {
         $validator = Validator::make($data, [
-            'customerId' => 'bail|required',
+            'customerId' => 'bail|present',
             'query' => 'bail|present',
             'type' => 'bail|required'
         ]);
