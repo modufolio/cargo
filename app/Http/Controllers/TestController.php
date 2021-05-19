@@ -61,6 +61,11 @@ class TestController extends BaseController
      */
     public function index()
     {
+        $carbon = Carbon::parse('2019-05-19 15:48:19')->diffInSeconds(Carbon::now('Asia/Jakarta'), false);
+        // if ($carbon > 30) {
+            return 'aa => '.$carbon;
+        // }
+        // return 'bb => '.$carbon;
         $data = Pickup::find(50);
         $pop = $data->proofOfPickup;
         $pop->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();

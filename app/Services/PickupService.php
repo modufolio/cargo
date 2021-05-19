@@ -128,12 +128,32 @@ class PickupService {
 					throw new InvalidArgumentException($e->getMessage());
 				}
 
+                // IF ANY PROMO, VALIDATE PROMO
 				if ($promo !== false) {
-					if ($promo['user_id'] !== $data['userId']) {
-						DB::rollback();
-						throw new InvalidArgumentException('Promo tidak dapat digunakan');
-					}
+                    try {
+                        $this->promoRepository->validatePromoRepo($promo, $data['userId']);
+                    } catch (Exception $e) {
+                        DB::rollback();
+                        Log::info($e->getMessage());
+                        Log::error($e);
+                        throw new InvalidArgumentException($e->getMessage());
+                    }
 				}
+
+                // USE PROMO
+                if ($promo !== null) {
+                    if ($promo !== false) {
+                        try {
+                            $this->promoRepository->usePromoRepo($promo);
+                        } catch (Exception $e) {
+                            DB::rollback();
+                            Log::info($e->getMessage());
+                            Log::error($e);
+                            throw new InvalidArgumentException('Promo gagal dipakai');
+                        }
+                    }
+                }
+                // END USE PROMO
 			}
 		}
 		if ($data['promoId'] == null || $data['promoId'] == '') {
@@ -626,9 +646,11 @@ class PickupService {
 			Log::error($e);
 			throw new InvalidArgumentException($e->getMessage());
 		}
-		// PROMO
+
+        // START PROMO
 		if ($data['form']['promoId'] !== null) {
 			if ($data['form']['promoId'] !== '') {
+                // GET PROMO DATA
 				try {
 					$promo = $this->promoRepository->getById($data['form']['promoId']);
 				} catch (Exception $e) {
@@ -638,12 +660,32 @@ class PickupService {
 					throw new InvalidArgumentException($e->getMessage());
 				}
 
+                // IF ANY PROMO, VALIDATE PROMO
 				if ($promo !== false) {
-					if ($promo['user_id'] !== $data['userId']) {
-						DB::rollback();
-						throw new InvalidArgumentException('Promo tidak dapat digunakan');
-					}
+                    try {
+                        $this->promoRepository->validatePromoRepo($promo, $customer['id']);
+                    } catch (Exception $e) {
+                        DB::rollback();
+                        Log::info($e->getMessage());
+                        Log::error($e);
+                        throw new InvalidArgumentException($e->getMessage());
+                    }
 				}
+
+                // USED PROMO
+                if ($promo !== null) {
+                    if ($promo !== false) {
+                        try {
+                            $this->promoRepository->usePromoRepo($promo);
+                        } catch (Exception $e) {
+                            DB::rollback();
+                            Log::info($e->getMessage());
+                            Log::error($e);
+                            throw new InvalidArgumentException('Promo gagal dipakai');
+                        }
+                    }
+                }
+                // END USED PROMO
 			}
 		}
 		if ($data['form']['promoId'] == null || $data['form']['promoId'] == '') {
@@ -874,7 +916,7 @@ class PickupService {
 				DB::rollback();
 				Log::info($e->getMessage());
 				Log::error($e);
-				throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+				throw new InvalidArgumentException('Perhitungan biaya gagal, promo gagal ditemukan');
 			}
 
 			try {
@@ -918,19 +960,19 @@ class PickupService {
 			}
 
             // UPDATE PAYMENT
-        try {
-            $payload = [
-                'id' => $cost['id'],
-                'method' => $data['form']['paymentMethod'],
-                'dueDate' => $data['form']['paymentDueDate']
-            ];
-            $this->costRepository->updatePaymentMethod($payload);
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::info($e->getMessage());
-            Log::error($e);
-            throw new InvalidArgumentException('Gagal mengubah metode pembayaran');
-        }
+            try {
+                $payload = [
+                    'id' => $cost['id'],
+                    'method' => $data['form']['paymentMethod'],
+                    'dueDate' => $data['form']['paymentDueDate']
+                ];
+                $this->costRepository->updatePaymentMethod($payload);
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getMessage());
+                Log::error($e);
+                throw new InvalidArgumentException('Gagal mengubah metode pembayaran');
+            }
 			// END CALCULATE BILL
 
             // TRACKING TIDAK DILAKUKAN KARENA MASUK KE DROP
