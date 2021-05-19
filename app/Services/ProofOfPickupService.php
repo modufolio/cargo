@@ -111,7 +111,7 @@ class ProofOfPickupService {
             DB::rollback();
             Log::info($e->getMessage());
             Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, rute pengiriman tidak ditemukan');
+            throw new InvalidArgumentException('Perhitungan biaya gagal, promo gagal ditemukan');
         }
 
         try {
@@ -120,7 +120,7 @@ class ProofOfPickupService {
             DB::rollback();
             Log::info($e->getMessage());
             Log::error($e);
-            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mendapatkan items');
+            throw new InvalidArgumentException('Perhitungan biaya gagal, Gagal mendapatkan item');
         }
 
         $items = collect($items)->values()->all();
