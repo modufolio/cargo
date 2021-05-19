@@ -230,4 +230,29 @@ class PromoService {
         DB::commit();
         return $promo;
     }
+
+    /**
+     * search promo service
+     */
+    public function searchPromoService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'customerId' => 'bail|required',
+            'query' => 'bail|present',
+            'type' => 'bail|required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        try {
+            $promo = $this->promoRepository->searchPromoRepo($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            Log::error($e);
+            throw new InvalidArgumentException('Gagal mendapatkan data promo');
+        }
+        return $promo;
+    }
 }

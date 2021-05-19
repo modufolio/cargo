@@ -216,6 +216,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::post('create', [PromoController::class, 'create']);
             Route::post('delete', [PromoController::class, 'delete']);
             Route::post('update', [PromoController::class, 'update']);
+            Route::post('search', [PromoController::class, 'search']);
         });
 
         // Vehicle

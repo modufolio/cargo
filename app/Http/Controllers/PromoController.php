@@ -168,4 +168,24 @@ class PromoController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * search promo.
+     *
+     * @param Request $request
+     */
+    public function search(Request $request)
+    {
+        $data = $request->only([
+            'query',
+            'customerId',
+            'type'
+        ]);
+        try {
+            $result = $this->promoService->searchPromoService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

@@ -352,4 +352,80 @@ class PromoRepository
         })->first();
         return $promo;
     }
+
+    /**
+     * search promo repo
+     */
+    public function searchPromoRepo($data = [])
+    {
+        $query = $data['query'];
+        if ($data['type'] == 'general') {
+            $promo = $this->promo
+                ->where(function($q) use ($query) {
+                    $q->where('code', 'ilike', '%'.$query.'%')
+                    ->orWhere('discount', 'ilike', '%'.$query.'%')
+                    ->orWhere('discount_max', 'ilike', '%'.$query.'%')
+                    ->orWhere('description', 'ilike', '%'.$query.'%')
+                    ->orWhere('terms', 'ilike', '%'.$query.'%')
+                    ->orWhere('min_value', 'ilike', '%'.$query.'%');
+                })
+                ->where('scope', 'general')
+                ->where('max_used', '>=', 1)
+                ->whereDate('start_at', '<=', date(Carbon::now('Asia/Jakarta')))
+                ->whereDate('end_at', '>=', date(Carbon::now('Asia/Jakarta')))
+                ->get();
+        }
+        if ($data['type'] == 'personal') {
+            $promo = $this->promo
+                ->where(function($q) use ($query) {
+                    $q->where('code', 'ilike', '%'.$query.'%')
+                    ->orWhere('discount', 'ilike', '%'.$query.'%')
+                    ->orWhere('discount_max', 'ilike', '%'.$query.'%')
+                    ->orWhere('description', 'ilike', '%'.$query.'%')
+                    ->orWhere('terms', 'ilike', '%'.$query.'%')
+                    ->orWhere('min_value', 'ilike', '%'.$query.'%');
+                })
+                ->where('scope', 'personal')
+                ->where('user_id', $data['customerId'])
+                ->where('max_used', '>=', 1)
+                ->whereDate('start_at', '<=', date(Carbon::now('Asia/Jakarta')))
+                ->whereDate('end_at', '>=', date(Carbon::now('Asia/Jakarta')))
+                ->get();
+        }
+        return $promo;
+    }
+
+    /**
+     * validate promo
+     */
+    public function validatePromoRepo($promo, $customerId)
+    {
+        if ($promo['scope'] == 'personal') {
+            if ($promo['user_id'] !== $customerId) {
+                throw new InvalidArgumentException('Promo tidak dapat digunakan untuk customer ini');
+            }
+        }
+        $start = Carbon::parse($promo['start_at'])->diffInSeconds(Carbon::now('Asia/Jakarta'), false);
+        if ($start < 0) {
+            throw new InvalidArgumentException('Promo belum berlaku');
+        }
+        $end = Carbon::parse($promo['end_at'])->diffInSeconds(Carbon::now('Asia/Jakarta'), false);
+        if ($end > 0) {
+            throw new InvalidArgumentException('Promo sudah kadaluarsa');
+        }
+        if ($promo['max_used'] <= 0) {
+            throw new InvalidArgumentException('Kuota promo sudah habis terpakai');
+        }
+        return $promo;
+    }
+
+    /**
+     * use promo
+     */
+    public function usePromoRepo($promo)
+    {
+        $data = $this->promo->find($promo['id']);
+        $data->max_used = intval($data->max_used) - 1;
+        $data->save();
+    }
 }
