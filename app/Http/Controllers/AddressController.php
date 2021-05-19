@@ -147,6 +147,13 @@ class AddressController extends BaseController
             return $this->sendError($e->getMessage());
         }
 
+        if (count($result) == 0) {
+            return response()->json([
+                'success' => true,
+                'data' => []
+            ]);
+        }
+
         return $this->sendResponse(null, $result);
     }
 }
