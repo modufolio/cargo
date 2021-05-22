@@ -53,8 +53,8 @@ class ProofOfDeliveryService {
     }
 
     /**
-     * create pop service DEPRECATED
-     *
+     * create pop service
+     * DEPRECATED
      * @param array $data
      * @return String
      */
@@ -271,7 +271,8 @@ class ProofOfDeliveryService {
     }
 
     /**
-     * update pop DEPRECATED
+     * update pop
+     * DEPRECATED
      * @param array $data
      */
     // public function updatePOPService($data = [])
