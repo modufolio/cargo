@@ -125,8 +125,9 @@ class ProofOfPickupService {
 
         $items = collect($items)->values()->all();
 
+        // ESTIMATE PRICE AND SAVE PRICE PER ITEM
         try {
-            $bill = $this->billRepository->calculateAndSavePrice($items, $route, $promo);
+            $bill = $this->billRepository->calculatePriceRepo($items, $route, $promo, true);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -334,8 +335,9 @@ class ProofOfPickupService {
 
         $items = collect($items)->values()->all();
 
+        // ESTIMATE PRICE AND SAVE PRICE PER ITEM
         try {
-            $bill = $this->billRepository->calculateAndSavePrice($items, $route, $promo);
+            $bill = $this->billRepository->calculatePriceRepo($items, $route, $promo, true);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
