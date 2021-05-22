@@ -141,7 +141,10 @@ class ProofOfPickupService {
 
         $cost = [
             'pickupId' => $data['pickupId'],
-            'amount' => $bill->total_price
+            'amount' => $bill->total_price,
+            'clearAmount' => $bill->total_clear_price,
+            'discount' => $bill->total_discount,
+            'service' => $bill->total_service
         ];
         try {
             $this->costRepository->saveCostRepo($cost);
@@ -351,7 +354,10 @@ class ProofOfPickupService {
 
         $cost = [
             'pickupId' => $data['pickup']['id'],
-            'amount' => $bill->total_price
+            'amount' => $bill->total_price,
+            'clearAmount' => $bill->total_clear_price,
+            'discount' => $bill->total_discount,
+            'service' => $bill->total_service
         ];
         try {
             $this->costRepository->updateCostByPickupRepo($cost);

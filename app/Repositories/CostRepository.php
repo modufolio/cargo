@@ -26,6 +26,9 @@ class CostRepository
         $cost = new $this->cost;
         $cost->pickup_id = $data['pickupId'];
         $cost->amount = $data['amount'];
+        $cost->clear_amount = $data['clearAmount'];
+        $cost->discount = $data['discount'];
+        $cost->service = $data['service'];
         $cost->save();
         return $cost;
     }
@@ -53,8 +56,15 @@ class CostRepository
     public function updateCostByPickupRepo($data)
     {
         $cost = $this->cost->updateOrCreate(
-            ['pickup_id' => $data['pickupId']],
-            ['amount' => $data['amount']]
+            [
+                'pickup_id' => $data['pickupId']
+            ],
+            [
+                'amount' => $data['amount'],
+                'clear_amount' => $data['clearAmount'],
+                'discount' => $data['discount'],
+                'service' => $data['service']
+            ]
         );
         return $cost;
     }
@@ -70,7 +80,10 @@ class CostRepository
         return $this->cost->where('pickup_id', $data['pickupId'])->update([
             'amount' => $data['amount'],
             'due_date' => $data['dueDate'],
-            'method' => $data['method']
+            'method' => $data['method'],
+            'clear_amount' => $data['clearAmount'],
+            'discount' => $data['discount'],
+            'service' => $data['service']
         ]);
     }
 }

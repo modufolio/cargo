@@ -951,7 +951,7 @@ class PickupService {
 			$cost = [
 				'pickupId' => $pickup['id'],
 				'amount' => $bill->total_price,
-                'clear_amount' => $bill->total_clear_price,
+                'clearAmount' => $bill->total_clear_price,
                 'discount' => $bill->total_discount,
                 'service' => $bill->total_service
 			];
@@ -1486,7 +1486,9 @@ class PickupService {
 			$cost = [
 				'pickupId' => $pickup['id'],
 				'amount' => $bill->total_price,
-				'clear_amount' => $bill->total_clear_price,
+				'clearAmount' => $bill->total_clear_price,
+				'discount' => $bill->total_discount,
+				'service' => $bill->total_service,
                 'method' => $data['form']['paymentMethod'],
                 'dueDate' => $data['form']['paymentDueDate']
 			];
