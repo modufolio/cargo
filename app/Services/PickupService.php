@@ -221,7 +221,7 @@ class PickupService {
 
 		// CALCULATE PRICE
 		try {
-			$price = $this->billRepository->calculatePrice($items, $route, $promo);
+			$price = $this->billRepository->calculatePriceRepo($items, $route, $promo);
 		} catch (Exception $e) {
 			DB::rollback();
 			Log::info($e->getMessage());
@@ -825,7 +825,7 @@ class PickupService {
 
 		// CALCULATE PRICE
 		try {
-			$price = $this->billRepository->calculatePrice($items, $route, $promo);
+			$price = $this->billRepository->calculatePriceRepo($items, $route, $promo);
 		} catch (Exception $e) {
 			DB::rollback();
 			Log::info($e->getMessage());
@@ -1192,7 +1192,7 @@ class PickupService {
 
 		// CALCULATE PRICE
 		try {
-			$price = $this->billRepository->calculatePrice($items, $route, $promo);
+			$price = $this->billRepository->calculatePriceRepo($items, $route, $promo);
 		} catch (Exception $e) {
 			DB::rollback();
 			Log::info($e->getMessage());
@@ -1378,7 +1378,7 @@ class PickupService {
 
 		// CALCULATE PRICE
 		try {
-			$price = $this->billRepository->calculatePrice($items, $route, $promo);
+			$price = $this->billRepository->calculatePriceRepo($items, $route, $promo);
 		} catch (Exception $e) {
 			DB::rollback();
 			Log::info($e->getMessage());
