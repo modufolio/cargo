@@ -64,19 +64,17 @@ class BillRepository
      *
      * @return object
      */
-    public function calculatePrice($items, $route, $promo)
+    public function calculatePriceRepo($items, $route, $promo)
     {
         $result = $data = [];
         $totalWeight = array_sum(array_column($items, 'weight'));
         if ($totalWeight >= intval($route['minimum_weight'])) {
             foreach ($items as $key => $value) {
-                // $unit               = $this->unit->where('id', $value['unit_id'])->select('name','price')->first();
                 $service            = $this->service->where('id', $value['service_id'])->select('name','price')->first();
                 $servicePrice       = $service['price'] ?? 0;
                 $price              = $this->getPricePerItem($value['type'], $value['weight'], $route, $servicePrice);
                 $data['price']      = $price;
                 $data['name']       = $value['name'];
-                // $data['unit']       = $unit;
                 $data['weight']     = $value['weight'];
                 $data['type']       = $value['type'];
                 $data['volume']     = $value['volume'];
@@ -90,7 +88,10 @@ class BillRepository
                 'success'       => true,
                 'total_weight'  => $totalWeight,
                 'items'         => $itemData,
-                'total_price'   => $finalTotal
+                'promo'         => $promo,
+                'total_price'   => $finalTotal['total'],
+                'total_discount' => $finalTotal['discount'],
+                'total_without_discount' => $total
             ];
         } else {
             $result = (object)[
@@ -101,7 +102,7 @@ class BillRepository
         return $result;
     }
 
-    public function addingPromo($total, $promo)
+    public function addingPromo($total, $promo) : array
     {
         $total = intval($total);
         if ($promo) {
@@ -111,11 +112,23 @@ class BillRepository
             if ($total >= $minValue) {
                 $discount = ($total * $promoDiscount) / 100;
                 if (intval($discount) >= $promoDiscountMax) {
-                    $total = $total - $promoDiscountMax;
+                    $totalWithDiscount = $total - $promoDiscountMax;
+                    $total = ['total' => $totalWithDiscount, 'discount' => $promoDiscountMax];
                 } else {
-                    $total = $total - intval($discount);
+                    $totalWithDiscount = $total - intval($discount);
+                    $total = ['total' => $totalWithDiscount, 'discount' => $discount];
                 }
+            } else {
+                $total = [
+                    'total' => $total,
+                    'discount' => 0
+                ];
             }
+        } else {
+            $total = [
+                'total' => $total,
+                'discount' => 0
+            ];
         }
         return $total;
     }
@@ -168,7 +181,9 @@ class BillRepository
                 'success'       => true,
                 'total_weight'  => $totalWeight,
                 'items'         => $itemData,
-                'total_price'   => $total
+                'total_price'   => $total,
+                'total_discount' => 0,
+                'total_without_discount' => $total
             ];
         } else {
             $result = (object)[
@@ -208,7 +223,10 @@ class BillRepository
                 'success'       => true,
                 'total_weight'  => $totalWeight,
                 'items'         => $itemData,
-                'total_price'   => $finalTotal
+                'promo'         => $promo,
+                'total_price'   => $finalTotal['total'],
+                'total_discount' => $finalTotal['discount'],
+                'total_without_discount' => $total
             ];
         } else {
             $result = (object)[
