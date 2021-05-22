@@ -55,7 +55,7 @@ class BillController extends BaseController
 
         if (empty($data['promoId'])) {
             try {
-                $result = $this->billService->calculatePriceWithoutPromo($data['items'], $route);
+                $result = $this->billService->calculatePriceWithoutPromoService($data['items'], $route);
             } catch (Exception $e) {
                 Log::info($e->getMessage());
                 return $this->sendError($e->getMessage());
