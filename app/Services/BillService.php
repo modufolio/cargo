@@ -99,8 +99,26 @@ class BillService {
             }
         }
 
+        $validator = Validator::make($route, [
+            'origin'                => 'bail|required',
+            'destination_district'  => 'bail|required',
+            'destination_city'      => 'bail|required',
+            'price'                 => 'bail|required|numeric',
+            'price_motorcycle'      => 'bail|required|numeric',
+            'price_car'             => 'bail|required|numeric',
+            'minimum_weight'        => 'bail|required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            DB::rollback();
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+
+        /**
+         * hitung perkiraan biaya sementara
+         */
         try {
-            $result = $this->billRepository->calculatePriceRepo($items, $route, $promo);
+            $result = $this->billRepository->calculatePriceRepo($items, $route, $promo, false);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal memperkirakan biaya');
@@ -109,12 +127,11 @@ class BillService {
     }
 
     /**
-     * Calculate price.
+     * Calculate price without promo.
      *
-     * @param Array $data
      * @return mixed
      */
-    public function calculatePriceWithoutPromo($items = [], $route = [])
+    public function calculatePriceWithoutPromoService($items = [], $route = [])
     {
         if (empty($items)) {
             throw new InvalidArgumentException('Item tidak ditemukan');
@@ -123,8 +140,25 @@ class BillService {
             throw new InvalidArgumentException('Rute tidak masuk dalam jangkauan');
         }
 
+        foreach ($items as $key => $value) {
+            $validator = Validator::make($value, [
+                'unit'          => 'bail|required',
+                'unit_count'    => 'bail|required|numeric',
+                'type'          => 'bail|required',
+                'name'          => 'bail|required',
+                'weight'        => 'bail|required|numeric',
+                'volume'        => 'bail|required|numeric',
+                'service_id'    => 'bail|nullable|present'
+            ]);
+
+            if ($validator->fails()) {
+                DB::rollback();
+                throw new InvalidArgumentException($validator->errors()->first());
+            }
+        }
+
         try {
-            $result = $this->billRepository->calculatePriceWithoutPromo($items, $route);
+            $result = $this->billRepository->calculatePriceRepo($items, $route, null, false);
         } catch (Exception $e) {
             Log::info($e->getMessage());
             throw new InvalidArgumentException('Gagal memperkirakan biaya');
