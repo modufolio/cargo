@@ -123,7 +123,7 @@ class ItemRepository
      */
     public function fetchItemByPickupRepo($data = [])
     {
-        $item = $this->item->where('pickup_id', $data['pickupId'])->get();
+        $item = $this->item->with('service')->where('pickup_id', $data['pickupId'])->get();
 
         if (!$item) {
             throw new InvalidArgumentException('Item tidak ditemukan');
