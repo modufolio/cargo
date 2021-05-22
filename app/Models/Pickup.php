@@ -40,8 +40,6 @@ class Pickup extends Model
 
     protected $hidden = [
         'user_id',
-        'promo_id',
-        'fleet_id',
         'sender_id',
         'receiver_id',
         'debtor_id',

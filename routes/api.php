@@ -100,6 +100,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
     // Bill
     Route::prefix('bill')->group(function() {
         Route::post('calculate', [BillController::class, 'calculatePrice']);
+        Route::post('calculate-final', [BillController::class, 'calculatePriceFinal']);
     });
 
     // Route

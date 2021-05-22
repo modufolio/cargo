@@ -25,7 +25,7 @@ class RouteService {
      * @param Array $data
      * @return mixed
      */
-    public function getByFleetOriginDestinationService($data)
+    public function getByFleetOriginDestinationService($data = [])
     {
         $validator = Validator::make($data, [
             'origin'                    => 'bail|required|max:50',

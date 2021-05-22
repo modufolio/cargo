@@ -1083,10 +1083,13 @@ class PickupRepository
      */
     public function getDetailPickupAdminRepo($data = [])
     {
-        $pickup = $this->pickup->select('id','name','phone','picktime','sender_id','receiver_id','pickup_plan_id','status','number','is_drop')->where('id', $data['pickupId'])->with(
+        $pickup = $this->pickup->select('id','name','phone','picktime','sender_id','receiver_id','pickup_plan_id','status','number','is_drop','fleet_id','promo_id')->where('id', $data['pickupId'])->with(
             [
                 'sender' => function($q) {
                     $q->select('id', 'province','city','district','village','postal_code','street');
+                },
+                'receiver' => function($q) {
+                    $q->select('id','city','district');
                 },
                 'items' => function($q) {
                     $q->select('id','name','pickup_id','unit_count','service_id','weight','volume','type','price','unit');

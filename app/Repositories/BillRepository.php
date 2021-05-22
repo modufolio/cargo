@@ -82,6 +82,7 @@ class BillRepository
                 $data['type']           = $value['type'];
                 $data['volume']         = $value['volume'];
                 $data['unit']           = $value['unit'] ?? 'buah';
+                $data['unit_count']     = $value['unit_count'];
                 $data['service']        = $service ?? null;
                 $data['id']             = $value['id'];
                 $itemData[] = $data;

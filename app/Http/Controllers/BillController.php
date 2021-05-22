@@ -79,4 +79,54 @@ class BillController extends BaseController
 
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * Calculate Price based on origin and destination
+     *
+     * @param Request $request
+     */
+    public function calculatePriceFinal(Request $request)
+    {
+        $data = $request->only([
+            'items',
+            'origin',
+            'destination_district',
+            'destination_city',
+            'fleetId',
+            'promoId'
+        ]);
+
+        try {
+            $route = $this->routeService->getByFleetOriginDestinationService($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            return $this->sendError($e->getMessage());
+        }
+
+        if (empty($data['promoId'])) {
+            try {
+                $result = $this->billService->calculatePriceWithoutPromoService($data['items'], $route);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                return $this->sendError($e->getMessage());
+            }
+        } else {
+            try {
+                $promo = $this->promoService->getPromoByIdService($data['promoId']);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                return $this->sendError($e->getMessage());
+            }
+
+            try {
+                $result = $this->billService->calculatePriceService($data['items'], $route, $promo);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                return $this->sendError($e->getMessage());
+            }
+        }
+
+
+        return $this->sendResponse(null, $result);
+    }
 }
