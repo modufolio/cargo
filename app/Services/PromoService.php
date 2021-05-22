@@ -255,4 +255,20 @@ class PromoService {
         }
         return $promo;
     }
+
+    /**
+     * Get promo by id.
+     *
+     * @return Promo
+     */
+    public function getPromoByIdService($promoId)
+    {
+        try {
+            $promo = $this->promoRepository->getById($promoId);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            throw new InvalidArgumentException('Gagal mendapatkan promo');
+        }
+        return $promo;
+    }
 }
