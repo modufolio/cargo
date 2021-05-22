@@ -208,26 +208,27 @@ class DropController extends BaseController
 
     /**
      * create drop admin.
+     * DEPRECATED
      */
-    public function createDropAdmin(Request $request)
-    {
-        $data = $request->only([
-            'userId',
-            'items',
-            'form',
-            'customer',
-            'branchId'
-        ]);
-        DB::beginTransaction();
-        try {
-            $result = $this->pickupService->createDropAdminService($data);
-        } catch (Exception $e) {
-            DB::rollback();
-            return $this->sendError($e->getMessage());
-        }
-        DB::commit();
-        return $this->sendResponse(null, $result);
-    }
+    // public function createDropAdmin(Request $request)
+    // {
+    //     $data = $request->only([
+    //         'userId',
+    //         'items',
+    //         'form',
+    //         'customer',
+    //         'branchId'
+    //     ]);
+    //     DB::beginTransaction();
+    //     try {
+    //         $result = $this->pickupService->createDropAdminService($data);
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         return $this->sendError($e->getMessage());
+    //     }
+    //     DB::commit();
+    //     return $this->sendResponse(null, $result);
+    // }
 
     /**
      * cancel pickup
