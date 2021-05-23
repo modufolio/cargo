@@ -4,28 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
-use Kyslik\ColumnSortable\Sortable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Cost extends Model
+class ExtraCost extends Model
 {
+    use HasFactory, SoftDeletes;
+
     public $timestamps = true;
 
-    use HasFactory, Sortable;
+    protected $table = 'extra_costs';
 
     protected $guarded = [];
 
     protected $hidden = [
-        'pickup_id'
-    ];
-
-    public $sortable = [
         'created_at',
         'updated_at',
-        'id',
-        'pickup',
-        'pickup_id',
-        'amount'
+        'deleted_at'
     ];
 
     public function getCreatedAtAttribute($value)
@@ -40,13 +34,23 @@ class Cost extends Model
         return $data;
     }
 
-    public function pickup()
+    public function createdBy()
     {
-        return $this->belongsTo(Pickup::class, 'pickup_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function extraCosts()
+    public function updatedBy()
     {
-        return $this->hasMany(ExtraCost::class);
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function deletedBy()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    public function cost()
+    {
+        return $this->belongsTo(Cost::class);
     }
 }

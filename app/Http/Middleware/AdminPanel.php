@@ -20,7 +20,7 @@ class AdminPanel
         $user = Auth::user();
         if ($user !== null) {
             $role = $user->role()->first();
-            if ($role->slug !== 'admin') {
+            if ($role->slug !== 'admin' && $role->slug !== 'finance' && $role->slug !== 'marketing') {
                 return $this->errorResponse(['code' => 4001], 'unathorized', 401);
             }
             $response = $next($request);

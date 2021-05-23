@@ -1721,12 +1721,12 @@ class PickupRepository
         $dateFrom = $data['dateFrom'];
         $dateTo = $data['dateTo'];
 
-        $pickup = $this->pickup->where('branch_id', $branchId)
+        $pickup = $this->pickup->with('proofOfPickup')->where('branch_id', $branchId)
             ->whereNotNull('pickup_plan_id')
             // ->whereHas('proofOfDelivery', function($q) {
             //     $q->where('status_delivery', 'success');
             // })
-            ->with(['user','sender','receiver','debtor','cost']);
+            ->with(['user','sender','receiver','debtor','cost.extraCosts']);
 
         if (empty($perPage)) {
             $perPage = 10;

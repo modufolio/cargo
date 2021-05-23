@@ -349,7 +349,7 @@ class ProofOfDeliveryService {
     //         'amount' => $bill->total_price
     //     ];
     //     try {
-    //         $this->costRepository->updateCostByPickupRepo($cost);
+    //         $this->costRepository->updateOrCreateCostByPickupIdRepo($cost);
     //     } catch (Exception $e) {
     //         DB::rollback();
     //         Log::info($e->getMessage());

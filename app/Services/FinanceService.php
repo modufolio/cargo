@@ -1,8 +1,9 @@
 <?php
 namespace App\Services;
 
-// use App\Models\Pickup;
+use App\Repositories\CostRepository;
 use App\Repositories\PickupRepository;
+// use App\Models\Pickup;
 // use App\Repositories\ItemRepository;
 // use App\Repositories\BillRepository;
 // use App\Repositories\PromoRepository;
@@ -15,7 +16,6 @@ use App\Repositories\PickupRepository;
 // use App\Repositories\TrackingRepository;
 // use App\Repositories\UserRepository;
 // use App\Repositories\PickupPlanRepository;
-// use App\Repositories\CostRepository;
 use Exception;
 use DB;
 use Log;
@@ -25,6 +25,7 @@ use InvalidArgumentException;
 class FinanceService {
 
 	protected $pickupRepository;
+	protected $costRepository;
 	// protected $itemRepository;
 	// protected $billRepository;
 	// protected $promoRepository;
@@ -37,10 +38,10 @@ class FinanceService {
 	// protected $trackingRepository;
 	// protected $userRepository;
 	// protected $pickupPlanRepository;
-	// protected $costRepository;
 
 	public function __construct(
-		PickupRepository $pickupRepository
+		PickupRepository $pickupRepository,
+		CostRepository $costRepository
 		// ItemRepository $itemRepository,
 		// BillRepository $billRepository,
 		// PromoRepository $promoRepository,
@@ -53,10 +54,10 @@ class FinanceService {
 		// TrackingRepository $trackingRepository,
 		// UserRepository $userRepository,
 		// PickupPlanRepository $pickupPlanRepository,
-		// CostRepository $costRepository
 	)
 	{
 		$this->pickupRepository = $pickupRepository;
+		$this->costRepository = $costRepository;
 		// $this->itemRepository = $itemRepository;
 		// $this->billRepository = $billRepository;
 		// $this->promoRepository = $promoRepository;
@@ -69,7 +70,6 @@ class FinanceService {
 		// $this->trackingRepository = $trackingRepository;
 		// $this->userRepository = $userRepository;
 		// $this->pickupPlanRepository = $pickupPlanRepository;
-		// $this->costRepository = $costRepository;
 	}
 
 	/**
@@ -106,4 +106,108 @@ class FinanceService {
 
 		return $result;
 	}
+
+    /**
+     * update cost service
+     */
+    public function updateFinanceCostService($data = [])
+    {
+        $validator = Validator::make($data, [
+            'cost' => 'bail|required',
+            'userId' => 'bail|required',
+            'extraCosts' => 'bail|present'
+		]);
+
+		if ($validator->fails()) {
+			throw new InvalidArgumentException($validator->errors()->first());
+		}
+
+        $validator = Validator::make($data['cost'], [
+            'id' => 'bail|required',
+            'amount' => 'bail|required',
+            'discount' => 'bail|required',
+            'method' => 'bail|required',
+            'due_date' => 'bail|present',
+            'clear_amount' => 'bail|required',
+            'status' => 'bail|required',
+            'notes' => 'bail|present',
+            'service' => 'bail|required'
+		]);
+
+		if ($validator->fails()) {
+			throw new InvalidArgumentException($validator->errors()->first());
+		}
+
+        DB::beginTransaction();
+
+        // UPDATE COST
+        try {
+            $payload = [
+                'amount' => $data['cost']['amount'],
+                'discount' => $data['cost']['discount'],
+                'method' => $data['cost']['method'],
+                'dueDate' => $data['cost']['due_date'],
+                'clearAmount' => $data['cost']['clear_amount'],
+                'status' => $data['cost']['status'],
+                'notes' => $data['cost']['notes'],
+                'service' => $data['cost']['service'],
+                'id' => $data['cost']['id']
+            ];
+			$cost = $this->costRepository->updateCostRepo($payload);
+		} catch (Exception $e) {
+			Log::info($e->getMessage());
+			Log::error($e);
+            DB::rollback();
+			throw new InvalidArgumentException($e->getMessage());
+		}
+        // END UPDATE COST
+
+        // UPDATE EXTRA COST
+        $extraCost = $data['extraCosts'];
+        if (count($extraCost) > 0) {
+            // DELETE EXTRA COST BY COSTID
+            try {
+                $this->costRepository->deleteExtraCostByCostIdRepo($data['cost']['id']);
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+                Log::error($e);
+                DB::rollback();
+                throw new InvalidArgumentException($e->getMessage());
+            }
+
+            $extra = [];
+            foreach ($extraCost as $key => $value) {
+                $validator = Validator::make($value, [
+                    'amount' => 'bail|required',
+                    'notes' => 'bail|present'
+                ]);
+
+                if ($validator->fails()) {
+                    DB::rollback();
+                    throw new InvalidArgumentException('Gagal menyimpan biaya tambahan. '. $validator->errors()->first());
+                }
+
+                try {
+                    $payload = [
+                        'amount' => $value['amount'],
+                        'notes' => $value['notes'],
+                        'userId' => $data['userId'],
+                        'costId' => $data['cost']['id']
+                    ];
+                    $extra[] = $this->costRepository->saveExtraCostRepo($payload);
+                } catch (Exception $e) {
+                    Log::info($e->getMessage());
+                    Log::error($e);
+                    DB::rollback();
+                    throw new InvalidArgumentException($e->getMessage());
+                }
+            }
+        }
+        // END UPDATE EXTRA COST
+        DB::commit();
+		return [
+            'cost' => $cost,
+            'extraCosts' => $extra
+        ];
+    }
 }

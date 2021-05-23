@@ -360,7 +360,7 @@ class ProofOfPickupService {
             'service' => $bill->total_service
         ];
         try {
-            $this->costRepository->updateCostByPickupRepo($cost);
+            $this->costRepository->updateOrCreateCostByPickupIdRepo($cost);
         } catch (Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());

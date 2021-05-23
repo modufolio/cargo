@@ -175,8 +175,23 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(User::class, 'marketing_id');
     }
 
-    public function customer()
+    public function customers()
     {
         return $this->hasMany(User::class, 'marketing_id');
+    }
+
+    public function creatorExtraCosts()
+    {
+        return $this->hasMany(ExtraCost::class, 'created_by');
+    }
+
+    public function deletorExtraCosts()
+    {
+        return $this->hasMany(ExtraCost::class, 'deleted_by');
+    }
+
+    public function changerExtraCosts()
+    {
+        return $this->hasMany(ExtraCost::class, 'updated_by');
     }
 }

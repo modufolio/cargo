@@ -3,16 +3,19 @@
 namespace App\Repositories;
 
 use App\Models\Cost;
+use App\Models\ExtraCost;
 use Carbon\Carbon;
 use InvalidArgumentException;
 
 class CostRepository
 {
     protected $cost;
+    protected $extraCost;
 
-    public function __construct(Cost $cost)
+    public function __construct(Cost $cost, ExtraCost $extraCost)
     {
         $this->cost = $cost;
+        $this->extraCost = $extraCost;
     }
 
     /**
@@ -53,7 +56,7 @@ class CostRepository
      * @param array $data
      * @return Cost
      */
-    public function updateCostByPickupRepo($data)
+    public function updateOrCreateCostByPickupIdRepo($data)
     {
         $cost = $this->cost->updateOrCreate(
             [
@@ -70,12 +73,12 @@ class CostRepository
     }
 
     /**
-     * update cost
+     * update cost by pickup
      *
      * @param array $data
      * @return Cost
      */
-    public function editCostRepo($data = [])
+    public function updateCostByPickupIdRepo($data = [])
     {
         return $this->cost->where('pickup_id', $data['pickupId'])->update([
             'amount' => $data['amount'],
@@ -85,5 +88,58 @@ class CostRepository
             'discount' => $data['discount'],
             'service' => $data['service']
         ]);
+    }
+
+    /**
+     * update cost repo
+    */
+    public function updateCostRepo($data = [])
+    {
+        $cost = $this->cost->find($data['id']);
+        $cost->amount = $data['amount'];
+        $cost->method = $data['method'];
+        $cost->due_date = $data['dueDate'];
+        $cost->discount = $data['discount'];
+        $cost->service = $data['service'];
+        $cost->clear_amount = $data['clearAmount'];
+        $cost->status = ucwords($data['status']);
+        $cost->notes = $data['notes'];
+        $cost->save();
+        return $cost;
+    }
+
+    /**
+     * update extra costs
+     */
+    public function updateExtraCostRepo($data = [])
+    {
+        $extraCost = $this->extraCost->find($data['id']);
+        $extraCost->amount = $data['amount'];
+        $extraCost->notes = $data['notes'];
+        $extraCost->save();
+        return $extraCost;
+    }
+
+    /**
+     * save extra cost
+     */
+    public function saveExtraCostRepo($data = [])
+    {
+        $extraCost = new $this->extraCost;
+        $extraCost->cost_id = $data['costId'];
+        $extraCost->amount = $data['amount'];
+        $extraCost->notes = $data['notes'];
+        $extraCost->created_by = $data['userId'];
+        $extraCost->updated_by = $data['userId'];
+        $extraCost->save();
+        return $extraCost;
+    }
+
+    /**
+     * delete extra cost by cost id
+     */
+    public function deleteExtraCostByCostIdRepo($costId)
+    {
+        $this->extraCost->where('cost_id', $costId)->delete();
     }
 }

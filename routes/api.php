@@ -343,6 +343,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
             Route::prefix('pickup')->group(function() {
                 Route::post('paginate', [FinanceController::class, 'getFinancePickupPaginate']);
             });
+            Route::post('update-cost', [FinanceController::class, 'updateCost']);
         });
 
         // REPORT

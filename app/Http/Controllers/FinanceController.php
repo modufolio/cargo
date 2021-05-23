@@ -53,4 +53,24 @@ class FinanceController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * update cost on finance
+     */
+    public function updateCost(Request $request)
+    {
+        $data = $request->only([
+            'cost',
+            'userId',
+            'extraCosts'
+        ]);
+
+        try {
+            $result = $this->financeService->updateFinanceCostService($data);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

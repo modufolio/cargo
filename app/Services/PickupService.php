@@ -1494,7 +1494,7 @@ class PickupService {
 			];
             // UPDATE COST
 			try {
-				$this->costRepository->editCostRepo($cost);
+				$this->costRepository->updateCostByPickupIdRepo($cost);
 			} catch (Exception $e) {
 				DB::rollback();
 				Log::info($e->getMessage());
