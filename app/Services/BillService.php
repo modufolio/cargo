@@ -51,7 +51,7 @@ class BillService {
             throw new InvalidArgumentException('Rute tidak masuk dalam jangkauan');
         }
 
-        $validator = Validator::make($route, [
+        $validator = Validator::make($route->toArray(), [
             'origin'                => 'bail|required',
             'destination_district'  => 'bail|required',
             'destination_city'      => 'bail|required',
@@ -66,7 +66,7 @@ class BillService {
             throw new InvalidArgumentException($validator->errors()->first());
         }
 
-        $validator = Validator::make($promo, [
+        $validator = Validator::make($promo->toArray(), [
             'discount'      => 'bail|required|numeric',
             'discount_max'  => 'bail|required|numeric',
             'min_value'     => 'bail|required|numeric',
@@ -97,21 +97,6 @@ class BillService {
                 DB::rollback();
                 throw new InvalidArgumentException($validator->errors()->first());
             }
-        }
-
-        $validator = Validator::make($route, [
-            'origin'                => 'bail|required',
-            'destination_district'  => 'bail|required',
-            'destination_city'      => 'bail|required',
-            'price'                 => 'bail|required|numeric',
-            'price_motorcycle'      => 'bail|required|numeric',
-            'price_car'             => 'bail|required|numeric',
-            'minimum_weight'        => 'bail|required|numeric'
-        ]);
-
-        if ($validator->fails()) {
-            DB::rollback();
-            throw new InvalidArgumentException($validator->errors()->first());
         }
 
         /**

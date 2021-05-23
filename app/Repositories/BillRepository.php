@@ -84,7 +84,7 @@ class BillRepository
                 $data['unit']           = $value['unit'] ?? 'buah';
                 $data['unit_count']     = $value['unit_count'];
                 $data['service']        = $service ?? null;
-                $data['id']             = $value['id'];
+                $data['id']             = $value['id'] ?? null;
                 $itemData[] = $data;
             }
             if ($savePrice) {
