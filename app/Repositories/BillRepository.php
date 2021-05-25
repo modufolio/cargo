@@ -71,7 +71,7 @@ class BillRepository
         $totalWeight = array_sum(array_column($items, 'weight'));
         if ($totalWeight >= intval($route['minimum_weight'])) {
             foreach ($items as $key => $value) {
-                $service                = $this->service->where('id', $value['service_id'])->select('name','price')->first();
+                $service                = $value['service_id'] ? $this->service->find($value['service_id']) : null;
                 $servicePrice           = $service['price'] ?? 0;
                 $priceItem              = $this->getPricePerItem($value['type'], $value['weight'], $route, $servicePrice);
                 $data['price']          = $priceItem['price'];
