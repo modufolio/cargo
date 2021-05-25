@@ -73,16 +73,24 @@ class ItemRepository
     {
         $pickup = $this->pickup->find($pickup['id']);
 
+        if (!$pickup) {
+            throw new InvalidArgumentException('Pickup tidak ditemukan, gagal menyimpan item');
+        }
+
         $item = [];
         foreach ($items as $key => $value) {
-            $item[] = $pickup->items()->create($value);
-            // $data = new $this->item;
-            // $data->service_id = $value['service_id'] ?? NULL;
-            // $data->name = $value['name'];
-            // $data->weight = $value['weight'];
-            // $data->volume = $value['volume'];
-            // $data->save();
-            // $item[] = $data;
+            // $item[] = $pickup->items()->create($value);
+            $data = new $this->item;
+            $data->pickup_id = $pickup['id'];
+            $data->service_id = $value['service_id'] ?? NULL;
+            $data->name = $value['name'];
+            $data->weight = $value['weight'];
+            $data->volume = $value['volume'];
+            $data->unit = $value['unit'];
+            $data->unit_count = $value['unit_count'];
+            $data->type = $value['type'];
+            $data->save();
+            $item[] = $data;
         }
 
         return $item;
