@@ -102,14 +102,15 @@ class BillRepository
             $totalService = array_sum(array_column($itemData, 'service_price'));
             $finalTotal = $this->addingPromo($total, $promo);
             $result = (object)[
-                'success'           => true,
-                'total_weight'      => $totalWeight,
-                'items'             => $itemData,
-                'promo'             => $promo,
-                'total_price'       => $finalTotal['total'], // total dengan potongan diskon dan tambahan biaya service
-                'total_service'     => $totalService, // total service
-                'total_discount'    => $finalTotal['discount'], // total diskon
-                'total_clear_price' => $totalClearPrice // total tanpa diskon, dan service, hanya biaya barang
+                'success'                   => true,
+                'total_weight'              => $totalWeight,
+                'items'                     => $itemData,
+                'promo'                     => $promo,
+                'total_price'               => $finalTotal['total'], // total dengan potongan diskon dan tambahan biaya service
+                'total_service'             => $totalService, // total service
+                'total_discount'            => $finalTotal['discount'], // total diskon
+                'total_clear_price'         => $totalClearPrice, // total tanpa diskon, dan service, hanya biaya barang
+                'total_price_with_service'  => $total // total tanpa diskon, dan service, hanya biaya barang
             ];
         } else {
             $result = (object)[
