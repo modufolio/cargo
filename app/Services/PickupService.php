@@ -794,14 +794,14 @@ class PickupService {
 			unset($items[$key]['service']);
 		}
 
-        foreach ($data['items'] as $key => $value) {
+        foreach ($items as $key => $value) {
             $validator = Validator::make($value, [
                 'unit'          => 'bail|required',
-                'unit_count'    => 'bail|required|numeric',
+                'unit_count'    => 'bail|required|min:1|numeric',
                 'type'          => 'bail|required',
                 'name'          => 'bail|required',
-                'weight'        => 'bail|required|numeric',
-                'volume'        => 'bail|required|numeric',
+                'weight'        => 'bail|required|min:0|numeric',
+                'volume'        => 'bail|required|min:0|numeric',
                 'service_id'    => 'bail|nullable|present',
             ]);
 
