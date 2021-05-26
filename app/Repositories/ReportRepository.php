@@ -237,8 +237,8 @@ class ReportRepository
 
         if (!empty($startDate) && !empty($endDate)) {
             $pickup = $pickup
-                ->whereDate('created_at', '>=', date($startDate))
-                ->whereDate('created_at', '<=', date($endDate));
+                ->whereDate('created_at', '>=', Carbon::parse($startDate)->toDateTimeString())
+                ->whereDate('created_at', '<=', Carbon::parse($endDate)->toDateTimeString());
         }
 
         if (!empty($branchName)) {
