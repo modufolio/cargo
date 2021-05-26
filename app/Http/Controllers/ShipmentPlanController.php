@@ -37,7 +37,9 @@ class ShipmentPlanController extends BaseController
             'driverId',
             'userId',
             'isTransit',
-            'transitBranch'
+            'transitBranch',
+            'fleet',
+            'withFleet'
         ]);
         DB::beginTransaction();
         try {

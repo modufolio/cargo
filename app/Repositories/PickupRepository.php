@@ -1841,4 +1841,19 @@ class PickupRepository
         $pickup->save();
         return $pickup;
     }
+
+    /**
+     * update fleet data
+     */
+    public function updateFleetDataPickupRepo($data = [])
+    {
+        $pickup = $this->pickup->find($data['pickupId']);
+        if (!$pickup) {
+            throw new InvalidArgumentException('Pickup tidak ditemukan');
+        }
+        $pickup->fleet_name = $data['fleetName'];
+        $pickup->fleet_departure = $data['fleetDeparture'];
+        $pickup->save();
+        return $pickup;
+    }
 }

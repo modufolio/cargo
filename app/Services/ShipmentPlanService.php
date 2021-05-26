@@ -56,6 +56,8 @@ class ShipmentPlanService {
             'vehicleId' => 'bail|required|integer',
             'driverId' => 'bail|required|integer',
             'userId' => 'bail|required|integer',
+            'fleet' => 'bail|present',
+            'withFleet' => 'bail|present'
         ]);
 
         if ($validator->fails()) {
@@ -141,7 +143,7 @@ class ShipmentPlanService {
             $status = 'applied';
             // SAVE SHIPMENT PLAN
             try {
-                $this->shipmentPlanRepository->saveShipmentPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
+                $shipmentPlan = $this->shipmentPlanRepository->saveShipmentPlanRepo($data['pickupId'], $data['vehicleId'], $data['userId']);
             } catch (Exception $e) {
                 DB::rollback();
                 Log::info($e->getMessage());
@@ -202,6 +204,44 @@ class ShipmentPlanService {
                 Log::info($e->getMessage());
                 Log::error($e);
                 throw new InvalidArgumentException('Gagal menyimpan data tracking driver');
+            }
+
+            if ($data['withFleet']) {
+                $fleetName = $data['fleet']['name'];
+                $fleetDepartureDate = $data['fleet']['departureDate'];
+                $tracking = [
+                    'pickupId' => $value,
+                    'docs' => $docs,
+                    'status' => $status,
+                    'notes' => "Paket dikirim dengan armada ($fleetName) dan akan berangkat pada ($fleetDepartureDate)",
+                    'picture' => null,
+                ];
+                try {
+                    $this->trackingRepository->recordTrackingByPickupRepo($tracking);
+                } catch (Exception $e) {
+                    DB::rollback();
+                    Log::info($e->getMessage());
+                    Log::error($e);
+                    throw new InvalidArgumentException('Gagal menyimpan data tracking armada');
+                }
+            }
+        }
+
+        if ($data['withFleet']) {
+            foreach ($data['pickupId'] as $key => $value) {
+                $fleetData = [
+                    'pickupId' => $value,
+                    'fleetName' => $data['fleet']['name'],
+                    'fleetDeparture' => $data['fleet']['departureDate'],
+                ];
+                try {
+                    $this->pickupRepository->updateFleetDataPickupRepo($fleetData);
+                } catch (Exception $e) {
+                    DB::rollback();
+                    Log::info($e->getMessage());
+                    Log::error($e);
+                    throw new InvalidArgumentException('Gagal menyimpan data armada pada pickup');
+                }
             }
         }
 
