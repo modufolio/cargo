@@ -953,7 +953,8 @@ class PickupService {
 				'amount' => $bill->total_price,
                 'clearAmount' => $bill->total_clear_price,
                 'discount' => $bill->total_discount,
-                'service' => $bill->total_service
+                'service' => $bill->total_service,
+                'amountWithService' => $bill->total_price_with_service
 			];
 			try {
 				$cost = $this->costRepository->saveCostRepo($cost);
@@ -1489,6 +1490,7 @@ class PickupService {
 				'clearAmount' => $bill->total_clear_price,
 				'discount' => $bill->total_discount,
 				'service' => $bill->total_service,
+                'amountWithService' => $bill->total_price_with_service,
                 'method' => $data['form']['paymentMethod'],
                 'dueDate' => $data['form']['paymentDueDate']
 			];

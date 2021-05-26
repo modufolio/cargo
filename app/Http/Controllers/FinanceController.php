@@ -42,7 +42,7 @@ class FinanceController extends BaseController
             'createdAt',
             'dateFrom',
             'dateTo',
-            'branchId'
+            'branchName'
         ]);
 
         try {

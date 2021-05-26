@@ -59,4 +59,41 @@ class ReportController extends BaseController
         }
         return $this->sendResponse(null, $result);
     }
+
+    /**
+     * get reporting
+     */
+    public function getReport(Request $request)
+    {
+        $data = $request->only([
+            'startDate',
+            'endDate',
+            'perPage',
+            'page',
+            'sort',
+            'number',
+            'name',
+            'receiver',
+            'debtor',
+            'paymentMethod',
+            'branchName',
+            'marketingName',
+            'driverPickupName',
+            'driverDeliveryName',
+            'costAmountWithService',
+            'costDiscount',
+            'costAmount',
+            'costService',
+            'costExtraCost',
+            'costMargin',
+            'costMethod',
+            'costStatus'
+        ]);
+        try {
+            $result = $this->reportService->getReportService($data);
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+        return $this->sendResponse(null, $result);
+    }
 }

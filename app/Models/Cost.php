@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Kyslik\ColumnSortable\Sortable;
+use App\Models\ExtraCost;
 
 class Cost extends Model
 {
@@ -28,6 +29,9 @@ class Cost extends Model
         'amount'
     ];
 
+    protected $appends = ['total_extra_cost','margin'];
+
+
     public function getCreatedAtAttribute($value)
     {
         $data = Carbon::parse($value)->format('Y-m-d h:m:s');
@@ -48,5 +52,22 @@ class Cost extends Model
     public function extraCosts()
     {
         return $this->hasMany(ExtraCost::class);
+    }
+
+    public function getTotalExtraCostAttribute()
+    {
+        $extraCosts = ExtraCost::where('cost_id', $this->id)->get()->all();
+        if (count($extraCosts) > 0) {
+            $total = array_sum(array_column($extraCosts, 'amount'));
+        } else {
+            $total = 0;
+        }
+        return intval($total);
+    }
+
+    public function getMarginAttribute()
+    {
+        $margin = intval($this->amount) - intval($this->total_extra_cost);
+        return intval($margin);
     }
 }

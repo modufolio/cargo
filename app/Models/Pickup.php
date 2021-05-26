@@ -35,7 +35,10 @@ class Pickup extends Model
         'id',
         'user',
         'number',
-        'redelivery_count'
+        'redelivery_count',
+        'marketing',
+        'pickup_plan',
+        'cost'
     ];
 
     protected $hidden = [
@@ -163,5 +166,15 @@ class Pickup extends Model
     public function pickupDriverLogs()
     {
         return $this->hasMany(PickupDriverLog::class);
+    }
+
+    public function marketing()
+    {
+        return $this->belongsTo(User::class, 'marketing_id');
+    }
+
+    public function extraCosts()
+    {
+        return $this->hasManyThrough(ExtraCost::class, Cost::class);
     }
 }

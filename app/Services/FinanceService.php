@@ -87,7 +87,7 @@ class FinanceService {
             'receiver' => 'bail|present',
             'debtor' => 'bail|present',
             'paymentMethod' => 'bail|present',
-			'branchId' => 'bail|required',
+			'branchName' => 'bail|required',
             'dateFrom' => 'bail|present',
             'dateTo' => 'bail|present'
 		]);
@@ -124,14 +124,15 @@ class FinanceService {
 
         $validator = Validator::make($data['cost'], [
             'id' => 'bail|required',
-            'amount' => 'bail|required',
-            'discount' => 'bail|required',
+            'amount' => 'bail|required|min:0|numeric',
+            'discount' => 'bail|required|min:0|numeric',
             'method' => 'bail|required',
             'due_date' => 'bail|present',
-            'clear_amount' => 'bail|required',
+            'clear_amount' => 'bail|required|min:0|numeric',
+            'amount_with_service' => 'bail|required|min:0|numeric',
             'status' => 'bail|required',
             'notes' => 'bail|present',
-            'service' => 'bail|required'
+            'service' => 'bail|required|min:0|numeric'
 		]);
 
 		if ($validator->fails()) {
@@ -151,7 +152,8 @@ class FinanceService {
                 'status' => $data['cost']['status'],
                 'notes' => $data['cost']['notes'],
                 'service' => $data['cost']['service'],
-                'id' => $data['cost']['id']
+                'id' => $data['cost']['id'],
+                'amount_with_service' => $data['cost']['amount_with_service']
             ];
 			$cost = $this->costRepository->updateCostRepo($payload);
 		} catch (Exception $e) {
@@ -178,7 +180,7 @@ class FinanceService {
             $extra = [];
             foreach ($extraCost as $key => $value) {
                 $validator = Validator::make($value, [
-                    'amount' => 'bail|required',
+                    'amount' => 'bail|required|min:0',
                     'notes' => 'bail|present'
                 ]);
 

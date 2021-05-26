@@ -32,6 +32,7 @@ class CostRepository
         $cost->clear_amount = $data['clearAmount'];
         $cost->discount = $data['discount'];
         $cost->service = $data['service'];
+        $cost->amount_with_service = $data['amountWithService'];
         $cost->save();
         return $cost;
     }
@@ -66,7 +67,8 @@ class CostRepository
                 'amount' => $data['amount'],
                 'clear_amount' => $data['clearAmount'],
                 'discount' => $data['discount'],
-                'service' => $data['service']
+                'service' => $data['service'],
+                'amount_with_service' => $data['amountWithService'],
             ]
         );
         return $cost;
@@ -86,7 +88,8 @@ class CostRepository
             'method' => $data['method'],
             'clear_amount' => $data['clearAmount'],
             'discount' => $data['discount'],
-            'service' => $data['service']
+            'service' => $data['service'],
+            'amount_with_service' => $data['amountWithService'],
         ]);
     }
 
@@ -104,6 +107,7 @@ class CostRepository
         $cost->clear_amount = $data['clearAmount'];
         $cost->status = ucwords($data['status']);
         $cost->notes = $data['notes'];
+        $cost->amount_with_service = $data['amountWithService'];
         $cost->save();
         return $cost;
     }

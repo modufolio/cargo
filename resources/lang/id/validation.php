@@ -194,6 +194,11 @@ return [
         'end_at' => 'Waktu selesai',
         'max_used' => 'Maksimal penggunaan',
         'code' => 'Kode',
-        'scope' => 'Lingkup'
+        'scope' => 'Lingkup',
+        'amount_with_service' => 'Harga dengan layanan packing',
+        'clear_amount' => 'Harga bersih',
+        'clear_price' => 'Harga bersih',
+        'driverPickupName' => 'Nama driver yang mem-pickup',
+        'driverDeliveryName' => 'Nama driver yang mengirim'
     ],
 ];

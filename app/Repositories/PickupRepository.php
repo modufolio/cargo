@@ -1716,17 +1716,17 @@ class PickupRepository
         $debtor = $data['debtor'];
         $paymentMethod = $data['paymentMethod'];
 
-        $branchId = $data['branchId'];
+        $branchName = $data['branchName'];
 
         $dateFrom = $data['dateFrom'];
         $dateTo = $data['dateTo'];
 
-        $pickup = $this->pickup->with('proofOfPickup')->where('branch_id', $branchId)
+        $pickup = $this->pickup
             ->whereNotNull('pickup_plan_id')
             // ->whereHas('proofOfDelivery', function($q) {
             //     $q->where('status_delivery', 'success');
             // })
-            ->with(['user','sender','receiver','debtor','cost.extraCosts']);
+            ->with(['user','sender','receiver','debtor','cost.extraCosts','branch','proofOfPickup']);
 
         if (empty($perPage)) {
             $perPage = 10;
@@ -1765,6 +1765,11 @@ class PickupRepository
                 case 'cost.method':
                     $pickup = $pickup->sortable([
                         'cost.method' => $order
+                    ]);
+                    break;
+                case 'branch.name':
+                    $pickup = $pickup->sortable([
+                        'branch.name' => $order
                     ]);
                     break;
                 case 'created_at':
@@ -1810,6 +1815,12 @@ class PickupRepository
             $pickup = $pickup
                 ->whereDate('created_at', '>=', date($dateFrom))
                 ->whereDate('created_at', '<=', date($dateTo));
+        }
+
+        if (!empty($branchName)) {
+            $pickup = $pickup->whereHas('branch', function($q) use ($branchName) {
+                $q->where('name', 'ilike', '%'.$branchName.'%');
+            });
         }
 
         $result = $pickup->paginate($perPage);

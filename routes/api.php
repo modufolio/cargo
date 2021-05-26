@@ -349,6 +349,7 @@ Route::group(['middleware' => ['auth:api','auth.custom','cors.custom']], functio
         // REPORT
         Route::prefix('report')->group(function() {
             Route::post('success-order', [ReportController::class, 'getReportSuccessPickupWithRange']);
+            Route::post('get', [ReportController::class, 'getReport']);
         });
     });
 
